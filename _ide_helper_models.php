@@ -168,7 +168,7 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property int $date_purchase
- * @property string $description
+ * @property string|null $description
  * @property int $provider_id
  * @property int $organization_id
  * @property string $state_name

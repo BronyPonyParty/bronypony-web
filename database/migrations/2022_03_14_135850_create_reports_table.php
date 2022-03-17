@@ -17,7 +17,7 @@ class CreateReportsTable extends Migration
             $table->increments('id');
             $table->integer('technic_id')->unsigned();
             $table->integer('user_id')->unsigned();
-            $table->string('description', 512);
+            $table->string('description', 512)->nullable();
             $table->string('state_name', 32);
             $table->timestamps();
         });

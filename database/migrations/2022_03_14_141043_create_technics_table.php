@@ -17,7 +17,7 @@ class CreateTechnicsTable extends Migration
             $table->increments('id');
             $table->string('name', 64);
             $table->integer('date_purchase');
-            $table->string('description', 1024);
+            $table->string('description', 1024)->nullable();
             $table->integer('provider_id')->unsigned();
             $table->integer('organization_id')->unsigned();
             $table->string('state_name', 32);
