@@ -14,8 +14,8 @@ class RepairsForeigns extends Migration
     public function up()
     {
         Schema::table('repairs', function (Blueprint $table) {
-            $table->foreign('order_id')->references('id')->on('orders');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('report_id')->references('id')->on('reports');
+            $table->foreign('repairman_id')->references('id')->on('users');
         });
     }
 
@@ -27,8 +27,8 @@ class RepairsForeigns extends Migration
     public function down()
     {
         Schema::table('repairs', function (Blueprint $table) {
-            $table->dropForeign(['order_id']);
-            $table->dropForeign(['user_id']);
+            $table->dropForeign(['report_id']);
+            $table->dropForeign(['repairman_id']);
         });
     }
 }

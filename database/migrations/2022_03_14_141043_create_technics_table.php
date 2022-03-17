@@ -15,6 +15,7 @@ class CreateTechnicsTable extends Migration
     {
         Schema::create('technics', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('name', 64);
             $table->integer('date_purchase');
             $table->string('description', 1024);
             $table->integer('provider_id')->unsigned();

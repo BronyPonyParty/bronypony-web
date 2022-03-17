@@ -58,23 +58,9 @@ namespace App\Models{
 /**
  * App\Models\Order
  *
- * @property int $id
- * @property int $technic_id
- * @property int $user_id
- * @property string $description
- * @property string $state_name
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Order newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Order query()
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereDescription($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereStateName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereTechnicId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Order whereUserId($value)
  */
 	class Order extends \Eloquent {}
 }
@@ -159,8 +145,8 @@ namespace App\Models{
  * App\Models\Repair
  *
  * @property int $id
- * @property int $order_id
- * @property int $user_id
+ * @property int $report_id
+ * @property int $repairman_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Repair newModelQuery()
@@ -168,9 +154,9 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Repair query()
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Repair whereOrderId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Repair whereRepairmanId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Repair whereReportId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Repair whereUserId($value)
  */
 	class Repair extends \Eloquent {}
 }
@@ -180,6 +166,7 @@ namespace App\Models{
  * App\Models\Technic
  *
  * @property int $id
+ * @property string $name
  * @property int $date_purchase
  * @property string $description
  * @property int $provider_id
@@ -194,6 +181,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDatePurchase($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Technic whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereStateName($value)
