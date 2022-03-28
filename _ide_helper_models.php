@@ -77,6 +77,7 @@ namespace App\Models{
  * @property string $state_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\OrganizationFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Organization newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Organization query()
@@ -126,6 +127,7 @@ namespace App\Models{
  * @property string $state_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\ProviderFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Provider newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Provider query()
@@ -163,6 +165,33 @@ namespace App\Models{
 
 namespace App\Models{
 /**
+ * App\Models\Session
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property string $token
+ * @property int $term
+ * @property string $ip
+ * @property int $removed
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Session newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Session newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Session query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereIp($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereRemoved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereTerm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereToken($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Session whereUserId($value)
+ */
+	class Session extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\Technic
  *
  * @property int $id
@@ -174,6 +203,7 @@ namespace App\Models{
  * @property string $state_name
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Database\Factories\TechnicFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic query()
