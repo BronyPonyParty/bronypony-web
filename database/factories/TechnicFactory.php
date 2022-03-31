@@ -14,7 +14,7 @@ class TechnicFactory extends Factory
     public function definition()
     {
         return [
-            'name' => rand(0, 10) <= 6 ? 'Компьютер-' . $this->faker->buildingNumber() : 'Принтер-' . $this->faker->buildingNumber(),
+            'name' => rand(0, 10) <= 6 ? 'Компьютер-' . $this->faker->unique()->buildingNumber() : 'Принтер-' . $this->faker->unique()->buildingNumber(),
             'date_purchase' => $this->faker->unixTime(),
             'description' => $this->faker->realTextBetween(200, 1000),
             'provider_id' => rand(1, 3),

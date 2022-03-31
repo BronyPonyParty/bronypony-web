@@ -14,9 +14,9 @@ class OrganizationFactory extends Factory
     public function definition()
     {
         return [
-            'organization_name' => $this->faker->company(),
-            'address' => $this->faker->address(),
-            'phone_number' => '79' . substr($this->faker->e164PhoneNumber(), 3, 11),
+            'organization_name' => $this->faker->unique()->company(),
+            'address' => $this->faker->unique()->address(),
+            'phone_number' => '79' . substr($this->faker->unique()->e164PhoneNumber(), 3, 11),
             'registration_date' => $this->faker->unixTime(),
             'state_name' => rand(0 , 1) ? 'Работает' : 'Не работает'
         ];

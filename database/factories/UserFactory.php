@@ -18,9 +18,9 @@ class UserFactory extends Factory
             'lastname' => $this->faker->lastName(),
             'firstname' => $this->faker->firstName(),
             'middlename' => $this->faker->lastName(),
-            'login' => $this->faker->citySuffix(),
+            'login' => $this->faker->unique()->citySuffix(),
             'password' =>  md5('123456'),
-            'phone_number' => '79' . substr($this->faker->e164PhoneNumber(), 3, 11),
+            'phone_number' => '79' . substr($this->faker->unique()->e164PhoneNumber(), 3, 11),
             'mail' => $this->faker->unique()->safeEmail(),
             'organization_id' => rand(1, 3),
             'status_name' => rand(1, 10) < 8 ? 'Работает' : 'Уволен'

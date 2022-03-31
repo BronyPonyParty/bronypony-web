@@ -18,10 +18,10 @@ class CreateUsersTable extends Migration
             $table->string('lastname', 64);
             $table->string('firstname', 64);
             $table->string('middlename', 64)->nullable();
-            $table->string('login', 64);
+            $table->string('login', 64)->unique();
             $table->string('password', 32);
-            $table->string('phone_number', 16)->nullable();
-            $table->string('mail', 64);
+            $table->string('phone_number', 16)->nullable()->unique();
+            $table->string('mail', 64)->unique();
             $table->string('avatar', 16)->nullable();
             $table->integer('organization_id')->unsigned();
             $table->string('status_name', 32);
