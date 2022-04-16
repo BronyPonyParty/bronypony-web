@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Middleware\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,6 @@ Route::post('login', [LoginController::class, 'login']);
 Route::get('logout', [LoginController::class, 'logout']);
 
 
-Route::prefix('{token}')->middleware(\App\Http\Middleware\Auth::class)->group(function () {
+Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     // Маршруты с участием токена
 });

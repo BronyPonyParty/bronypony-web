@@ -6,12 +6,12 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <title>login</title>
+    <title>Курсач</title>
 </head>
 <body>
 
     <div id="app">
-        <v-login></v-login>
+        <v-app></v-app>
     </div>
 
     <script src=" {{ asset('/js/app.js') }}"></script>
