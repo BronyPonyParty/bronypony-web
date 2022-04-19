@@ -10,7 +10,7 @@ export default {
         }
     },
     state: {
-        page: 'login'
+        page: 'user'
     },
     getters: {
         getPage(state) {
