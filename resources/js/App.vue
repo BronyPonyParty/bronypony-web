@@ -1,10 +1,10 @@
 <template>
     <div>
+        <v-notice-window v-if="popup.name === 'noticeWindow'"></v-notice-window>
         <v-user v-if="page === 'user'"></v-user>
         <v-login v-if="page === 'login'"></v-login>
-
-<!--        <button @click="goUser" style="position: absolute">User</button>-->
-<!--        <button @click="goLogin" style="position: absolute; left: 50px">Login</button>-->
+        <v-statements v-if="page === 'statements'"></v-statements>
+        <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
     </div>
 </template>
 
@@ -31,12 +31,14 @@ export default {
     },
 
     computed: mapGetters({
-        page: 'app/getPage'
+        page: 'app/getPage',
+        popup: 'app/getPopup'
     }),
 
     methods: {
         ...mapMutations({
-            setPage: 'app/setPage'
+            setPage: 'app/setPage',
+            setPopup: 'app/setPopup',
         }),
 
         goUser() {
@@ -52,6 +54,15 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss">
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap');
+
+body {
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+        width: 0;
+     }
+}
+
 </style>
