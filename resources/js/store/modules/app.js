@@ -11,11 +11,20 @@ export default {
 
         setPopup(state, popup) {
             state.popup = popup;
+        },
+
+        setWindow(state, window) {
+            state.window = window;
         }
     },
     state: {
         page: 'equipmentList',
         popup: {
+            name: '',
+            description: ''
+        },
+
+        window: {
             name: '',
             description: ''
         }
@@ -27,6 +36,10 @@ export default {
 
         getPopup(state) {
             return state.popup;
+        },
+
+        getWindow(state) {
+            return state.window;
         }
     }
 }

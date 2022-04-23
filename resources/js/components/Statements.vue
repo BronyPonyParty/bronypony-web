@@ -11,10 +11,10 @@
                         <table class="table" style="table-layout: fixed; border: none" v-for="(item, index) in items" :key="item.id">
                             <tbody>
                                 <tr>
-                                    <td class="wb default-td" style="border-radius: 5px 0 0 5px">{{ item.name }}</td>
+                                    <td class="wb default-td">{{ item.name }}</td>
                                     <td class="wb default-td">{{ item.status }}</td>
                                     <td class="wb default-td">{{ item.date }}</td>
-                                    <td style="text-align: center; width: 64px; border-radius: 0 5px 5px 0" class="default-td">
+                                    <td style="text-align: center; width: 64px;" class="default-td">
                                         <button type="button" class="btn dropdown-button" @click="toggleDropdown(index)">
                                             <svg width="16" height="16" fill="white" viewBox="0 0 18 18" class="cur-point">
                                                 <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
@@ -42,7 +42,7 @@
                                             </div>
                                             <div class="row pt-3">
                                                 <div class="col" style="text-align: right">
-                                                    <button class="btn btn-get" @click="showPopup('noticeWindow', 'Вы уверены, что хотите взять данное заявление?')"><strong>За работу</strong></button>
+                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Вы уверены, что хотите взять данное заявление?')"><strong>За работу</strong></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -65,7 +65,7 @@ export default {
 
     data: () => ({
         show: false,
-       items: [
+        items: [
            {
                id: 0,
                name: 'Техника-236',
@@ -97,16 +97,16 @@ export default {
 
     methods: {
         ...mapMutations({
-            setPopup: 'app/setPopup',
+            setWindow: 'app/setWindow',
         }),
 
         toggleDropdown(index) {
             this.items[index].visibility ^= true;
         },
 
-        showPopup(name, description) {
+        showWindow(name, description) {
             setTimeout(() =>{
-                this.setPopup({name: name, description: description});
+                this.setWindow({name: name, description: description});
             }, 0)
         }
     }
@@ -114,7 +114,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 
     .cur-point {
         cursor: pointer;
@@ -126,7 +126,14 @@ export default {
 
     .default-td {
         background-color: #3C4870;
-        color: white
+        color: white;
+
+        &:first-child {
+            border-radius: 5px 0 0 5px;
+        }
+        &:last-child {
+            border-radius: 0 5px 5px 0;
+        }
     }
 
     .wb {

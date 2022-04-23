@@ -27,7 +27,7 @@
                             <strong class="clip">Путинцев Александр</strong>
                         </div>
                         <hr>
-                        <div class="item-dropdown cur-point clip">Обратная связь</div>
+                        <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                         <div class="item-dropdown cur-point clip">Настройки</div>
                         <hr>
                         <div class="item-dropdown cur-point clip">Выход</div>
@@ -45,10 +45,10 @@
                         <strong class="clip">Путинцев Александр</strong>
                     </div>
                     <hr>
-                    <div class="item-dropdown cur-point clip">Cписок заявлений</div>
+                    <div class="item-dropdown cur-point clip">Список заявлений</div>
                     <div class="item-dropdown cur-point clip">Список техники</div>
                     <hr>
-                    <div class="item-dropdown cur-point clip">Обратная связь</div>
+                    <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                     <div class="item-dropdown cur-point clip">Настройки</div>
                     <hr>
                     <div class="item-dropdown cur-point clip">Выход</div>
@@ -59,6 +59,7 @@
 
 <script>
 import ClickOutside from 'vue-click-outside'
+import {mapMutations} from "vuex";
 export default {
     name: "Header",
 
@@ -70,6 +71,10 @@ export default {
     }),
 
     methods: {
+        ...mapMutations({
+            setWindow: 'app/setWindow'
+        }),
+
         popupProfileToggle() {
             this.popupProfile = !this.popupProfile;
 
@@ -102,6 +107,13 @@ export default {
                     this.popupMenuShowed = false;
                 }
             }
+        },
+
+        showFeedBackWindow() {
+            setTimeout(() => {
+                this.setWindow({name: 'feedBack'});
+            }, 0);
+            this.popupProfileToggle();
         }
     },
 
@@ -159,7 +171,6 @@ export default {
 
     .dropdown-popup {
         position: absolute;
-        border: 1px solid #202020;
         width: 180px;
         top: 100%;
         color: black;
@@ -174,8 +185,7 @@ export default {
         }
 
         hr {
-            margin-top: 6px;
-            margin-bottom: 6px;
+            margin: 6px;
         }
 
         .item-dropdown {
@@ -189,8 +199,14 @@ export default {
             white-space: nowrap;
             background-color: transparent;
             border: 0;
-            margin-bottom: 4px;
-            margin-top: 4px;
+
+            &:last-child {
+                border-radius: 0 0 6px 6px;
+            }
+
+            &:first-child {
+                border-radius: 6px 6px 0 0;
+            }
         }
 
         .item-dropdown:hover {

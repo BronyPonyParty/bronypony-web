@@ -30,6 +30,10 @@ Vue.component('v-header', require('./components/Header.vue').default);
 Vue.component('v-statements', require('./components/Statements.vue').default);
 Vue.component('v-notice-window', require('./store/modules/popup/NoticeWindow.vue').default);
 Vue.component('v-equipment-list', require('./components/EquipmentList.vue').default);
+Vue.component('v-tech-description-window', require('./store/modules/popup/TechDescriptionWindow.vue').default);
+Vue.component('v-repair-history-window', require('./store/modules/popup/RepairHistoryWindow.vue').default);
+Vue.component('v-travel-history-window', require('./store/modules/popup/TravelHistoryWindow.vue').default);
+Vue.component('v-feed-back-window', require('./store/modules/popup/FeedBackWindow.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

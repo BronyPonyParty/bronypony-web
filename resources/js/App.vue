@@ -1,6 +1,11 @@
 <template>
     <div>
-        <v-notice-window v-if="popup.name === 'noticeWindow'"></v-notice-window>
+        <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
+        <v-tech-description-window v-if="window.name === 'techDescriptionWindow'"></v-tech-description-window>
+        <v-repair-history-window v-if="window.name === 'repairHistory'"></v-repair-history-window>
+        <v-travel-history-window v-if="window.name === 'travelHistory'"></v-travel-history-window>
+        <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
+
         <v-user v-if="page === 'user'"></v-user>
         <v-login v-if="page === 'login'"></v-login>
         <v-statements v-if="page === 'statements'"></v-statements>
@@ -32,13 +37,13 @@ export default {
 
     computed: mapGetters({
         page: 'app/getPage',
-        popup: 'app/getPopup'
+        popup: 'app/getPopup',
+        window: 'app/getWindow',
     }),
 
     methods: {
         ...mapMutations({
             setPage: 'app/setPage',
-            setPopup: 'app/setPopup',
         }),
 
         goUser() {
@@ -62,7 +67,10 @@ body {
 
     &::-webkit-scrollbar {
         width: 0;
-     }
+    }
 }
 
+.container {
+    max-width: 1160px;
+}
 </style>

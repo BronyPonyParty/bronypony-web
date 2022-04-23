@@ -13,16 +13,14 @@
                             </button>
                         </div>
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            {{popup.description}}
+                            {{window.description}}
 
                             <div class="buttons" style="text-align: right">
                                 <button class="btn cancel-btn text-white" @click="close" style="border: none; box-shadow: inherit;"><strong>Отмена</strong></button>
                                 <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>Взять</strong></button>
                             </div>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
@@ -40,16 +38,16 @@ export default {
     },
 
     computed: mapGetters ({
-        popup: 'app/getPopup'
+        window: 'app/getWindow'
     }),
 
     methods: {
         ...mapMutations({
-            setPopup: 'app/setPopup',
+            setWindow: 'app/setWindow',
         }),
 
         close() {
-            this.setPopup({name: ''});
+            this.setWindow({name: ''});
         },
 
         accept() {
