@@ -18,7 +18,7 @@ export default {
         }
     },
     state: {
-        page: 'equipmentList',
+        page: 'statements',
         popup: {
             name: '',
             description: ''

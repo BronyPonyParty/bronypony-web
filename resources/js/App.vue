@@ -60,17 +60,17 @@ export default {
 </script>
 
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800;900&display=swap');
 
-body {
-    overflow-y: scroll;
+    body {
+        overflow-y: scroll;
 
-    &::-webkit-scrollbar {
-        width: 0;
+        &::-webkit-scrollbar {
+            width: 0;
+        }
     }
-}
 
-.container {
-    max-width: 1160px;
-}
+    .container {
+        max-width: 1160px;
+    }
 </style>

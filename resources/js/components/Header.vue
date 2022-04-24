@@ -28,7 +28,7 @@
                         </div>
                         <hr>
                         <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
-                        <div class="item-dropdown cur-point clip">Настройки</div>
+                        <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
                         <hr>
                         <div class="item-dropdown cur-point clip">Выход</div>
                     </div>
@@ -49,7 +49,7 @@
                     <div class="item-dropdown cur-point clip">Список техники</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
-                    <div class="item-dropdown cur-point clip">Настройки</div>
+                    <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
                     <hr>
                     <div class="item-dropdown cur-point clip">Выход</div>
                 </div>
@@ -72,7 +72,8 @@ export default {
 
     methods: {
         ...mapMutations({
-            setWindow: 'app/setWindow'
+            setWindow: 'app/setWindow',
+            setPage: 'app/setPage'
         }),
 
         popupProfileToggle() {
@@ -114,6 +115,12 @@ export default {
                 this.setWindow({name: 'feedBack'});
             }, 0);
             this.popupProfileToggle();
+        },
+
+        getUserPage() {
+            setTimeout(() => {
+                this.setPage('user');
+            }, 0)
         }
     },
 
