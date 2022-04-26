@@ -126,6 +126,7 @@ export default {
 
     .default-td {
         background-color: #3C4870;
+        border: none;
         color: white;
 
         &:first-child {

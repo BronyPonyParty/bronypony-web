@@ -33,13 +33,11 @@
                                 <strong>Отчество</strong>
                                 <input class="form-control form-control-lg outline-text">
                             </div>
-                            <div class="edit-group">
-                                <strong>Почта</strong>
-                                <input class="form-control form-control-lg outline-text">
-                            </div>
-                            <div class="edit-group">
-                                <strong>Номер телефона</strong>
-                                <input type="tel" class="form-control form-control-lg outline-text">
+                            <div class="edit-group d-sm-none">
+                                <strong>Изображение</strong>
+                                <div class="avatar-image cur-point">
+                                    <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg" class="rounded-circle" alt="Avatar">
+                                </div>
                             </div>
                             <div class="edit-group">
                                 <button class="btn outline-button text-white" style="border: none; box-shadow: inherit;">
@@ -51,7 +49,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div class="d-none d-sm-block">
                             <strong>Изображение</strong>
                             <div class="avatar-image cur-point">
                                 <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg" class="rounded-circle" alt="Avatar">

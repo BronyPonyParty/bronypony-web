@@ -5885,8 +5885,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "User",
   mounted: function mounted() {// Вызовс всего
@@ -11665,7 +11663,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, ".cur-point[data-v-7ce29f8f] {\n  cursor: pointer;\n}\ntd[data-v-7ce29f8f] {\n  vertical-align: middle;\n}\n.default-td[data-v-7ce29f8f] {\n  background-color: #3C4870;\n  color: white;\n}\n.default-td[data-v-7ce29f8f]:first-child {\n  border-radius: 5px 0 0 5px;\n}\n.default-td[data-v-7ce29f8f]:last-child {\n  border-radius: 0 5px 5px 0;\n}\n.wb[data-v-7ce29f8f] {\n  word-break: break-all;\n}\nstrong[data-v-7ce29f8f] {\n  font-weight: 600;\n}\n.ellipsis-text[data-v-7ce29f8f] {\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.btn-get[data-v-7ce29f8f] {\n  background-color: #2F8E6C;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-get[data-v-7ce29f8f]:hover {\n  background-color: #287D5E;\n}\n.btn-get[data-v-7ce29f8f]:active {\n  background-color: #1C5542;\n}\n.dropdown-button[data-v-7ce29f8f] {\n  background-color: #3C4870;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.dropdown-button[data-v-7ce29f8f]:hover {\n  background-color: #394168;\n}\n.dropdown-button[data-v-7ce29f8f]:active {\n  background-color: #232A44;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, ".cur-point[data-v-7ce29f8f] {\n  cursor: pointer;\n}\ntd[data-v-7ce29f8f] {\n  vertical-align: middle;\n}\n.default-td[data-v-7ce29f8f] {\n  background-color: #3C4870;\n  border: none;\n  color: white;\n}\n.default-td[data-v-7ce29f8f]:first-child {\n  border-radius: 5px 0 0 5px;\n}\n.default-td[data-v-7ce29f8f]:last-child {\n  border-radius: 0 5px 5px 0;\n}\n.wb[data-v-7ce29f8f] {\n  word-break: break-all;\n}\nstrong[data-v-7ce29f8f] {\n  font-weight: 600;\n}\n.ellipsis-text[data-v-7ce29f8f] {\n  overflow: hidden;\n  text-overflow: ellipsis;\n}\n.btn-get[data-v-7ce29f8f] {\n  background-color: #2F8E6C;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-get[data-v-7ce29f8f]:hover {\n  background-color: #287D5E;\n}\n.btn-get[data-v-7ce29f8f]:active {\n  background-color: #1C5542;\n}\n.dropdown-button[data-v-7ce29f8f] {\n  background-color: #3C4870;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.dropdown-button[data-v-7ce29f8f]:hover {\n  background-color: #394168;\n}\n.dropdown-button[data-v-7ce29f8f]:active {\n  background-color: #232A44;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31814,8 +31812,6 @@ var render = function () {
                   _vm._v(" "),
                   _vm._m(4),
                   _vm._v(" "),
-                  _vm._m(5),
-                  _vm._v(" "),
                   _c("div", { staticClass: "edit-group" }, [
                     _c(
                       "button",
@@ -31854,7 +31850,7 @@ var render = function () {
                   ]),
                 ]),
                 _vm._v(" "),
-                _vm._m(6),
+                _vm._m(5),
               ]
             ),
           ]),
@@ -31922,30 +31918,25 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "edit-group" }, [
-      _c("strong", [_vm._v("Почта")]),
+    return _c("div", { staticClass: "edit-group d-sm-none" }, [
+      _c("strong", [_vm._v("Изображение")]),
       _vm._v(" "),
-      _c("input", { staticClass: "form-control form-control-lg outline-text" }),
+      _c("div", { staticClass: "avatar-image cur-point" }, [
+        _c("img", {
+          staticClass: "rounded-circle",
+          attrs: {
+            src: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg",
+            alt: "Avatar",
+          },
+        }),
+      ]),
     ])
   },
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "edit-group" }, [
-      _c("strong", [_vm._v("Номер телефона")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control form-control-lg outline-text",
-        attrs: { type: "tel" },
-      }),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
+    return _c("div", { staticClass: "d-none d-sm-block" }, [
       _c("strong", [_vm._v("Изображение")]),
       _vm._v(" "),
       _c("div", { staticClass: "avatar-image cur-point" }, [
@@ -32410,9 +32401,7 @@ var render = function () {
                           _c("strong", [_vm._v("Путинцев Александр")]),
                           _vm._v(" "),
                           _c("div", [
-                            _c("span", [
-                              _vm._v("24.04.22 16:38:12 / 24.04.22 17:02:24"),
-                            ]),
+                            _c("span", [_vm._v("24.04.22 / 24.04.22")]),
                             _vm._v(" "),
                             _c(
                               "svg",
@@ -32781,7 +32770,7 @@ var staticRenderFns = [
                 _c("span", { staticClass: "moving" }, [_vm._v("101/407")]),
               ]),
               _vm._v(" "),
-              _c("span", [_vm._v("24.04.22 16:38:12")]),
+              _c("span", [_vm._v("24.04.22")]),
             ]
           ),
         ]),

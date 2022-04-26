@@ -27,7 +27,7 @@
                                         <strong>Путинцев Александр</strong>
                                         <span class="moving">101/407</span>
                                     </div>
-                                    <span>24.04.22 16:38:12</span>
+                                    <span>24.04.22</span>
                                 </div>
                             </div>
                         </div>

@@ -25,7 +25,7 @@
                                 <div class="item justify-content-between p-3 d-flex">
                                     <strong>Путинцев Александр</strong>
                                     <div>
-                                        <span>24.04.22 16:38:12 / 24.04.22 17:02:24</span>
+                                        <span>24.04.22 / 24.04.22</span>
                                         <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="cur-point" style="margin-left: 10px">
                                             <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                                         </svg>
