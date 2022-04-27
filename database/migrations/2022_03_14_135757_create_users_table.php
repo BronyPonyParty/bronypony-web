@@ -24,7 +24,7 @@ class CreateUsersTable extends Migration
             $table->string('mail', 64)->unique();
             $table->string('avatar', 16)->nullable();
             $table->integer('organization_id')->unsigned();
-            $table->string('status_name', 32);
+            $table->boolean('status');
             $table->timestamps();
         });
     }

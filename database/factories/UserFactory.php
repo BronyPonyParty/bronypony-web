@@ -23,7 +23,7 @@ class UserFactory extends Factory
             'phone_number' => '79' . substr($this->faker->unique()->e164PhoneNumber(), 3, 11),
             'mail' => $this->faker->unique()->safeEmail(),
             'organization_id' => rand(1, 3),
-            'status_name' => rand(1, 10) < 8 ? 'Работает' : 'Уволен'
+            'status' => rand(1, 10) < 8
         ];
     }
 }
