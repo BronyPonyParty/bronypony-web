@@ -5288,19 +5288,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "App",
   mounted: function mounted() {
-    // Как идея, стандартная страница может быть знакомством и дальше уже будет выбр пользователя
-    var token = localStorage.getItem('token');
-
-    if (token !== null && token.length === 32) {// Функция которая вернёт данные о пользователе
-      // localStorage.removeItem('token');
-      // sessionStorage.setItem('page', 'login')
-      // this.setPage('login');
-      // return;
-    } //
-
-
-    var page = sessionStorage.getItem('page');
-    if (page !== null) this.setPage(page);
+    this.$store.dispatch('auth/getUserData');
   },
   computed: (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     page: 'app/getPage',
@@ -5436,13 +5424,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var vue_click_outside__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-click-outside */ "./node_modules/vue-click-outside/index.js");
 /* harmony import */ var vue_click_outside__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_click_outside__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -5506,68 +5487,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Header",
-  data: function data() {
-    return {
-      popupProfile: false,
-      popupProfileShowed: false,
-      popupMenu: false,
-      popupMenuShowed: false
-    };
+  computed: {
+    popupProfile: function popupProfile() {
+      return this.$store.getters['header/PopupProfile'];
+    },
+    popupMenu: function popupMenu() {
+      return this.$store.getters['header/popupMenu'];
+    }
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapMutations)({
-    setWindow: 'app/setWindow',
-    setPage: 'app/setPage'
-  })), {}, {
+  methods: {
     popupProfileToggle: function popupProfileToggle() {
-      var _this = this;
-
-      this.popupProfile = !this.popupProfile;
-      setTimeout(function () {
-        _this.popupProfileShowed = _this.popupProfile;
-      }, 0);
+      this.$store.dispatch('header/popupProfileToggle');
     },
     popupProfileOutside: function popupProfileOutside() {
-      if (this.popupProfileShowed) {
-        if (this.popupProfile) {
-          this.popupProfile = false;
-          this.popupProfileShowed = false;
-        }
-      }
-    },
-    popupMenuToggle: function popupMenuToggle() {
-      var _this2 = this;
-
-      this.popupMenu = !this.popupMenu;
-      setTimeout(function () {
-        _this2.popupMenuShowed = _this2.popupMenu;
-      }, 0);
+      this.$store.dispatch('header/popupProfileOutside');
     },
     popupMenuOutside: function popupMenuOutside() {
-      if (this.popupMenuShowed) {
-        if (this.popupMenu) {
-          this.popupMenu = false;
-          this.popupMenuShowed = false;
-        }
-      }
+      this.$store.dispatch('header/popupMenuOutside');
+    },
+    popupMenuToggle: function popupMenuToggle() {
+      this.$store.dispatch('header/popupMenuToggle');
     },
     showFeedBackWindow: function showFeedBackWindow() {
-      var _this3 = this;
-
-      setTimeout(function () {
-        _this3.setWindow({
-          name: 'feedBack'
-        });
-      }, 0);
-      this.popupProfileToggle();
+      this.$store.dispatch('header/showFeedBackWindow');
     },
     getUserPage: function getUserPage() {
-      var _this4 = this;
-
-      setTimeout(function () {
-        _this4.setPage('user');
-      }, 0);
+      this.$store.dispatch('header/getUserPage');
     }
-  }),
+  },
   directives: {
     ClickOutside: (vue_click_outside__WEBPACK_IMPORTED_MODULE_0___default())
   }
@@ -5586,7 +5533,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 //
 //
 //
@@ -5623,55 +5569,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
- // import VUser from './User.vue';
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  // components: {
-  //     VUser
-  // },
-  // computed: mapGetters(['auth/getToken']),
-  computed: (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
-    page: 'app/getPage',
-    token: 'auth/getToken'
-  }),
-  // computed: {
-  //     token() {
-  //         let token = this.$store.getters['auth/getToken'];
-  //         return 'Token: ' + token;
-  //     }
-  // },
-  data: function data() {
-    return {
-      login: '',
-      password: '',
-      errors: null
-    };
-  },
-  methods: {// testFunction() {
-    //     this.$store.commit('auth/setToken', 'BRONY-BRONY');
-    // },
-    // testFunction1() {
-    //     this.$store.commit('app/setPage', 'auth');
-    // },
-    // testFunction2() {
-    //     this.$store.commit('app/setPage', 'user');
-    // },
-    //
-    // auth() {
-    //     axios.post('/api/login', {
-    //         login: this.login,
-    //         password: this.password
-    //     }).then(response => {
-    //         console.log(response.data);
-    //         localStorage.setItem('token', response.data);
-    //     }).catch(error => {
-    //         if (error.response.status === 422) {
-    //             this.errors = error.response.data.errors;
-    //         } else if (error.response.status === 400) {
-    //             this.errors = error.response.data.message;
-    //         }
-    //     });
-    // },
+  methods: {
+    authorization: function authorization() {
+      this.$store.dispatch('auth/auth', {
+        login: this.$refs.login.value,
+        password: this.$refs.password.value
+      });
+    }
   }
 });
 
@@ -6421,20 +6326,26 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _modules_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/auth */ "./resources/js/store/modules/auth.js");
 /* harmony import */ var _modules_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/app */ "./resources/js/store/modules/app.js");
+/* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/header */ "./resources/js/store/modules/header.js");
+/* harmony import */ var _modules_user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/user */ "./resources/js/store/modules/user.js");
 
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_2__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_3__["default"]);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_3__["default"].Store({
+
+
+vue__WEBPACK_IMPORTED_MODULE_4__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_5__["default"]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_5__["default"].Store({
   namespaced: true,
   modules: {
     app: _modules_app__WEBPACK_IMPORTED_MODULE_1__["default"],
-    auth: _modules_auth__WEBPACK_IMPORTED_MODULE_0__["default"]
+    auth: _modules_auth__WEBPACK_IMPORTED_MODULE_0__["default"],
+    header: _modules_header__WEBPACK_IMPORTED_MODULE_2__["default"],
+    user: _modules_user__WEBPACK_IMPORTED_MODULE_3__["default"]
   }
 }));
 
@@ -6453,20 +6364,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
-  actions: {},
-  mutations: {
-    setPage: function setPage(state, page) {
-      state.page = page;
-    },
-    setPopup: function setPopup(state, popup) {
-      state.popup = popup;
-    },
-    setWindow: function setWindow(state, window) {
-      state.window = window;
-    }
-  },
   state: {
-    page: 'statements',
+    token: localStorage.getItem('token') || '',
+    page: localStorage.getItem('page') || '',
     popup: {
       name: '',
       description: ''
@@ -6474,6 +6374,28 @@ __webpack_require__.r(__webpack_exports__);
     window: {
       name: '',
       description: ''
+    }
+  },
+  actions: {},
+  mutations: {
+    setPage: function setPage(state, page) {
+      state.page = page;
+      localStorage.setItem('page', page);
+    },
+    setPopup: function setPopup(state, popup) {
+      state.popup = popup;
+    },
+    setWindow: function setWindow(state, window) {
+      state.window = window;
+    },
+    setToken: function setToken(state, token) {
+      if (token === '') {
+        localStorage.removeItem('token');
+        return;
+      }
+
+      state.token = token;
+      localStorage.setItem('token', token);
     }
   },
   getters: {
@@ -6485,6 +6407,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     getWindow: function getWindow(state) {
       return state.window;
+    },
+    getToken: function getToken(state) {
+      return state.token;
     }
   }
 });
@@ -6504,20 +6429,219 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
-  actions: {},
-  mutations: {
-    setToken: function setToken(state, token) {
-      state.token = token;
+  state: {},
+  actions: {
+    auth: function auth(ctx, _ref) {
+      var login = _ref.login,
+          password = _ref.password;
+      axios.post('/api/login', {
+        login: login,
+        password: password
+      }).then(function (response) {
+        ctx.commit('app/setToken', response.data, {
+          root: true
+        });
+        ctx.commit('app/setPage', 'statements', {
+          root: true
+        });
+      })["catch"](function (error) {
+        if (error.response.status === 422) {
+          // this.errors = error.response.data.errors;
+          console.log(error.response.data.errors);
+        } else if (error.response.status === 400) {
+          // this.errors = error.response.data.message;
+          console.log(error.response.data.errors);
+        }
+      });
+    },
+    getUserData: function getUserData(_ref2) {
+      var rootGetters = _ref2.rootGetters,
+          commit = _ref2.commit;
+      var token = rootGetters['app/getToken'];
+
+      if (token.length !== 32) {
+        commit('app/setPage', 'login', {
+          root: true
+        });
+        return;
+      }
+
+      var url = '/api/' + token + '/auth/getUserData';
+      axios.post(url, {
+        token: token
+      }).then(function (response) {
+        console.log(response.data);
+        if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {
+          root: true
+        });
+      })["catch"](function (error) {
+        if (error.response.status === 401) {
+          commit('app/setPage', 'login', {
+            root: true
+          });
+          commit('app/setToken', '', {
+            root: true
+          });
+        }
+      });
     }
   },
+  mutations: {},
+  getters: {}
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/header.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/modules/header.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
   state: {
-    token: 'HADOOKEN'
+    popupProfile: false,
+    popupProfileShowed: false,
+    popupMenu: false,
+    popupMenuShowed: false
+  },
+  actions: {
+    popupProfileToggle: function popupProfileToggle(ctx) {
+      ctx.commit('setPopupProfile', {
+        root: true
+      });
+      setTimeout(function () {
+        ctx.commit('setPopupProfileShowed', {
+          root: true
+        });
+      }, 0);
+    },
+    popupProfileOutside: function popupProfileOutside(ctx) {
+      if (ctx.rootGetters['header/popupProfileShowed']) {
+        if (ctx.rootGetters['header/PopupProfile']) {
+          ctx.commit('setPopupProfileFalse', {
+            root: true
+          });
+          ctx.commit('setPopupProfileShowedFalse', {
+            root: true
+          });
+        }
+      }
+    },
+    popupMenuToggle: function popupMenuToggle(ctx) {
+      ctx.commit('setPopupMenu', {
+        root: true
+      });
+      setTimeout(function () {
+        ctx.commit('setPopupMenuShowed', {
+          root: true
+        });
+      }, 0);
+    },
+    popupMenuOutside: function popupMenuOutside(ctx) {
+      if (ctx.rootGetters['header/popupMenuShowed']) {
+        if (ctx.rootGetters['header/popupMenu']) {
+          ctx.commit('setPopupMenu', {
+            root: true
+          });
+          ctx.commit('setPopupMenuShowed', {
+            root: true
+          });
+        }
+      }
+    },
+    showFeedBackWindow: function showFeedBackWindow(ctx) {
+      setTimeout(function () {
+        ctx.commit('app/setWindow', {
+          name: 'feedBack'
+        }, {
+          root: true
+        });
+      }, 0);
+
+      if (ctx.rootGetters['header/PopupProfile']) {
+        ctx.dispatch('popupProfileToggle');
+      } else {
+        ctx.dispatch('popupMenuToggle');
+      }
+    },
+    getUserPage: function getUserPage(ctx) {
+      setTimeout(function () {
+        ctx.commit('app/setPage', 'user', {
+          root: true
+        });
+      }, 0);
+
+      if (ctx.rootGetters['header/PopupProfile']) {
+        ctx.dispatch('popupProfileToggle');
+      } else {
+        ctx.dispatch('popupMenuToggle');
+      }
+    }
+  },
+  mutations: {
+    setPopupProfile: function setPopupProfile(state) {
+      state.popupProfile = !state.popupProfile;
+    },
+    setPopupProfileShowed: function setPopupProfileShowed(state) {
+      state.popupProfileShowed = state.popupProfile;
+    },
+    setPopupProfileFalse: function setPopupProfileFalse(state) {
+      state.popupProfile = false;
+    },
+    setPopupProfileShowedFalse: function setPopupProfileShowedFalse(state) {
+      state.popupProfileShowed = false;
+    },
+    setPopupMenu: function setPopupMenu(state) {
+      state.popupMenu = !state.popupMenu;
+    },
+    setPopupMenuFalse: function setPopupMenuFalse(state) {
+      state.popupMenu = false;
+    },
+    setPopupMenuShowed: function setPopupMenuShowed(state) {
+      state.popupMenuShowed = state.popupMenu;
+    }
   },
   getters: {
-    getToken: function getToken(state) {
-      return state.token;
+    PopupProfile: function PopupProfile(state) {
+      return state.popupProfile;
+    },
+    popupProfileShowed: function popupProfileShowed(state) {
+      return state.popupProfileShowed;
+    },
+    popupMenu: function popupMenu(state) {
+      return state.popupMenu;
+    },
+    popupMenuShowed: function popupMenuShowed(state) {
+      return state.popupMenuShowed;
     }
   }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/user.js":
+/*!********************************************!*\
+  !*** ./resources/js/store/modules/user.js ***!
+  \********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  state: {},
+  actions: {},
+  mutations: {},
+  getters: {}
 });
 
 /***/ }),
@@ -31493,9 +31617,46 @@ var render = function () {
                 ]
               ),
               _vm._v(" "),
-              _vm._m(0),
+              _c("div", { staticClass: "form-white my-4" }, [
+                _c("label", { staticClass: "form-label" }, [_vm._v("Логин")]),
+                _vm._v(" "),
+                _c("input", {
+                  ref: "login",
+                  staticClass: "form-control form-control-lg outline-text",
+                  on: {
+                    keyup: function ($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.authorization.apply(null, arguments)
+                    },
+                  },
+                }),
+              ]),
               _vm._v(" "),
-              _vm._m(1),
+              _c("div", { staticClass: "form-white mb-4" }, [
+                _c("label", { staticClass: "form-label" }, [_vm._v("Пароль")]),
+                _vm._v(" "),
+                _c("input", {
+                  ref: "password",
+                  staticClass: "form-control form-control-lg outline-text",
+                  attrs: { type: "password" },
+                  on: {
+                    keyup: function ($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.authorization.apply(null, arguments)
+                    },
+                  },
+                }),
+              ]),
               _vm._v(" "),
               _c(
                 "button",
@@ -31503,11 +31664,12 @@ var render = function () {
                   staticClass: "btn btn-lg w-100 text-white outline-button",
                   staticStyle: { border: "none", "box-shadow": "inherit" },
                   attrs: { type: "submit" },
+                  on: { click: _vm.authorization },
                 },
                 [_vm._v("Войти в систему")]
               ),
               _vm._v(" "),
-              _vm._m(2),
+              _vm._m(0),
             ]),
           ]),
         ]),
@@ -31516,32 +31678,6 @@ var render = function () {
   ])
 }
 var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-white my-4" }, [
-      _c("label", { staticClass: "form-label" }, [_vm._v("Логин")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control form-control-lg outline-text",
-        attrs: { type: "email" },
-      }),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-white mb-4" }, [
-      _c("label", { staticClass: "form-label" }, [_vm._v("Пароль")]),
-      _vm._v(" "),
-      _c("input", {
-        staticClass: "form-control form-control-lg outline-text",
-        attrs: { type: "password" },
-      }),
-    ])
-  },
   function () {
     var _vm = this
     var _h = _vm.$createElement

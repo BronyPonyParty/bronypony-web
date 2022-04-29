@@ -39,7 +39,7 @@
                     <path  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                 </svg>
             </div>
-                <div class="dropdown-popup d-sm-none" tabindex="2" v-if="popupMenu" v-click-outside="popupMenuOutside">
+                <div class="dropdown-popup d-sm-none" tabindex="2"  v-if="popupMenu" v-click-outside="popupMenuOutside">
                     <div class="item-dropdown cur-point" style="white-space: normal;">
                         Вошли как
                         <strong class="clip">Путинцев Александр</strong>
@@ -59,68 +59,43 @@
 
 <script>
 import ClickOutside from 'vue-click-outside'
-import {mapMutations} from "vuex";
+import {mapGetters} from "vuex";
 export default {
     name: "Header",
 
-    data: () => ({
-        popupProfile: false,
-        popupProfileShowed: false,
-        popupMenu: false,
-        popupMenuShowed: false,
-    }),
+    computed: {
+        popupProfile() {
+            return this.$store.getters['header/PopupProfile'];
+        },
+
+        popupMenu() {
+            return this.$store.getters['header/popupMenu'];
+        }
+    },
 
     methods: {
-        ...mapMutations({
-            setWindow: 'app/setWindow',
-            setPage: 'app/setPage'
-        }),
-
         popupProfileToggle() {
-            this.popupProfile = !this.popupProfile;
-
-            setTimeout(() => {
-                this.popupProfileShowed = this.popupProfile;
-            }, 0);
+            this.$store.dispatch('header/popupProfileToggle');
         },
 
         popupProfileOutside() {
-            if (this.popupProfileShowed) {
-                if (this.popupProfile) {
-                    this.popupProfile = false;
-                    this.popupProfileShowed = false;
-                }
-            }
-        },
-
-        popupMenuToggle() {
-            this.popupMenu = !this.popupMenu;
-
-            setTimeout(() => {
-                this.popupMenuShowed = this.popupMenu;
-            }, 0);
+            this.$store.dispatch('header/popupProfileOutside');
         },
 
         popupMenuOutside() {
-            if (this.popupMenuShowed) {
-                if (this.popupMenu) {
-                    this.popupMenu = false;
-                    this.popupMenuShowed = false;
-                }
-            }
+            this.$store.dispatch('header/popupMenuOutside');
+        },
+
+        popupMenuToggle() {
+            this.$store.dispatch('header/popupMenuToggle');
         },
 
         showFeedBackWindow() {
-            setTimeout(() => {
-                this.setWindow({name: 'feedBack'});
-            }, 0);
-            this.popupProfileToggle();
+            this.$store.dispatch('header/showFeedBackWindow');
         },
 
         getUserPage() {
-            setTimeout(() => {
-                this.setPage('user');
-            }, 0)
+            this.$store.dispatch('header/getUserPage');
         }
     },
 

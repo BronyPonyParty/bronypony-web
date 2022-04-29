@@ -19,20 +19,8 @@ import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
 
-    mounted() { // Как идея, стандартная страница может быть знакомством и дальше уже будет выбр пользователя
-        const token = localStorage.getItem('token');
-        if (token !== null && token.length === 32) {
-            // Функция которая вернёт данные о пользователе
-
-
-            // localStorage.removeItem('token');
-            // sessionStorage.setItem('page', 'login')
-            // this.setPage('login');
-            // return;
-        }
-        //
-        const page = sessionStorage.getItem('page');
-        if (page !== null) this.setPage(page);
+    mounted() {
+        this.$store.dispatch('auth/getUserData');
     },
 
     computed: mapGetters({

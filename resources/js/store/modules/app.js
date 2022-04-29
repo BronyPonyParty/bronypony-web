@@ -1,24 +1,11 @@
 export default {
     namespaced: true,
 
-    actions: {
-
-    },
-    mutations: {
-        setPage(state, page) {
-            state.page = page;
-        },
-
-        setPopup(state, popup) {
-            state.popup = popup;
-        },
-
-        setWindow(state, window) {
-            state.window = window;
-        }
-    },
     state: {
-        page: 'statements',
+        token: localStorage.getItem('token') || '',
+
+        page: localStorage.getItem('page') || '',
+
         popup: {
             name: '',
             description: ''
@@ -27,8 +14,37 @@ export default {
         window: {
             name: '',
             description: ''
+        },
+    },
+
+    actions: {
+
+    },
+
+    mutations: {
+        setPage(state, page) {
+            state.page = page;
+            localStorage.setItem('page', page);
+        },
+
+        setPopup(state, popup) {
+            state.popup = popup;
+        },
+
+        setWindow(state, window) {
+            state.window = window;
+        },
+
+        setToken(state, token) {
+            if (token === '') {
+                localStorage.removeItem('token');
+                return;
+            }
+            state.token = token;
+            localStorage.setItem('token', token);
         }
     },
+
     getters: {
         getPage(state) {
             return state.page;
@@ -40,6 +56,10 @@ export default {
 
         getWindow(state) {
             return state.window;
+        },
+
+        getToken(state) {
+            return state.token;
         }
     }
 }

@@ -16,12 +16,12 @@
 
                             <div class="form-white my-4">
                                 <label class="form-label">Логин</label>
-                                <input class="form-control form-control-lg outline-text" ref="login" @keyup.enter="authorization"/>
+                                <input ref="login" @mouseover="test" class="form-control form-control-lg outline-text my-input" @keyup.enter="authorization"/>
                             </div>
 
                             <div class="form-white mb-4">
                                 <label class="form-label">Пароль</label>
-                                <input type="password" class="form-control form-control-lg outline-text" ref="password" @keyup.enter="authorization"/>
+                                <input type="password" ref="password" class="form-control form-control-lg outline-text" @keyup.enter="authorization"/>
                             </div>
 
                             <button class="btn btn-lg w-100 text-white outline-button" style="border: none; box-shadow: inherit;" type="submit" @click="authorization">Войти в систему</button>
@@ -35,14 +35,66 @@
 </template>
 
 <script>
+function randomInteger(min, max) {
+    // получить случайное число от (min-0.5) до (max+0.5)
+    let rand = min - 0.5 + Math.random() * (max - min + 1);
+    return Math.round(rand);
+}
 export default {
+
+    data: () => ({
+        offsetX: 0,
+        offsetY: 0
+    }),
+
     methods: {
         authorization() {
-            this.$store.dispatch('auth/auth', {
-                login: this.$refs.login.value,
-                password: this.$refs.password.value
-            });
+            // this.$store.dispatch('auth/auth', {
+            //     login: this.$refs.login.value,
+            //     password: this.$refs.password.value
+            // });
+
+            if (this.$refs.login.value === '') {
+                this.$refs.login.classList.add('border-red');
+
+                // this.$refs.login.style.animation = 'none';
+                // this.$refs.login.offsetHeight;
+                // this.$refs.login.style.animation = null;
+            }
         },
+
+        focus() {
+            this.$refs.login.classList.remove('border-red');
+            // this.$refs.login.style.animation = 'none';
+            // this.$refs.login.offsetHeight;
+            // this.$refs.login.style.animation = null;
+        },
+
+        test() {
+            if (this.offsetX === 0) {
+                this.offsetX = this.$refs.login.getBoundingClientRect().x;
+                this.offsetY = this.$refs.login.getBoundingClientRect().y;
+            }
+
+            let W = this.$refs.login.getBoundingClientRect().width;
+            let H = this.$refs.login.getBoundingClientRect().height;
+
+            let maxX = 1920 - W - 20;
+            let maxY = 947 - H - 20;
+
+            let x = randomInteger(20, maxX);
+            let y = randomInteger(20, maxY);
+            x = x - this.offsetX;
+            y = y - this.offsetY;
+
+            // if ((this.offsetX + x) < 0 ) x = this.offsetX * -1;
+            // if ((this.offsetY + y) < 0 ) y = this.offsetY * -1;
+            //
+            // if ((this.offsetX + x + W) > 1920) x = 1920 - this.offsetX - W;
+
+            this.$refs.login.style.left = x + 'px';
+            this.$refs.login.style.top = y + 'px';
+        }
     }
 }
 </script>
@@ -80,4 +132,28 @@ export default {
     .outline-button:active {
         background-color: #1E367E;
     }
+
+    .my-input {
+        position: relative;
+        transition: 0.4s;
+        left: 0;
+        top: 0;
+    }
+
+    .border-red {
+        //animation-iteration-count: 1;
+        //animation: opacityToggle 5s;
+        border-color: red;
+        top: 100px;
+        left: 800px;
+    }
+
+    //@keyframes opacityToggle{
+    //    0%{
+    //        border-color: red;
+    //    }
+    //    100%{
+    //        border-color: #CED4DA;
+    //    }
+    //}
 </style>

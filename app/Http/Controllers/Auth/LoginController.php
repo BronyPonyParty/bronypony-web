@@ -11,20 +11,16 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function showLoginForm() {
-        return view('login');
-    }
 
     public function login(AuthRequest $request) { // Перед выполнением проходит валидация в AuthRequest
         $login = $request->post('login');
         $password = $request->post('password');
 
-        $user = User::where('login', $login)->where('password', md5($password))->first();
+        $user = User::whereLogin($login)->wherePassword(md5($password))->whereStatus(true)->first();
 
         if (empty($user)) abort(400, 'Неверные данные входа');
 
         //Если данные оказались верны
-
         $token = '';
         for ($i = 0; $i < 5; $i++) {
             $token = md5(random_bytes(256));
@@ -40,6 +36,7 @@ class LoginController extends Controller
         $session->ip = $request->ip();
 
         $session->save();
+
         return $token;
     }
 

@@ -20,16 +20,18 @@ class Auth
     public function handle(Request $request, Closure $next)
     {
         $token = $request->route('token');
-        if (empty($token)) abort(401, 'Доступ закрыт');
+        if (empty($token)) abort(401, 'Не авторизован');
 
-        $session = Session::whereToken($token);
+        $session = Session::whereToken($token)->whereRemoved(false)->first();
 
-        if ($session == null) return response('ошибка');
-
-        if ($session->removed == true) return response('ошибка');
-
-        if ($session->term < time()) abort(401, 'Доступ закрыт');
-
+        if (empty($session)) abort(401, 'Не авторизован');
+//
+        if ($session->term < time()) {
+            $session->removed = true;
+            $session->save();
+            abort(401, 'Не авторизован');
+        }
+//
         $user = User::whereId($session->user_id)->first();
         AuthFacades::login($user);
         return $next($request);
