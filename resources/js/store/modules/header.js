@@ -56,15 +56,15 @@ export default {
         },
 
         getUserPage(ctx) {
-            setTimeout(() => {
-                ctx.commit('app/setPage', 'user', {root:true});
-            }, 0);
+            ctx.commit('app/setPage', 'user', {root:true});
+        },
 
-            if (ctx.rootGetters['header/PopupProfile']) {
-                ctx.dispatch('popupProfileToggle');
-            } else {
-                ctx.dispatch('popupMenuToggle');
-            }
+        getStatementsPage(ctx) {
+            ctx.commit('app/setPage', 'statements', {root:true});
+        },
+
+        getEquipmentList(ctx) {
+            ctx.commit('app/setPage', 'equipmentList', {root:true});
         }
     },
 
@@ -95,6 +95,10 @@ export default {
 
         setPopupMenuShowed(state) {
             state.popupMenuShowed = state.popupMenu;
+        },
+
+        setPopupMenuShowedFalse(state) {
+            state.popupMenuShowed = false;
         }
     },
 

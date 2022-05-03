@@ -10,8 +10,8 @@
             </a>
 
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
-                <a href="#">Список заявлений</a>
-                <a href="#">Список техники</a>
+                <label class="cur-point" @click="getStatementsPage">Список заявлений</label>
+                <label class="cur-point" @click="getEquipmentList">Список техники</label>
             </div>
 
             <div class="d-flex justify-content-center align-items-center position-relative">
@@ -45,8 +45,8 @@
                         <strong class="clip">Путинцев Александр</strong>
                     </div>
                     <hr>
-                    <div class="item-dropdown cur-point clip">Список заявлений</div>
-                    <div class="item-dropdown cur-point clip">Список техники</div>
+                    <div class="item-dropdown cur-point clip" @click="getStatementsPage">Список заявлений</div>
+                    <div class="item-dropdown cur-point clip" @click="getEquipmentList">Список техники</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                     <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
@@ -96,6 +96,14 @@ export default {
 
         getUserPage() {
             this.$store.dispatch('header/getUserPage');
+        },
+
+        getStatementsPage() {
+            this.$store.dispatch('header/getStatementsPage');
+        },
+
+        getEquipmentList() {
+            this.$store.dispatch('header/getEquipmentList');
         }
     },
 
@@ -132,7 +140,7 @@ export default {
     }
 
     .nav-bar {
-        a {
+        label {
             margin-left: 10px;
             text-decoration: none;
             background-image: linear-gradient(currentColor, currentColor);
@@ -142,7 +150,7 @@ export default {
             transition: background-size .3s;
         }
 
-        a:hover {
+        label:hover {
             background-size: 100% 2px;
         }
     }

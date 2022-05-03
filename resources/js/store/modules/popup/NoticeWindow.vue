@@ -16,7 +16,6 @@
                             {{window.description}}
 
                             <div class="buttons" style="text-align: right">
-                                <button class="btn cancel-btn text-white" @click="close" style="border: none; box-shadow: inherit;"><strong>Отмена</strong></button>
                                 <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>Взять</strong></button>
                             </div>
                         </div>

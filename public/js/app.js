@@ -5513,6 +5513,12 @@ __webpack_require__.r(__webpack_exports__);
     },
     getUserPage: function getUserPage() {
       this.$store.dispatch('header/getUserPage');
+    },
+    getStatementsPage: function getStatementsPage() {
+      this.$store.dispatch('header/getStatementsPage');
+    },
+    getEquipmentList: function getEquipmentList() {
+      this.$store.dispatch('header/getEquipmentList');
     }
   },
   directives: {
@@ -5898,7 +5904,6 @@ function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { va
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
 //
 //
 //
@@ -6572,17 +6577,19 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     getUserPage: function getUserPage(ctx) {
-      setTimeout(function () {
-        ctx.commit('app/setPage', 'user', {
-          root: true
-        });
-      }, 0);
-
-      if (ctx.rootGetters['header/PopupProfile']) {
-        ctx.dispatch('popupProfileToggle');
-      } else {
-        ctx.dispatch('popupMenuToggle');
-      }
+      ctx.commit('app/setPage', 'user', {
+        root: true
+      });
+    },
+    getStatementsPage: function getStatementsPage(ctx) {
+      ctx.commit('app/setPage', 'statements', {
+        root: true
+      });
+    },
+    getEquipmentList: function getEquipmentList(ctx) {
+      ctx.commit('app/setPage', 'equipmentList', {
+        root: true
+      });
     }
   },
   mutations: {
@@ -6606,6 +6613,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     setPopupMenuShowed: function setPopupMenuShowed(state) {
       state.popupMenuShowed = state.popupMenu;
+    },
+    setPopupMenuShowedFalse: function setPopupMenuShowedFalse(state) {
+      state.popupMenuShowed = false;
     }
   },
   getters: {
@@ -11739,7 +11749,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\nstrong[data-v-1f42fb90] {\n  font-weight: 600;\n}\nnav[data-v-1f42fb90] {\n  background-color: #3C4870;\n  color: white;\n}\nnav a[data-v-1f42fb90] {\n  color: white;\n}\n.profile[data-v-1f42fb90] {\n  background-color: white;\n  height: 40px;\n  width: 40px;\n}\n.profile img[data-v-1f42fb90] {\n  height: 100%;\n  width: 100%;\n  border: 0;\n}\n.nav-bar a[data-v-1f42fb90] {\n  margin-left: 10px;\n  text-decoration: none;\n  background-image: linear-gradient(currentColor, currentColor);\n  background-position: 0 100%;\n  background-repeat: no-repeat;\n  background-size: 0 2px;\n  transition: background-size 0.3s;\n}\n.nav-bar a[data-v-1f42fb90]:hover {\n  background-size: 100% 2px;\n}\n.cur-point[data-v-1f42fb90] {\n  cursor: pointer;\n}\n.dropdown-popup[data-v-1f42fb90] {\n  position: absolute;\n  width: 180px;\n  top: 100%;\n  color: black;\n  right: 0;\n  left: auto;\n  background-color: #3D4870;\n  border-radius: 6px;\n  box-shadow: 0 1px 5px #1c2128;\n}\n.dropdown-popup ul[data-v-1f42fb90] {\n  list-style-type: none;\n}\n.dropdown-popup hr[data-v-1f42fb90] {\n  margin: 6px;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90] {\n  display: block;\n  width: 100%;\n  padding: 0.25rem 1rem;\n  clear: both;\n  color: white;\n  text-align: inherit;\n  text-decoration: none;\n  white-space: nowrap;\n  background-color: transparent;\n  border: 0;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:last-child {\n  border-radius: 0 0 6px 6px;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:first-child {\n  border-radius: 6px 6px 0 0;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:hover {\n  background-color: #343E61;\n}\n.clip[data-v-1f42fb90] {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  height: auto;\n  /* Высота/ background: #fc0; /* Цвет фона */\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}\n.list:hover svg[data-v-1f42fb90]:hover {\n  fill: #D8D8D8;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\nstrong[data-v-1f42fb90] {\n  font-weight: 600;\n}\nnav[data-v-1f42fb90] {\n  background-color: #3C4870;\n  color: white;\n}\nnav a[data-v-1f42fb90] {\n  color: white;\n}\n.profile[data-v-1f42fb90] {\n  background-color: white;\n  height: 40px;\n  width: 40px;\n}\n.profile img[data-v-1f42fb90] {\n  height: 100%;\n  width: 100%;\n  border: 0;\n}\n.nav-bar label[data-v-1f42fb90] {\n  margin-left: 10px;\n  text-decoration: none;\n  background-image: linear-gradient(currentColor, currentColor);\n  background-position: 0 100%;\n  background-repeat: no-repeat;\n  background-size: 0 2px;\n  transition: background-size 0.3s;\n}\n.nav-bar label[data-v-1f42fb90]:hover {\n  background-size: 100% 2px;\n}\n.cur-point[data-v-1f42fb90] {\n  cursor: pointer;\n}\n.dropdown-popup[data-v-1f42fb90] {\n  position: absolute;\n  width: 180px;\n  top: 100%;\n  color: black;\n  right: 0;\n  left: auto;\n  background-color: #3D4870;\n  border-radius: 6px;\n  box-shadow: 0 1px 5px #1c2128;\n}\n.dropdown-popup ul[data-v-1f42fb90] {\n  list-style-type: none;\n}\n.dropdown-popup hr[data-v-1f42fb90] {\n  margin: 6px;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90] {\n  display: block;\n  width: 100%;\n  padding: 0.25rem 1rem;\n  clear: both;\n  color: white;\n  text-align: inherit;\n  text-decoration: none;\n  white-space: nowrap;\n  background-color: transparent;\n  border: 0;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:last-child {\n  border-radius: 0 0 6px 6px;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:first-child {\n  border-radius: 6px 6px 0 0;\n}\n.dropdown-popup .item-dropdown[data-v-1f42fb90]:hover {\n  background-color: #343E61;\n}\n.clip[data-v-1f42fb90] {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  height: auto;\n  /* Высота/ background: #fc0; /* Цвет фона */\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}\n.list:hover svg[data-v-1f42fb90]:hover {\n  fill: #D8D8D8;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31290,7 +31300,26 @@ var render = function () {
         ),
       ]),
       _vm._v(" "),
-      _vm._m(0),
+      _c(
+        "div",
+        {
+          staticClass: "d-none d-sm-block nav-bar",
+          staticStyle: { "flex-grow": "1" },
+        },
+        [
+          _c(
+            "label",
+            { staticClass: "cur-point", on: { click: _vm.getStatementsPage } },
+            [_vm._v("Список заявлений")]
+          ),
+          _vm._v(" "),
+          _c(
+            "label",
+            { staticClass: "cur-point", on: { click: _vm.getEquipmentList } },
+            [_vm._v("Список техники")]
+          ),
+        ]
+      ),
       _vm._v(" "),
       _c(
         "div",
@@ -31359,7 +31388,7 @@ var render = function () {
                   attrs: { tabindex: "1" },
                 },
                 [
-                  _vm._m(1),
+                  _vm._m(0),
                   _vm._v(" "),
                   _c("hr"),
                   _vm._v(" "),
@@ -31438,17 +31467,27 @@ var render = function () {
               attrs: { tabindex: "2" },
             },
             [
-              _vm._m(2),
+              _vm._m(1),
               _vm._v(" "),
               _c("hr"),
               _vm._v(" "),
-              _c("div", { staticClass: "item-dropdown cur-point clip" }, [
-                _vm._v("Список заявлений"),
-              ]),
+              _c(
+                "div",
+                {
+                  staticClass: "item-dropdown cur-point clip",
+                  on: { click: _vm.getStatementsPage },
+                },
+                [_vm._v("Список заявлений")]
+              ),
               _vm._v(" "),
-              _c("div", { staticClass: "item-dropdown cur-point clip" }, [
-                _vm._v("Список техники"),
-              ]),
+              _c(
+                "div",
+                {
+                  staticClass: "item-dropdown cur-point clip",
+                  on: { click: _vm.getEquipmentList },
+                },
+                [_vm._v("Список техники")]
+              ),
               _vm._v(" "),
               _c("hr"),
               _vm._v(" "),
@@ -31482,23 +31521,6 @@ var render = function () {
   ])
 }
 var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass: "d-none d-sm-block nav-bar",
-        staticStyle: { "flex-grow": "1" },
-      },
-      [
-        _c("a", { attrs: { href: "#" } }, [_vm._v("Список заявлений")]),
-        _vm._v(" "),
-        _c("a", { attrs: { href: "#" } }, [_vm._v("Список техники")]),
-      ]
-    )
-  },
   function () {
     var _vm = this
     var _h = _vm.$createElement
@@ -32356,19 +32378,6 @@ var render = function () {
                         staticStyle: { "text-align": "right" },
                       },
                       [
-                        _c(
-                          "button",
-                          {
-                            staticClass: "btn cancel-btn text-white",
-                            staticStyle: {
-                              border: "none",
-                              "box-shadow": "inherit",
-                            },
-                            on: { click: _vm.close },
-                          },
-                          [_c("strong", [_vm._v("Отмена")])]
-                        ),
-                        _vm._v(" "),
                         _c(
                           "button",
                           {
