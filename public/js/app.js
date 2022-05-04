@@ -5519,6 +5519,9 @@ __webpack_require__.r(__webpack_exports__);
     },
     getEquipmentList: function getEquipmentList() {
       this.$store.dispatch('header/getEquipmentList');
+    },
+    logout: function logout() {
+      this.$store.dispatch('auth/logout');
     }
   },
   directives: {
@@ -5578,7 +5581,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   methods: {
     authorization: function authorization() {
-      this.$store.dispatch('auth/auth', {
+      this.$store.dispatch('auth/login', {
         login: this.$refs.login.value,
         password: this.$refs.password.value
       });
@@ -6436,7 +6439,7 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {},
   actions: {
-    auth: function auth(ctx, _ref) {
+    login: function login(ctx, _ref) {
       var login = _ref.login,
           password = _ref.password;
       axios.post('/api/login', {
@@ -6471,7 +6474,7 @@ __webpack_require__.r(__webpack_exports__);
         return;
       }
 
-      var url = '/api/' + token + '/auth/getUserData';
+      var url = '/api/' + token + '/getUserData';
       axios.post(url, {
         token: token
       }).then(function (response) {
@@ -6488,6 +6491,24 @@ __webpack_require__.r(__webpack_exports__);
             root: true
           });
         }
+      });
+    },
+    logout: function logout(_ref3) {
+      var rootGetters = _ref3.rootGetters,
+          commit = _ref3.commit;
+      var token = rootGetters['app/getToken'];
+      var url = '/api/' + token + '/logout';
+      axios.post(url, {
+        token: token
+      }).then(function (response) {
+        commit('app/setPage', 'login', {
+          root: true
+        });
+        commit('app/setToken', '', {
+          root: true
+        });
+      })["catch"](function (error) {
+        console.log('logout error: ' + error.response.data.errors);
       });
     }
   },
@@ -31412,9 +31433,14 @@ var render = function () {
                   _vm._v(" "),
                   _c("hr"),
                   _vm._v(" "),
-                  _c("div", { staticClass: "item-dropdown cur-point clip" }, [
-                    _vm._v("Выход"),
-                  ]),
+                  _c(
+                    "div",
+                    {
+                      staticClass: "item-dropdown cur-point clip",
+                      on: { click: _vm.logout },
+                    },
+                    [_vm._v("Выход")]
+                  ),
                 ]
               )
             : _vm._e(),
@@ -31511,9 +31537,14 @@ var render = function () {
               _vm._v(" "),
               _c("hr"),
               _vm._v(" "),
-              _c("div", { staticClass: "item-dropdown cur-point clip" }, [
-                _vm._v("Выход"),
-              ]),
+              _c(
+                "div",
+                {
+                  staticClass: "item-dropdown cur-point clip",
+                  on: { click: _vm.logout },
+                },
+                [_vm._v("Выход")]
+              ),
             ]
           )
         : _vm._e(),

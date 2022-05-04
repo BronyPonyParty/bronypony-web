@@ -30,7 +30,7 @@
                         <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                         <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
                         <hr>
-                        <div class="item-dropdown cur-point clip">Выход</div>
+                        <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
                     </div>
             </div>
 
@@ -51,7 +51,7 @@
                     <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                     <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
                     <hr>
-                    <div class="item-dropdown cur-point clip">Выход</div>
+                    <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
                 </div>
         </div>
     </nav>
@@ -104,6 +104,10 @@ export default {
 
         getEquipmentList() {
             this.$store.dispatch('header/getEquipmentList');
+        },
+
+        logout() {
+            this.$store.dispatch('auth/logout');
         }
     },
 

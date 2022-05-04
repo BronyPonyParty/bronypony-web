@@ -6,7 +6,7 @@ export default {
     },
 
     actions: {
-        auth (ctx, {login, password}) {
+        login (ctx, {login, password}) {
             axios.post('/api/login', {
                 login,
                 password
@@ -25,14 +25,14 @@ export default {
         },
 
         getUserData ({rootGetters, commit}) {
-            let token = rootGetters['app/getToken'];
+            const token = rootGetters['app/getToken'];
 
             if (token.length !== 32) {
                 commit('app/setPage', 'login', {root:true});
                 return;
             }
 
-            let url = '/api/' + token + '/auth/getUserData';
+            const url = '/api/' + token + '/getUserData';
 
             axios.post(url, {
                 token
@@ -44,6 +44,20 @@ export default {
                     commit('app/setPage', 'login', {root:true});
                     commit('app/setToken', '', {root:true});
                 }
+            });
+        },
+
+        logout({rootGetters, commit}) {
+            const token = rootGetters['app/getToken'];
+            const url = '/api/' + token + '/logout';
+
+            axios.post(url, {
+                token
+            }).then(response => {
+                commit('app/setPage', 'login', {root:true});
+                commit('app/setToken', '', {root:true});
+            }).catch(error => {
+                console.log('logout error: ' + error.response.data.errors)
             });
         }
     },

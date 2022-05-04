@@ -22,9 +22,9 @@ use App\Http\Middleware\Auth;
 //});
 
 Route::post('login', [LoginController::class, 'login']);
-Route::get('logout', [LoginController::class, 'logout']);
 
 
 Route::prefix('{token}')->middleware(Auth::class)->group(function () {
-    Route::post('auth/getUserData', [UserController::class, 'getUserData']);
+    Route::post('getUserData', [UserController::class, 'getUserData']);
+    Route::post('logout', [LoginController::class, 'logout']);
 });

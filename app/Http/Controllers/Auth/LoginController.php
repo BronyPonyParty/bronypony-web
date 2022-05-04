@@ -40,7 +40,12 @@ class LoginController extends Controller
         return $token;
     }
 
-    public function logout() {
-        //logout
+    public function logout(Request $request) {
+        $token = $request->post('token');
+
+        $authToken = Session::whereToken($token)->first();
+        $authToken->removed = 1;
+
+        $authToken->save();
     }
 }

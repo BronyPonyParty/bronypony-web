@@ -38,7 +38,7 @@
 export default {
     methods: {
         authorization() {
-            this.$store.dispatch('auth/auth', {
+            this.$store.dispatch('auth/login', {
                 login: this.$refs.login.value,
                 password: this.$refs.password.value
             });
