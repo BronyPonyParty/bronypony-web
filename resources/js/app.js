@@ -34,6 +34,7 @@ Vue.component('v-tech-description-window', require('./store/modules/popup/TechDe
 Vue.component('v-repair-history-window', require('./store/modules/popup/RepairHistoryWindow.vue').default);
 Vue.component('v-travel-history-window', require('./store/modules/popup/TravelHistoryWindow.vue').default);
 Vue.component('v-feed-back-window', require('./store/modules/popup/FeedBackWindow.vue').default);
+Vue.component('v-password-window', require('./store/modules/popup/passwordWindow.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

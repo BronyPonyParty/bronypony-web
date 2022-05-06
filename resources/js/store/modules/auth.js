@@ -11,7 +11,17 @@ export default {
                 login,
                 password
             }).then(response => {
-                ctx.commit('app/setToken',response.data, {root:true});
+                ctx.commit('user/setProfileInfo', {
+                    id: response.data[1].id,
+                    firstname: response.data[1].firstname,
+                    lastname: response.data[1].lastname,
+                    middlename: response.data[1].middlename,
+                    mail: response.data[1].mail,
+                    phoneNumber: response.data[1].phone_number,
+                    avatar: response.data[1].avatar,
+                }, {root:true});
+
+                ctx.commit('app/setToken',response.data[0], {root:true});
                 ctx.commit('app/setPage', 'statements', {root:true});
             }).catch(error => {
                 if (error.response.status === 422) {
@@ -37,7 +47,16 @@ export default {
             axios.post(url, {
                 token
             }).then(response => {
-                console.log(response.data);
+                commit('user/setProfileInfo', {
+                    id: response.data.id,
+                    firstname: response.data.firstname,
+                    lastname: response.data.lastname,
+                    middlename: response.data.middlename,
+                    mail: response.data.mail,
+                    phoneNumber: response.data.phone_number,
+                    avatar: response.data.avatar,
+                }, {root:true});
+
                 if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {root:true});
             }).catch(error => {
                 if (error.response.status === 401) {

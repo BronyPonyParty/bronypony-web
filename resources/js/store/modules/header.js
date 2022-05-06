@@ -10,35 +10,35 @@ export default {
 
     actions: {
         popupProfileToggle(ctx) {
-            ctx.commit('setPopupProfile', {root:true});
+            ctx.commit('setPopupProfile');
 
             setTimeout(() => {
-                ctx.commit('setPopupProfileShowed', {root:true});
+                ctx.commit('setPopupProfileShowed');
             }, 0);
         },
 
         popupProfileOutside(ctx) {
             if (ctx.rootGetters['header/popupProfileShowed']) {
                 if (ctx.rootGetters['header/PopupProfile']) {
-                    ctx.commit('setPopupProfileFalse', {root:true})
-                    ctx.commit('setPopupProfileShowedFalse', {root:true})
+                    ctx.commit('setPopupProfileFalse')
+                    ctx.commit('setPopupProfileShowedFalse')
                 }
             }
         },
 
         popupMenuToggle(ctx) {
-            ctx.commit('setPopupMenu', {root:true})
+            ctx.commit('setPopupMenu')
 
             setTimeout(() => {
-                ctx.commit('setPopupMenuShowed', {root:true});
+                ctx.commit('setPopupMenuShowed');
             }, 0);
         },
 
         popupMenuOutside(ctx) {
             if (ctx.rootGetters['header/popupMenuShowed']) {
                 if (ctx.rootGetters['header/popupMenu']) {
-                    ctx.commit('setPopupMenu', {root:true});
-                    ctx.commit('setPopupMenuShowed', {root:true});
+                    ctx.commit('setPopupMenu');
+                    ctx.commit('setPopupMenuShowed');
                 }
             }
         },

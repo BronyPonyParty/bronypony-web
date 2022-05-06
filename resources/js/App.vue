@@ -5,11 +5,14 @@
         <v-repair-history-window v-if="window.name === 'repairHistory'"></v-repair-history-window>
         <v-travel-history-window v-if="window.name === 'travelHistory'"></v-travel-history-window>
         <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
+        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
 
-        <v-user v-if="page === 'user'"></v-user>
         <v-login v-if="page === 'login'"></v-login>
-        <v-statements v-if="page === 'statements'"></v-statements>
-        <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
+        <template v-if="token.length === 32">
+            <v-user v-if="page === 'user'"></v-user>
+            <v-statements v-if="page === 'statements'"></v-statements>
+            <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
+        </template>
     </div>
 </template>
 
@@ -27,6 +30,7 @@ export default {
         page: 'app/getPage',
         popup: 'app/getPopup',
         window: 'app/getWindow',
+        token: 'app/getToken'
     }),
 
     methods: {

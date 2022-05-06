@@ -37,7 +37,7 @@ class LoginController extends Controller
 
         $session->save();
 
-        return $token;
+        return [$token, $user];
     }
 
     public function logout(Request $request) {

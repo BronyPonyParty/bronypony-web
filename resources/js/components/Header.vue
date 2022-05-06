@@ -16,7 +16,8 @@
 
             <div class="d-flex justify-content-center align-items-center position-relative">
                 <div class="nav-item profile cur-point rounded-circle d-none d-sm-block" @click="popupProfileToggle" tabindex="0">
-                    <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg" class="rounded-circle" alt="Avatar">
+                   <img :src="profileInfo.avatar" alt="avatar" class="rounded-circle">
+
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="d-none d-sm-block cur-point position-absolute" style="margin-left: 40px; height: 100%; top: 0">
                         <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                     </svg>
@@ -24,7 +25,7 @@
                     <div class="dropdown-popup d-none d-sm-block" tabindex="1" v-if="popupProfile" v-click-outside="popupProfileOutside">
                         <div class="item-dropdown cur-point" style="white-space: normal;">
                             Вошли как
-                            <strong class="clip">Путинцев Александр</strong>
+                            <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
                         </div>
                         <hr>
                         <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
@@ -42,7 +43,7 @@
                 <div class="dropdown-popup d-sm-none" tabindex="2"  v-if="popupMenu" v-click-outside="popupMenuOutside">
                     <div class="item-dropdown cur-point" style="white-space: normal;">
                         Вошли как
-                        <strong class="clip">Путинцев Александр</strong>
+                        <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
                     </div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="getStatementsPage">Список заявлений</div>
@@ -59,7 +60,6 @@
 
 <script>
 import ClickOutside from 'vue-click-outside'
-import {mapGetters} from "vuex";
 export default {
     name: "Header",
 
@@ -70,6 +70,10 @@ export default {
 
         popupMenu() {
             return this.$store.getters['header/popupMenu'];
+        },
+
+        profileInfo() {
+            return this.$store.getters['user/getProfileInfo'];
         }
     },
 

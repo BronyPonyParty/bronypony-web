@@ -23,36 +23,37 @@
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text">
+                                <input class="form-control form-control-lg outline-text" ref="firstname" v-model="profileInfo.newFirstname">
                             </div>
                             <div class="edit-group">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text">
+                                <input class="form-control form-control-lg outline-text" ref="lastname" v-model="profileInfo.newLastname">
                             </div>
                             <div class="edit-group">
                                 <strong>Отчество</strong>
-                                <input class="form-control form-control-lg outline-text">
+                                <input class="form-control form-control-lg outline-text" ref="middlename" v-model="profileInfo.newMiddlename">
                             </div>
                             <div class="edit-group d-sm-none">
                                 <strong>Изображение</strong>
-                                <div class="avatar-image cur-point">
-                                    <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg" class="rounded-circle" alt="Avatar">
+                                <div class="avatar-image cur-point" @click="$refs.inputFile.click()">
+                                    <img :src="profileInfo.newAvatar" alt="Avatar" class="rounded-circle">
                                 </div>
                             </div>
                             <div class="edit-group">
-                                <button class="btn outline-button text-white" style="border: none; box-shadow: inherit;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="" viewBox="0 0 16 16">
-                                        <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                                    </svg>
-                                    Редактировать
+                                <button class="btn save-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="saveInfo">
+                                    Сохранить
+                                </button>
+                                <button class="btn cancel-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="cancelInfo">
+                                    Отмена
                                 </button>
                             </div>
                         </div>
 
                         <div class="d-none d-sm-block">
                             <strong>Изображение</strong>
-                            <div class="avatar-image cur-point">
-                                <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/d9/d99bbd7392258e81ebe66380368e90587c3b233e_full.jpg" class="rounded-circle" alt="Avatar">
+                            <div class="avatar-image cur-point"  @click="$refs.inputFile.click()">
+                                <input type="file" accept=".jpg, .png, .jpeg" ref="inputFile" hidden @change="loadAvatar">
+                                <img :src="profileInfo.newAvatar" alt="Avatar" class="rounded-circle">
                             </div>
                         </div>
                     </div>
@@ -66,8 +67,37 @@
 export default {
     name: "User",
 
-    mounted() {
-        // Вызовс всего
+    computed: {
+        profileInfo() {
+            return this.$store.getters['user/getProfileInfo'];
+        },
+
+        equal() {
+            let user = this.$store.getters['user/getProfileInfo'];
+
+            return  user.firstname  === (user.newFirstname).trim()  &&
+                    user.lastname   === (user.newLastname).trim()   &&
+                    user.middlename === (user.newMiddlename).trim() &&
+                    user.avatar     === user.newAvatar;
+        }
+    },
+
+    methods: {
+        loadAvatar() {
+            this.$store.dispatch('user/loadAvatar', this.$refs.inputFile);
+        },
+
+        build() {
+            this.equal = this.$refs.firstname.value === this.profileInfo.firstname;
+        },
+
+        saveInfo() {
+            this.$store.dispatch('user/saveInfo');
+        },
+
+        cancelInfo() {
+            this.$store.commit('user/cancelInfo');
+        }
     }
 }
 </script>
@@ -141,5 +171,26 @@ export default {
             width: 150px;
             height: 150px;
         }
+    }
+
+    .save-button {
+        background-color: #2F8E6C;
+    }
+
+    .save-button:hover {
+        background-color: #297E5F;
+    }
+    .save-button:active {
+        background-color: #1C5542;
+    }
+
+    .cancel-button {
+        background-color: #E64825;
+    }
+    .cancel-button:hover {
+        background-color: #C93E1F;
+    }
+    .cancel-button:active {
+        background-color: #90291A;
     }
 </style>
