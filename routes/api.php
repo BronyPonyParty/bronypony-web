@@ -27,4 +27,5 @@ Route::post('login', [LoginController::class, 'login']);
 Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::post('getUserData', [UserController::class, 'getUserData']);
     Route::post('logout', [LoginController::class, 'logout']);
+    Route::post('saveUserData', [UserController::class, 'saveUserData']);
 });

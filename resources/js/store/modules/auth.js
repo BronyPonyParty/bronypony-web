@@ -34,45 +34,11 @@ export default {
             });
         },
 
-        getUserData ({rootGetters, commit}) {
-            const token = rootGetters['app/getToken'];
-
-            if (token.length !== 32) {
-                commit('app/setPage', 'login', {root:true});
-                return;
-            }
-
-            const url = '/api/' + token + '/getUserData';
-
-            axios.post(url, {
-                token
-            }).then(response => {
-                commit('user/setProfileInfo', {
-                    id: response.data.id,
-                    firstname: response.data.firstname,
-                    lastname: response.data.lastname,
-                    middlename: response.data.middlename,
-                    mail: response.data.mail,
-                    phoneNumber: response.data.phone_number,
-                    avatar: response.data.avatar,
-                }, {root:true});
-
-                if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {root:true});
-            }).catch(error => {
-                if (error.response.status === 401) {
-                    commit('app/setPage', 'login', {root:true});
-                    commit('app/setToken', '', {root:true});
-                }
-            });
-        },
-
         logout({rootGetters, commit}) {
             const token = rootGetters['app/getToken'];
             const url = '/api/' + token + '/logout';
 
-            axios.post(url, {
-                token
-            }).then(response => {
+            axios.post(url).then(response => {
                 commit('app/setPage', 'login', {root:true});
                 commit('app/setToken', '', {root:true});
             }).catch(error => {

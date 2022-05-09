@@ -8,11 +8,9 @@
         <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
 
         <v-login v-if="page === 'login'"></v-login>
-        <template v-if="token.length === 32">
-            <v-user v-if="page === 'user'"></v-user>
-            <v-statements v-if="page === 'statements'"></v-statements>
-            <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
-        </template>
+        <v-user v-if="page === 'user'"></v-user>
+        <v-statements v-if="page === 'statements'"></v-statements>
+        <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
     </div>
 </template>
 
@@ -23,7 +21,7 @@ export default {
     name: "App",
 
     mounted() {
-        this.$store.dispatch('auth/getUserData');
+        this.$store.dispatch('user/getUserData');
     },
 
     computed: mapGetters({

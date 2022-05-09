@@ -5285,13 +5285,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "App",
   mounted: function mounted() {
-    this.$store.dispatch('auth/getUserData');
+    this.$store.dispatch('user/getUserData');
   },
   computed: (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     page: 'app/getPage',
@@ -5822,14 +5820,26 @@ __webpack_require__.r(__webpack_exports__);
     loadAvatar: function loadAvatar() {
       this.$store.dispatch('user/loadAvatar', this.$refs.inputFile);
     },
-    build: function build() {
-      this.equal = this.$refs.firstname.value === this.profileInfo.firstname;
+    saveUserData: function saveUserData() {
+      if (this.$refs.firstname.value.trim() === '' || this.$refs.lastname.value.trim() === '') {
+        if (this.$refs.firstname.value.trim() === '') this.$refs.firstname.classList.add('border-red');
+        if (this.$refs.lastname.value.trim() === '') this.$refs.lastname.classList.add('border-red');
+        return;
+      }
+
+      this.$store.dispatch('user/saveUserData', this.$refs.inputFile.files[0]);
     },
-    saveInfo: function saveInfo() {
-      this.$store.dispatch('user/saveInfo');
+    removeRedOnFirstname: function removeRedOnFirstname() {
+      this.$refs.firstname.classList.remove('border-red');
+    },
+    removeRedOnLastname: function removeRedOnLastname() {
+      this.$refs.lastname.classList.remove('border-red');
     },
     cancelInfo: function cancelInfo() {
+      this.removeRedOnFirstname();
+      this.removeRedOnLastname();
       this.$store.commit('user/cancelInfo');
+      this.$refs.inputFile.value = '';
     }
   }
 });
@@ -6571,55 +6581,12 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    getUserData: function getUserData(_ref2) {
+    logout: function logout(_ref2) {
       var rootGetters = _ref2.rootGetters,
           commit = _ref2.commit;
       var token = rootGetters['app/getToken'];
-
-      if (token.length !== 32) {
-        commit('app/setPage', 'login', {
-          root: true
-        });
-        return;
-      }
-
-      var url = '/api/' + token + '/getUserData';
-      axios.post(url, {
-        token: token
-      }).then(function (response) {
-        commit('user/setProfileInfo', {
-          id: response.data.id,
-          firstname: response.data.firstname,
-          lastname: response.data.lastname,
-          middlename: response.data.middlename,
-          mail: response.data.mail,
-          phoneNumber: response.data.phone_number,
-          avatar: response.data.avatar
-        }, {
-          root: true
-        });
-        if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {
-          root: true
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          commit('app/setPage', 'login', {
-            root: true
-          });
-          commit('app/setToken', '', {
-            root: true
-          });
-        }
-      });
-    },
-    logout: function logout(_ref3) {
-      var rootGetters = _ref3.rootGetters,
-          commit = _ref3.commit;
-      var token = rootGetters['app/getToken'];
       var url = '/api/' + token + '/logout';
-      axios.post(url, {
-        token: token
-      }).then(function (response) {
+      axios.post(url).then(function (response) {
         commit('app/setPage', 'login', {
           root: true
         });
@@ -6789,41 +6756,94 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   actions: {
-    saveInfo: function saveInfo(ctx) {// какой-то код
+    getUserData: function getUserData(_ref) {
+      var rootGetters = _ref.rootGetters,
+          commit = _ref.commit;
+      var token = rootGetters['app/getToken'];
+
+      if (token.length !== 32) {
+        commit('app/setPage', 'login', {
+          root: true
+        });
+        return;
+      }
+
+      var url = '/api/' + token + '/getUserData';
+      axios.post(url).then(function (response) {
+        commit('setProfileInfo', {
+          id: response.data.id,
+          firstname: response.data.firstname,
+          lastname: response.data.lastname,
+          middlename: response.data.middlename,
+          mail: response.data.mail,
+          phoneNumber: response.data.phone_number,
+          avatar: response.data.avatar
+        });
+        if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {
+          root: true
+        });
+      })["catch"](function (error) {
+        if (error.response.status === 401) {
+          commit('app/setPage', 'login', {
+            root: true
+          });
+          commit('app/setToken', '', {
+            root: true
+          });
+        }
+      });
+    },
+    saveUserData: function saveUserData(ctx, avatar) {
+      var token = ctx.rootGetters['app/getToken'];
+      var url = '/api/' + token + '/saveUserData';
+      var userData = ctx.rootGetters['user/getProfileInfo'];
+      var formData = new FormData();
+      formData.append('avatar', avatar);
+      formData.append('firstname', userData.newFirstname);
+      formData.append('lastname', userData.newLastname);
+      formData.append('middlename', userData.newMiddlename);
+      axios.post(url, formData).then(function (response) {
+        console.log(response.data);
+      })["catch"](function (error) {
+        console.log(error.response.data.errors);
+      });
     },
     loadAvatar: function loadAvatar(ctx, ref) {
-      if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(ref.files[0].name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
-      var image = new Image();
+      // if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(ref.files[0].name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
+      //
+      // const image = new Image();
+      // const fr = new FileReader();
+      // fr.readAsDataURL(ref.files[0]);
+      // fr.onload = e => {
+      //     image.src = [e.target.result].join('');
+      //
+      //     image.onload = function() {
+      //         if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
+      //         if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
+      //         ctx.commit('setAvatar', [e.target.result].join(''));
+      //     }
+      //
+      //     image.onerror = function () {
+      //         console.log('Содержимое файла не соответствует расширению файла');
+      //     }
+      // }
       var fr = new FileReader();
       fr.readAsDataURL(ref.files[0]);
 
       fr.onload = function (e) {
-        image.src = [e.target.result].join('');
-
-        image.onload = function () {
-          if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
-          if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
-          ctx.commit('setAvatar', [e.target.result].join(''));
-          console.log(this.naturalHeight + ' ' + this.naturalWidth);
-        };
-
-        image.onerror = function () {
-          console.log('Содержимое файла не соответствует расширению файла');
-        };
+        ctx.commit('setAvatar', [e.target.result].join(''));
       };
-
-      ref.value = '';
     }
   },
   mutations: {
-    setProfileInfo: function setProfileInfo(state, _ref) {
-      var id = _ref.id,
-          firstname = _ref.firstname,
-          lastname = _ref.lastname,
-          middlename = _ref.middlename,
-          mail = _ref.mail,
-          phoneNumber = _ref.phoneNumber,
-          avatar = _ref.avatar;
+    setProfileInfo: function setProfileInfo(state, _ref2) {
+      var id = _ref2.id,
+          firstname = _ref2.firstname,
+          lastname = _ref2.lastname,
+          middlename = _ref2.middlename,
+          mail = _ref2.mail,
+          phoneNumber = _ref2.phoneNumber,
+          avatar = _ref2.avatar;
       state.user.id = id;
       state.user.firstname = firstname;
       state.user.lastname = lastname;
@@ -12026,7 +12046,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.settings[data-v-d884f594] {\n  border-radius: 5px;\n  background-color: white;\n}\n.settings span[data-v-d884f594] {\n  padding-left: 8px;\n}\n.settings .setting[data-v-d884f594] {\n  cursor: pointer;\n  padding: 10px;\n  width: 100%;\n}\n.settings .setting[data-v-d884f594]:last-child {\n  border-radius: 0 0 5px 5px;\n}\n.settings .setting[data-v-d884f594]:first-child {\n  border-radius: 5px 5px 0 0;\n}\n.settings .setting[data-v-d884f594]:hover {\n  background-color: #E9E9E9;\n}\n.cur-point[data-v-d884f594] {\n  cursor: pointer;\n}\n.clip[data-v-d884f594] {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}\n.edit-list[data-v-d884f594] {\n  width: 250px;\n}\n.edit-list .edit-group[data-v-d884f594] {\n  margin-bottom: 13px;\n}\n.edit-list .edit-group strong[data-v-d884f594] {\n  margin-bottom: 0;\n}\n.edit-list .edit-group button[data-v-d884f594] {\n  margin-top: 20px;\n}\n.edit-list .edit-group[data-v-d884f594]:last-child {\n  margin-bottom: 0;\n}\n.avatar-image[data-v-d884f594] {\n  border-radius: 50%;\n  margin: 15px 30px 0 0;\n}\n.avatar-image img[data-v-d884f594] {\n  width: 150px;\n  height: 150px;\n}\n.save-button[data-v-d884f594] {\n  background-color: #2F8E6C;\n}\n.save-button[data-v-d884f594]:hover {\n  background-color: #297E5F;\n}\n.save-button[data-v-d884f594]:active {\n  background-color: #1C5542;\n}\n.cancel-button[data-v-d884f594] {\n  background-color: #E64825;\n}\n.cancel-button[data-v-d884f594]:hover {\n  background-color: #C93E1F;\n}\n.cancel-button[data-v-d884f594]:active {\n  background-color: #90291A;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\n.settings[data-v-d884f594] {\n  border-radius: 5px;\n  background-color: white;\n}\n.settings span[data-v-d884f594] {\n  padding-left: 8px;\n}\n.settings .setting[data-v-d884f594] {\n  cursor: pointer;\n  padding: 10px;\n  width: 100%;\n}\n.settings .setting[data-v-d884f594]:last-child {\n  border-radius: 0 0 5px 5px;\n}\n.settings .setting[data-v-d884f594]:first-child {\n  border-radius: 5px 5px 0 0;\n}\n.settings .setting[data-v-d884f594]:hover {\n  background-color: #E9E9E9;\n}\n.cur-point[data-v-d884f594] {\n  cursor: pointer;\n}\n.clip[data-v-d884f594] {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}\n.edit-list[data-v-d884f594] {\n  width: 250px;\n}\n.edit-list .edit-group[data-v-d884f594] {\n  margin-bottom: 13px;\n}\n.edit-list .edit-group strong[data-v-d884f594] {\n  margin-bottom: 0;\n}\n.edit-list .edit-group button[data-v-d884f594] {\n  margin-top: 20px;\n}\n.edit-list .edit-group[data-v-d884f594]:last-child {\n  margin-bottom: 0;\n}\n.avatar-image[data-v-d884f594] {\n  border-radius: 50%;\n  margin: 15px 30px 0 0;\n}\n.avatar-image img[data-v-d884f594] {\n  width: 150px;\n  height: 150px;\n}\n.save-button[data-v-d884f594] {\n  background-color: #2F8E6C;\n}\n.save-button[data-v-d884f594]:hover {\n  background-color: #297E5F;\n}\n.save-button[data-v-d884f594]:active {\n  background-color: #1C5542;\n}\n.cancel-button[data-v-d884f594] {\n  background-color: #E64825;\n}\n.cancel-button[data-v-d884f594]:hover {\n  background-color: #C93E1F;\n}\n.cancel-button[data-v-d884f594]:active {\n  background-color: #90291A;\n}\n.border-red[data-v-d884f594] {\n  border-color: red;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -31474,17 +31494,13 @@ var render = function () {
       _vm._v(" "),
       _vm.page === "login" ? _c("v-login") : _vm._e(),
       _vm._v(" "),
-      _vm.token.length === 32
-        ? [
-            _vm.page === "user" ? _c("v-user") : _vm._e(),
-            _vm._v(" "),
-            _vm.page === "statements" ? _c("v-statements") : _vm._e(),
-            _vm._v(" "),
-            _vm.page === "equipmentList" ? _c("v-equipment-list") : _vm._e(),
-          ]
-        : _vm._e(),
+      _vm.page === "user" ? _c("v-user") : _vm._e(),
+      _vm._v(" "),
+      _vm.page === "statements" ? _c("v-statements") : _vm._e(),
+      _vm._v(" "),
+      _vm.page === "equipmentList" ? _c("v-equipment-list") : _vm._e(),
     ],
-    2
+    1
   )
 }
 var staticRenderFns = []
@@ -32344,6 +32360,7 @@ var render = function () {
                       staticClass: "form-control form-control-lg outline-text",
                       domProps: { value: _vm.profileInfo.newFirstname },
                       on: {
+                        focus: _vm.removeRedOnFirstname,
                         input: function ($event) {
                           if ($event.target.composing) {
                             return
@@ -32374,6 +32391,7 @@ var render = function () {
                       staticClass: "form-control form-control-lg outline-text",
                       domProps: { value: _vm.profileInfo.newLastname },
                       on: {
+                        focus: _vm.removeRedOnLastname,
                         input: function ($event) {
                           if ($event.target.composing) {
                             return
@@ -32453,7 +32471,7 @@ var render = function () {
                           "box-shadow": "inherit",
                         },
                         attrs: { disabled: _vm.equal },
-                        on: { click: _vm.saveInfo },
+                        on: { click: _vm.saveUserData },
                       },
                       [
                         _vm._v(

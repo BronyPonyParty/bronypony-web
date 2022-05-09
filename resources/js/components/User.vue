@@ -23,11 +23,11 @@
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text" ref="firstname" v-model="profileInfo.newFirstname">
+                                <input class="form-control form-control-lg outline-text" @focus="removeRedOnFirstname" ref="firstname" v-model="profileInfo.newFirstname">
                             </div>
                             <div class="edit-group">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text" ref="lastname" v-model="profileInfo.newLastname">
+                                <input class="form-control form-control-lg outline-text" @focus="removeRedOnLastname" ref="lastname" v-model="profileInfo.newLastname">
                             </div>
                             <div class="edit-group">
                                 <strong>Отчество</strong>
@@ -40,7 +40,7 @@
                                 </div>
                             </div>
                             <div class="edit-group">
-                                <button class="btn save-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="saveInfo">
+                                <button class="btn save-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="saveUserData">
                                     Сохранить
                                 </button>
                                 <button class="btn cancel-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="cancelInfo">
@@ -87,16 +87,29 @@ export default {
             this.$store.dispatch('user/loadAvatar', this.$refs.inputFile);
         },
 
-        build() {
-            this.equal = this.$refs.firstname.value === this.profileInfo.firstname;
+        saveUserData() {
+            if (this.$refs.firstname.value.trim() === '' || this.$refs.lastname.value.trim() === '') {
+                if (this.$refs.firstname.value.trim() === '') this.$refs.firstname.classList.add('border-red');
+                if (this.$refs.lastname.value.trim() === '') this.$refs.lastname.classList.add('border-red');
+                return;
+            }
+
+            this.$store.dispatch('user/saveUserData', this.$refs.inputFile.files[0]);
         },
 
-        saveInfo() {
-            this.$store.dispatch('user/saveInfo');
+        removeRedOnFirstname() {
+            this.$refs.firstname.classList.remove('border-red');
+        },
+
+        removeRedOnLastname() {
+            this.$refs.lastname.classList.remove('border-red');
         },
 
         cancelInfo() {
+            this.removeRedOnFirstname();
+            this.removeRedOnLastname();
             this.$store.commit('user/cancelInfo');
+            this.$refs.inputFile.value = '';
         }
     }
 }
@@ -192,5 +205,9 @@ export default {
     }
     .cancel-button:active {
         background-color: #90291A;
+    }
+
+    .border-red {
+        border-color: red
     }
 </style>
