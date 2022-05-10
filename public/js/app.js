@@ -5818,7 +5818,10 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     loadAvatar: function loadAvatar() {
-      this.$store.dispatch('user/loadAvatar', this.$refs.inputFile);
+      this.$store.dispatch('user/loadAvatar', {
+        file: this.$refs.inputFile.files[0],
+        fileValue: this.$refs.inputFile.value
+      });
     },
     saveUserData: function saveUserData() {
       if (this.$refs.firstname.value.trim() === '' || this.$refs.lastname.value.trim() === '') {
@@ -5827,7 +5830,7 @@ __webpack_require__.r(__webpack_exports__);
         return;
       }
 
-      this.$store.dispatch('user/saveUserData', this.$refs.inputFile.files[0]);
+      this.$store.dispatch('user/saveUserData');
     },
     removeRedOnFirstname: function removeRedOnFirstname() {
       this.$refs.firstname.classList.remove('border-red');
@@ -5839,7 +5842,6 @@ __webpack_require__.r(__webpack_exports__);
       this.removeRedOnFirstname();
       this.removeRedOnLastname();
       this.$store.commit('user/cancelInfo');
-      this.$refs.inputFile.value = '';
     }
   }
 });
@@ -6753,7 +6755,8 @@ __webpack_require__.r(__webpack_exports__);
       newLastname: '',
       newMiddlename: '',
       newAvatar: ''
-    }
+    },
+    selectedFile: ''
   },
   actions: {
     getUserData: function getUserData(_ref) {
@@ -6793,10 +6796,11 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    saveUserData: function saveUserData(ctx, avatar) {
+    saveUserData: function saveUserData(ctx) {
       var token = ctx.rootGetters['app/getToken'];
       var url = '/api/' + token + '/saveUserData';
       var userData = ctx.rootGetters['user/getProfileInfo'];
+      var avatar = ctx.rootGetters['user/getSelectedFile'];
       var formData = new FormData();
       formData.append('avatar', avatar);
       formData.append('firstname', userData.newFirstname);
@@ -6808,42 +6812,43 @@ __webpack_require__.r(__webpack_exports__);
         console.log(error.response.data.errors);
       });
     },
-    loadAvatar: function loadAvatar(ctx, ref) {
-      // if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(ref.files[0].name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
-      //
-      // const image = new Image();
-      // const fr = new FileReader();
-      // fr.readAsDataURL(ref.files[0]);
-      // fr.onload = e => {
-      //     image.src = [e.target.result].join('');
-      //
-      //     image.onload = function() {
-      //         if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
-      //         if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
-      //         ctx.commit('setAvatar', [e.target.result].join(''));
-      //     }
-      //
-      //     image.onerror = function () {
-      //         console.log('Содержимое файла не соответствует расширению файла');
-      //     }
-      // }
+    loadAvatar: function loadAvatar(ctx, _ref2) {
+      var file = _ref2.file,
+          fileValue = _ref2.fileValue;
+      if (fileValue === '') return; // Если пользователь нажимает отмена в выборе файла
+
+      if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
+      var image = new Image();
       var fr = new FileReader();
-      fr.readAsDataURL(ref.files[0]);
+      fr.readAsDataURL(file);
 
       fr.onload = function (e) {
-        ctx.commit('setAvatar', [e.target.result].join(''));
+        image.src = [e.target.result].join('');
+
+        image.onload = function () {
+          if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
+          if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
+          ctx.commit('setAvatar', [e.target.result].join(''));
+          ctx.commit('setSelectedFile', file);
+        };
+
+        image.onerror = function () {
+          console.log('Содержимое файла не соответствует расширению файла');
+        };
       };
+
+      fileValue = '';
     }
   },
   mutations: {
-    setProfileInfo: function setProfileInfo(state, _ref2) {
-      var id = _ref2.id,
-          firstname = _ref2.firstname,
-          lastname = _ref2.lastname,
-          middlename = _ref2.middlename,
-          mail = _ref2.mail,
-          phoneNumber = _ref2.phoneNumber,
-          avatar = _ref2.avatar;
+    setProfileInfo: function setProfileInfo(state, _ref3) {
+      var id = _ref3.id,
+          firstname = _ref3.firstname,
+          lastname = _ref3.lastname,
+          middlename = _ref3.middlename,
+          mail = _ref3.mail,
+          phoneNumber = _ref3.phoneNumber,
+          avatar = _ref3.avatar;
       state.user.id = id;
       state.user.firstname = firstname;
       state.user.lastname = lastname;
@@ -6858,8 +6863,8 @@ __webpack_require__.r(__webpack_exports__);
         state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
         state.user.newAvatar = '/storage/uploads/avatars/defaultAvatar.jpg';
       } else {
-        state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar;
-        state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar;
+        state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
+        state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
       }
     },
     setAvatar: function setAvatar(state, avatar) {
@@ -6870,11 +6875,18 @@ __webpack_require__.r(__webpack_exports__);
       state.user.newLastname = state.user.lastname;
       state.user.newMiddlename = state.user.middlename;
       state.user.newAvatar = state.user.avatar;
+      state.selectedFile = '';
+    },
+    setSelectedFile: function setSelectedFile(state, selectedFile) {
+      state.selectedFile = selectedFile;
     }
   },
   getters: {
     getProfileInfo: function getProfileInfo(state) {
       return state.user;
+    },
+    getSelectedFile: function getSelectedFile(state) {
+      return state.selectedFile;
     }
   }
 });

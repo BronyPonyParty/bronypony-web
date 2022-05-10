@@ -84,7 +84,10 @@ export default {
 
     methods: {
         loadAvatar() {
-            this.$store.dispatch('user/loadAvatar', this.$refs.inputFile);
+            this.$store.dispatch('user/loadAvatar', {
+                file: this.$refs.inputFile.files[0],
+                fileValue: this.$refs.inputFile.value
+            });
         },
 
         saveUserData() {
@@ -94,7 +97,7 @@ export default {
                 return;
             }
 
-            this.$store.dispatch('user/saveUserData', this.$refs.inputFile.files[0]);
+            this.$store.dispatch('user/saveUserData');
         },
 
         removeRedOnFirstname() {
@@ -109,7 +112,6 @@ export default {
             this.removeRedOnFirstname();
             this.removeRedOnLastname();
             this.$store.commit('user/cancelInfo');
-            this.$refs.inputFile.value = '';
         }
     }
 }

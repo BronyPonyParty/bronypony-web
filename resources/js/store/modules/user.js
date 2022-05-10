@@ -15,7 +15,9 @@ export default {
             newLastname: '',
             newMiddlename: '',
             newAvatar: '',
-        }
+        },
+
+        selectedFile: ''
     },
 
     actions: {
@@ -49,16 +51,19 @@ export default {
             });
         },
 
-        saveUserData(ctx, avatar) {
+        saveUserData(ctx) {
             const token = ctx.rootGetters['app/getToken'];
             const url = '/api/' + token + '/saveUserData';
             const userData = ctx.rootGetters['user/getProfileInfo'];
+            const avatar = ctx.rootGetters['user/getSelectedFile'];
+
 
             const formData = new FormData();
             formData.append('avatar', avatar);
             formData.append('firstname', userData.newFirstname);
             formData.append('lastname', userData.newLastname);
             formData.append('middlename', userData.newMiddlename);
+
 
             axios.post(url, formData).then(response => {
                 console.log(response.data);
@@ -67,30 +72,28 @@ export default {
             })
         },
 
-        loadAvatar(ctx, ref) {
-            // if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(ref.files[0].name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
-            //
-            // const image = new Image();
-            // const fr = new FileReader();
-            // fr.readAsDataURL(ref.files[0]);
-            // fr.onload = e => {
-            //     image.src = [e.target.result].join('');
-            //
-            //     image.onload = function() {
-            //         if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
-            //         if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
-            //         ctx.commit('setAvatar', [e.target.result].join(''));
-            //     }
-            //
-            //     image.onerror = function () {
-            //         console.log('Содержимое файла не соответствует расширению файла');
-            //     }
-            // }
+        loadAvatar(ctx, {file, fileValue}) {
+            if (fileValue === '') return; // Если пользователь нажимает отмена в выборе файла
+            if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
+
+            const image = new Image();
             const fr = new FileReader();
-            fr.readAsDataURL(ref.files[0])
+            fr.readAsDataURL(file);
             fr.onload = e => {
-                ctx.commit('setAvatar', [e.target.result].join(''));
+                image.src = [e.target.result].join('');
+
+                image.onload = function() {
+                    if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
+                    if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
+                    ctx.commit('setAvatar', [e.target.result].join(''));
+                    ctx.commit('setSelectedFile', file);
+                }
+
+                image.onerror = function () {
+                    console.log('Содержимое файла не соответствует расширению файла');
+                }
             }
+            fileValue = '';
         }
     },
 
@@ -112,8 +115,8 @@ export default {
                 state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
                 state.user.newAvatar = '/storage/uploads/avatars/defaultAvatar.jpg';
             } else {
-                state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar;
-                state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar;
+                state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
+                state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
             }
         },
 
@@ -126,12 +129,21 @@ export default {
             state.user.newLastname = state.user.lastname;
             state.user.newMiddlename = state.user.middlename;
             state.user.newAvatar = state.user.avatar;
+            state.selectedFile = ''
+        },
+
+        setSelectedFile(state, selectedFile) {
+            state.selectedFile = selectedFile;
         }
     },
 
     getters: {
         getProfileInfo(state) {
             return state.user;
+        },
+
+        getSelectedFile(state) {
+            return state.selectedFile;
         }
     }
 }
