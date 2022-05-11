@@ -5824,9 +5824,14 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     saveUserData: function saveUserData() {
-      if (this.$refs.firstname.value.trim() === '' || this.$refs.lastname.value.trim() === '') {
-        if (this.$refs.firstname.value.trim() === '') this.$refs.firstname.classList.add('border-red');
-        if (this.$refs.lastname.value.trim() === '') this.$refs.lastname.classList.add('border-red');
+      var firstname = this.$refs.firstname.value;
+      var lastname = this.$refs.lastname.value;
+      var middlename = this.$refs.middlename.value;
+
+      if (firstname.trim() === '' || firstname.trim().length > 32 || lastname.trim() === '' || lastname.trim().length > 32 || middlename.trim().length > 32) {
+        if (firstname.trim() === '' || firstname.trim().length > 32) this.$refs.firstname.classList.add('border-red');
+        if (lastname.trim() === '' || lastname.trim().length > 32) this.$refs.lastname.classList.add('border-red');
+        if (middlename.trim().length > 32) this.$refs.middlename.classList.add('border-red');
         return;
       }
 
@@ -5838,9 +5843,15 @@ __webpack_require__.r(__webpack_exports__);
     removeRedOnLastname: function removeRedOnLastname() {
       this.$refs.lastname.classList.remove('border-red');
     },
+    removeRedOnMiddlename: function removeRedOnMiddlename() {
+      this.$refs.middlename.classList.remove('border-red');
+    },
     cancelInfo: function cancelInfo() {
       this.removeRedOnFirstname();
       this.removeRedOnLastname();
+      this.removeRedOnMiddlename();
+      this.$refs.inputFile.value = ''; // Исправляем баг с неизменяемой аватаркой
+
       this.$store.commit('user/cancelInfo');
     }
   }
@@ -6807,9 +6818,24 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('lastname', userData.newLastname);
       formData.append('middlename', userData.newMiddlename);
       axios.post(url, formData).then(function (response) {
-        console.log(response.data);
+        ctx.commit('setProfileInfo', {
+          id: response.data.id,
+          firstname: response.data.firstname,
+          lastname: response.data.lastname,
+          middlename: response.data.middlename,
+          mail: response.data.mail,
+          phoneNumber: response.data.phone_number,
+          avatar: response.data.avatar
+        });
       })["catch"](function (error) {
-        console.log(error.response.data.errors);
+        if (error.response.status === 401) {
+          ctx.commit('app/setPage', 'login', {
+            root: true
+          });
+          ctx.commit('app/setToken', '', {
+            root: true
+          });
+        }
       });
     },
     loadAvatar: function loadAvatar(ctx, _ref2) {
@@ -6836,8 +6862,6 @@ __webpack_require__.r(__webpack_exports__);
           console.log('Содержимое файла не соответствует расширению файла');
         };
       };
-
-      fileValue = '';
     }
   },
   mutations: {
@@ -6852,12 +6876,12 @@ __webpack_require__.r(__webpack_exports__);
       state.user.id = id;
       state.user.firstname = firstname;
       state.user.lastname = lastname;
-      state.user.middlename = middlename;
+      state.user.middlename = middlename != null ? middlename : '';
       state.user.mail = mail;
       state.user.phoneNumber = phoneNumber;
       state.user.newFirstname = firstname;
       state.user.newLastname = lastname;
-      state.user.newMiddlename = middlename;
+      state.user.newMiddlename = middlename != null ? middlename : '';
 
       if (avatar === null) {
         state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
@@ -32370,6 +32394,7 @@ var render = function () {
                       ],
                       ref: "firstname",
                       staticClass: "form-control form-control-lg outline-text",
+                      attrs: { maxlength: "32" },
                       domProps: { value: _vm.profileInfo.newFirstname },
                       on: {
                         focus: _vm.removeRedOnFirstname,
@@ -32401,6 +32426,7 @@ var render = function () {
                       ],
                       ref: "lastname",
                       staticClass: "form-control form-control-lg outline-text",
+                      attrs: { maxlength: "32" },
                       domProps: { value: _vm.profileInfo.newLastname },
                       on: {
                         focus: _vm.removeRedOnLastname,
@@ -32432,8 +32458,10 @@ var render = function () {
                       ],
                       ref: "middlename",
                       staticClass: "form-control form-control-lg outline-text",
+                      attrs: { maxlength: "32" },
                       domProps: { value: _vm.profileInfo.newMiddlename },
                       on: {
+                        focus: _vm.removeRedOnMiddlename,
                         input: function ($event) {
                           if ($event.target.composing) {
                             return

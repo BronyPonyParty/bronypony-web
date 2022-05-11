@@ -20,8 +20,9 @@ class UserController extends Controller
         $lastname = $request->post('lastname');
         $middlename = $request->post('middlename');
 
-        if (empty($firstname)) abort(400, 'Пустые данные');
-        if (empty($lastname)) abort(400, 'Пустые данные');
+        if (empty($firstname) || strlen($firstname) > 32) abort(400, 'Пустая или длинная строка');
+        if (empty($lastname) || strlen($lastname) > 32) abort(400, 'Пустая или длинная строка');
+        if (strlen($middlename) > 32) abort(400, 'Длинная строка');
 
         if (!empty($avatar)) $hashAvatar = hash_file('md5', $avatar);
 
@@ -49,6 +50,7 @@ class UserController extends Controller
         if ($user->middlename !== $middlename) $user->middlename = $middlename;
 
         $user->save();
-        return 'OK';
+
+        return $user;
     }
 }

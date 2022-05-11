@@ -65,10 +65,22 @@ export default {
             formData.append('middlename', userData.newMiddlename);
 
 
+
             axios.post(url, formData).then(response => {
-                console.log(response.data);
+                ctx.commit('setProfileInfo', {
+                    id: response.data.id,
+                    firstname: response.data.firstname,
+                    lastname: response.data.lastname,
+                    middlename: response.data.middlename,
+                    mail: response.data.mail,
+                    phoneNumber: response.data.phone_number,
+                    avatar: response.data.avatar,
+                });
             }).catch(error => {
-                console.log(error.response.data.errors);
+                if (error.response.status === 401) {
+                    ctx.commit('app/setPage', 'login', {root:true});
+                    ctx.commit('app/setToken', '', {root:true});
+                }
             })
         },
 
@@ -93,7 +105,6 @@ export default {
                     console.log('Содержимое файла не соответствует расширению файла');
                 }
             }
-            fileValue = '';
         }
     },
 
@@ -102,14 +113,13 @@ export default {
             state.user.id = id;
             state.user.firstname = firstname;
             state.user.lastname = lastname;
-            state.user.middlename = middlename;
+            state.user.middlename = middlename != null ? middlename : '';
             state.user.mail = mail;
             state.user.phoneNumber = phoneNumber;
 
-
             state.user.newFirstname = firstname;
             state.user.newLastname = lastname;
-            state.user.newMiddlename = middlename;
+            state.user.newMiddlename = middlename != null ? middlename : '';
 
             if (avatar === null) {
                 state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';

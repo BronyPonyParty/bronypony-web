@@ -23,15 +23,15 @@
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text" @focus="removeRedOnFirstname" ref="firstname" v-model="profileInfo.newFirstname">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="profileInfo.newFirstname">
                             </div>
                             <div class="edit-group">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text" @focus="removeRedOnLastname" ref="lastname" v-model="profileInfo.newLastname">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="profileInfo.newLastname">
                             </div>
                             <div class="edit-group">
                                 <strong>Отчество</strong>
-                                <input class="form-control form-control-lg outline-text" ref="middlename" v-model="profileInfo.newMiddlename">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnMiddlename" ref="middlename" v-model="profileInfo.newMiddlename">
                             </div>
                             <div class="edit-group d-sm-none">
                                 <strong>Изображение</strong>
@@ -91,9 +91,18 @@ export default {
         },
 
         saveUserData() {
-            if (this.$refs.firstname.value.trim() === '' || this.$refs.lastname.value.trim() === '') {
-                if (this.$refs.firstname.value.trim() === '') this.$refs.firstname.classList.add('border-red');
-                if (this.$refs.lastname.value.trim() === '') this.$refs.lastname.classList.add('border-red');
+            const firstname = this.$refs.firstname.value;
+            const lastname = this.$refs.lastname.value;
+            const middlename = this.$refs.middlename.value;
+
+            if (firstname.trim() === '' ||
+                firstname.trim().length > 32 ||
+                lastname.trim() === '' ||
+                lastname.trim().length > 32 ||
+                middlename.trim().length > 32) {
+                if (firstname.trim() === '' || firstname.trim().length > 32) this.$refs.firstname.classList.add('border-red');
+                if (lastname.trim() === '' || lastname.trim().length > 32) this.$refs.lastname.classList.add('border-red');
+                if (middlename.trim().length > 32) this.$refs.middlename.classList.add('border-red');
                 return;
             }
 
@@ -107,10 +116,15 @@ export default {
         removeRedOnLastname() {
             this.$refs.lastname.classList.remove('border-red');
         },
+        removeRedOnMiddlename() {
+            this.$refs.middlename.classList.remove('border-red');
+        },
 
         cancelInfo() {
             this.removeRedOnFirstname();
             this.removeRedOnLastname();
+            this.removeRedOnMiddlename();
+            this.$refs.inputFile.value = ''; // Исправляем баг с неизменяемой аватаркой
             this.$store.commit('user/cancelInfo');
         }
     }
