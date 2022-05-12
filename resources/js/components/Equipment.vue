@@ -23,11 +23,14 @@
                 </div>
 
                 <div class="col-12 col-lg white-block p-3">
-                    <div class="techList">
+                    <div class="techList" v-if="items.length !== 0">
                         <div class="item justify-content-between p-3 d-flex" v-for="(item, index) in items" :key="item.id" @click="showDescriptionWindow()">
                             <strong>{{item.name}}</strong>
                             <span>{{item.status}}</span>
                         </div>
+                    </div>
+                    <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
+                        Список пуст
                     </div>
                 </div>
             </div>
@@ -47,26 +50,26 @@ export default {
                 name: 'Компьютер 256',
                 status: 'Исправна'
             },
-            {
-                id: 1,
-                name: 'Компьютер 333',
-                status: 'Исправна'
-            },
-            {
-                id: 2,
-                name: 'Компьютер 336',
-                status: 'Исправна'
-            },
-            {
-                id: 3,
-                name: 'Принтер 623',
-                status: 'Неисправна'
-            },
-            {
-                id: 4,
-                name: 'Компьютер 131',
-                status: 'Утилизирована'
-            },
+            // {
+            //     id: 1,
+            //     name: 'Компьютер 333',
+            //     status: 'Исправна'
+            // },
+            // {
+            //     id: 2,
+            //     name: 'Компьютер 336',
+            //     status: 'Исправна'
+            // },
+            // {
+            //     id: 3,
+            //     name: 'Принтер 623',
+            //     status: 'Неисправна'
+            // },
+            // {
+            //     id: 4,
+            //     name: 'Компьютер 131',
+            //     status: 'Утилизирована'
+            // },
         ]
     }),
 

@@ -64,7 +64,7 @@ export default {
         },
 
         getEquipmentList(ctx) {
-            ctx.commit('app/setPage', 'equipmentList', {root:true});
+            ctx.commit('app/setPage', 'equipment', {root:true});
         }
     },
 

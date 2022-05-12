@@ -116,6 +116,7 @@ export default {
         removeRedOnLastname() {
             this.$refs.lastname.classList.remove('border-red');
         },
+
         removeRedOnMiddlename() {
             this.$refs.middlename.classList.remove('border-red');
         },

@@ -2,15 +2,13 @@
     <div>
         <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
         <v-tech-description-window v-if="window.name === 'techDescriptionWindow'"></v-tech-description-window>
-        <v-repair-history-window v-if="window.name === 'repairHistory'"></v-repair-history-window>
-        <v-travel-history-window v-if="window.name === 'travelHistory'"></v-travel-history-window>
         <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
         <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
 
         <v-login v-if="page === 'login'"></v-login>
         <v-user v-if="page === 'user'"></v-user>
         <v-statements v-if="page === 'statements'"></v-statements>
-        <v-equipment-list v-if="page === 'equipmentList'"></v-equipment-list>
+        <v-equipment v-if="page === 'equipment'"></v-equipment>
     </div>
 </template>
 
