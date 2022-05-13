@@ -25,7 +25,7 @@
                 <div class="col-12 col-lg white-block p-3">
                     <div class="techList" v-if="items.length !== 0">
                         <div class="item justify-content-between p-3 d-flex" v-for="(item, index) in items" :key="item.id" @click="showDescriptionWindow()">
-                            <strong>{{item.name}}</strong>
+                            <strong>{{item.name + '-' + item.number}}</strong>
                             <span>{{item.status}}</span>
                         </div>
                     </div>
@@ -43,35 +43,15 @@ import {mapMutations} from 'vuex';
 export default {
     name: "equipmentList",
 
-    data: () => ({
-        items: [
-            {
-                id: 0,
-                name: 'Компьютер 256',
-                status: 'Исправна'
-            },
-            // {
-            //     id: 1,
-            //     name: 'Компьютер 333',
-            //     status: 'Исправна'
-            // },
-            // {
-            //     id: 2,
-            //     name: 'Компьютер 336',
-            //     status: 'Исправна'
-            // },
-            // {
-            //     id: 3,
-            //     name: 'Принтер 623',
-            //     status: 'Неисправна'
-            // },
-            // {
-            //     id: 4,
-            //     name: 'Компьютер 131',
-            //     status: 'Утилизирована'
-            // },
-        ]
-    }),
+    mounted() {
+        this.$store.dispatch('equipment/getEquipmentData');
+    },
+
+    computed: {
+        items() {
+            return this.$store.getters['equipment/getItems'];
+        }
+    },
 
     methods: {
         ...mapMutations({

@@ -20,14 +20,14 @@ export default {
         popupProfileOutside(ctx) {
             if (ctx.rootGetters['header/popupProfileShowed']) {
                 if (ctx.rootGetters['header/PopupProfile']) {
-                    ctx.commit('setPopupProfileFalse')
-                    ctx.commit('setPopupProfileShowedFalse')
+                    ctx.commit('setPopupProfileFalse');
+                    ctx.commit('setPopupProfileShowedFalse');
                 }
             }
         },
 
         popupMenuToggle(ctx) {
-            ctx.commit('setPopupMenu')
+            ctx.commit('setPopupMenu');
 
             setTimeout(() => {
                 ctx.commit('setPopupMenuShowed');

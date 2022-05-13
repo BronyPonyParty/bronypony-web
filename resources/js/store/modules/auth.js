@@ -39,8 +39,12 @@ export default {
             const url = '/api/' + token + '/logout';
 
             axios.post(url).then(response => {
+                //Открытие страницы логина и учитска переменной token
                 commit('app/setPage', 'login', {root:true});
                 commit('app/setToken', '', {root:true});
+
+                // Очистка списка техники
+                commit('equipment/clearItems', '', {root:true});
             }).catch(error => {
                 console.log('logout error: ' + error.response.data.errors)
             });
