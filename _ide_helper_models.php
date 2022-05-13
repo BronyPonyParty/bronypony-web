@@ -74,7 +74,7 @@ namespace App\Models{
  * @property string $address
  * @property string $phone_number
  * @property int $registration_date
- * @property string $state_name
+ * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\OrganizationFactory factory(...$parameters)
@@ -87,7 +87,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereOrganizationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereRegistrationDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Organization whereStateName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Organization whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereUpdatedAt($value)
  */
 	class Organization extends \Eloquent {}
@@ -124,7 +124,7 @@ namespace App\Models{
  * @property string $organization_name
  * @property string $phone_number
  * @property string $address
- * @property string $state_name
+ * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\ProviderFactory factory(...$parameters)
@@ -136,7 +136,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereOrganizationName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider wherePhoneNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereStateName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Provider whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereUpdatedAt($value)
  */
 	class Provider extends \Eloquent {}
@@ -201,7 +201,7 @@ namespace App\Models{
  * @property string|null $description
  * @property int $provider_id
  * @property int $organization_id
- * @property string $state_name
+ * @property string $status
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Database\Factories\TechnicFactory factory(...$parameters)
@@ -216,7 +216,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereProviderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Technic whereStateName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Technic whereStatus($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereUpdatedAt($value)
  */
 	class Technic extends \Eloquent {}

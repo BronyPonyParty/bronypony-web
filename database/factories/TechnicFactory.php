@@ -20,7 +20,7 @@ class TechnicFactory extends Factory
             'description' => $this->faker->realTextBetween(200, 1000),
             'provider_id' => rand(1, 3),
             'organization_id' => rand(1, 3),
-            'state_name' => rand(0, 10) <= 8 ? 'Исправна' : 'Утилизирована'
+            'status' => rand(0, 10) <= 8 ? 'Исправна' : 'Утилизирована'
         ];
     }
 }

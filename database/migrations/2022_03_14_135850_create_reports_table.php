@@ -20,7 +20,7 @@ class CreateReportsTable extends Migration
             $table->string('description', 512)->nullable();
             $table->integer('create_date');
             $table->integer('complete_date');
-            $table->string('state_name', 32);
+            $table->string('status', 32);
             $table->timestamps();
         });
     }

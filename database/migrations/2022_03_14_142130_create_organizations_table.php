@@ -19,7 +19,7 @@ class CreateOrganizationsTable extends Migration
             $table->string('address', 128)->unique();
             $table->string('phone_number', 16)->unique();
             $table->integer('registration_date');
-            $table->string('state_name', 32);
+            $table->string('status', 32);
             $table->timestamps();
         });
     }

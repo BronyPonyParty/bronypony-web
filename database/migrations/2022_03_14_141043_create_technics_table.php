@@ -21,7 +21,7 @@ class CreateTechnicsTable extends Migration
             $table->string('description', 1024)->nullable();
             $table->integer('provider_id')->unsigned();
             $table->integer('organization_id')->unsigned();
-            $table->string('state_name', 32);
+            $table->string('status', 32);
             $table->timestamps();
         });
     }

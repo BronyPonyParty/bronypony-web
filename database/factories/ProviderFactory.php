@@ -17,7 +17,7 @@ class ProviderFactory extends Factory
             'organization_name' => $this->faker->unique()->company(),
             'phone_number' => '79' . substr($this->faker->unique()->e164PhoneNumber(), 3, 11),
             'address' => $this->faker->unique()->address(),
-            'state_name' => rand(0 ,1) ? 'Работает' : 'Не работает'
+            'status' => rand(0 ,1) ? 'Работает' : 'Не работает'
         ];
     }
 }
