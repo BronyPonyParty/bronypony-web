@@ -15,8 +15,6 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $data = [];
-
         $data[] = [
             'lastname' => 'Путинцев',
             'firstname' => 'Александр',

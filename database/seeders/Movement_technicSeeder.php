@@ -15,8 +15,6 @@ class Movement_technicSeeder extends Seeder
      */
     public function run()
     {
-        $data = [];
-
         $data[] = [
             'user_id' => 2,
             'technic_id' => 19,

@@ -15,8 +15,6 @@ class OrganizationSeeder extends Seeder
      */
     public function run()
     {
-        $data = [];
-
         $data[] = [
             'name' => 'Office workers',
             'address' => '672520, г. Сураж, ул. Чапаевский пер, дом 57',

@@ -15,8 +15,6 @@ class Movement_listSeeder extends Seeder
      */
     public function run()
     {
-        $data = [];
-
         $data[] = [
             'premise_id' => 3,
             'movement_technic_id' => 1
