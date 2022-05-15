@@ -15,9 +15,8 @@ class CreateMovementListsTable extends Migration
     {
         Schema::create('movement_lists', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('premise_id')->unsigned();
-            $table->integer('movement_technic_id')->unsigned();
-            $table->timestamps();
+            $table->unsignedInteger('premise_id');
+            $table->unsignedInteger('movement_technic_id');
         });
     }
 

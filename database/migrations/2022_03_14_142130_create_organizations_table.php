@@ -15,12 +15,11 @@ class CreateOrganizationsTable extends Migration
     {
         Schema::create('organizations', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('organization_name', 64)->unique();
+            $table->string('name', 64)->unique();
             $table->string('address', 128)->unique();
             $table->string('phone_number', 16)->unique();
-            $table->integer('registration_date');
-            $table->string('status', 32);
-            $table->timestamps();
+            $table->unsignedInteger('registration_date');
+            $table->unsignedTinyInteger('status');
         });
     }
 

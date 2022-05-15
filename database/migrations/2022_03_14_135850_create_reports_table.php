@@ -15,13 +15,12 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('technic_id')->unsigned();
-            $table->integer('user_id')->unsigned();
+            $table->unsignedInteger('technic_id');
+            $table->unsignedInteger('user_id');
             $table->string('description', 512)->nullable();
-            $table->integer('create_date');
-            $table->integer('complete_date');
-            $table->string('status', 32);
-            $table->timestamps();
+            $table->unsignedInteger('create_date');
+            $table->unsignedInteger('complete_date')->nullable();
+            $table->unsignedTinyInteger('status');
         });
     }
 

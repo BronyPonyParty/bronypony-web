@@ -15,10 +15,9 @@ class CreatePremisesTable extends Migration
     {
         Schema::create('premises', function (Blueprint $table) {
             $table->increments('id');
-            $table->tinyInteger('number');
-            $table->tinyInteger('floor');
-            $table->integer('organization_id')->unsigned();
-            $table->timestamps();
+            $table->unsignedInteger('number');
+            $table->smallInteger('floor');
+            $table->unsignedInteger('organization_id');
         });
     }
 

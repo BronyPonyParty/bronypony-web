@@ -2,10 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\Organization;
-use App\Models\Provider;
-use App\Models\Technic;
-use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,10 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Organization::factory(3)->create();
-        User::factory(10)->create();
-        Provider::factory(3)->create();
-        Technic::factory(30)->create();
-        $this->call(PremisesSeeder::class);
+        $this->call(OrganizationSeeder::class);
+        $this->call(ProviderSeeder::class);
+        $this->call(UserSeeder::class);
+        $this->call(PremiseSeeder::class);
+        $this->call(TechnicSeeder::class);
+        $this->call(Movement_technicSeeder::class);
+        $this->call(Movement_listSeeder::class);
+        $this->call(ReportSeeder::class);
+        $this->call(RepairSeeder::class);
     }
 }

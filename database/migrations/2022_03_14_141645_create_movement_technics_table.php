@@ -15,10 +15,9 @@ class CreateMovementTechnicsTable extends Migration
     {
         Schema::create('movement_technics', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('user_id')->unsigned();
-            $table->integer('technic_id')->unsigned();
-            $table->integer('date');
-            $table->timestamps();
+            $table->unsignedInteger('user_id');
+            $table->unsignedInteger('technic_id');
+            $table->unsignedInteger('date');
         });
     }
 

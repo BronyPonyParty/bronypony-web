@@ -15,11 +15,10 @@ class CreateProvidersTable extends Migration
     {
         Schema::create('providers', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('organization_name', 64)->unique();
+            $table->string('name', 64)->unique();
             $table->string('phone_number', 16)->unique();
             $table->string('address', 128)->unique();
-            $table->string('status', 32);
-            $table->timestamps();
+            $table->unsignedTinyInteger('status');
         });
     }
 

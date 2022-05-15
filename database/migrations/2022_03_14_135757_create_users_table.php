@@ -23,9 +23,9 @@ class CreateUsersTable extends Migration
             $table->string('phone_number', 16)->nullable()->unique();
             $table->string('mail', 64)->unique();
             $table->string('avatar', 32)->nullable();
-            $table->integer('organization_id')->unsigned();
-            $table->boolean('status');
-            $table->timestamps();
+            $table->unsignedInteger('organization_id');
+            $table->unsignedTinyInteger('status');
+            // 0 - удалён, 2 - сотрудник, 4 - ремонтник, 8 - главный ремонтник
         });
     }
 

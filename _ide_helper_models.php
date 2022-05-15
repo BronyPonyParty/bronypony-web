@@ -17,16 +17,12 @@ namespace App\Models{
  * @property int $id
  * @property int $premise_id
  * @property int $movement_technic_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list query()
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereMovementTechnicId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list wherePremiseId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereUpdatedAt($value)
  */
 	class Movement_list extends \Eloquent {}
 }
@@ -39,16 +35,12 @@ namespace App\Models{
  * @property int $user_id
  * @property int $technic_id
  * @property int $date
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic query()
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereTechnicId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereUserId($value)
  */
 	class Movement_technic extends \Eloquent {}
@@ -70,25 +62,21 @@ namespace App\Models{
  * App\Models\Organization
  *
  * @property int $id
- * @property string $organization_name
+ * @property string $name
  * @property string $address
  * @property string $phone_number
  * @property int $registration_date
- * @property string $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $status
  * @method static \Database\Factories\OrganizationFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Organization newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Organization query()
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Organization whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Organization whereOrganizationName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Organization whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereRegistrationDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Organization whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Organization whereUpdatedAt($value)
  */
 	class Organization extends \Eloquent {}
 }
@@ -101,17 +89,13 @@ namespace App\Models{
  * @property int $number
  * @property int $floor
  * @property int $organization_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Premise newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Premise newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Premise query()
- * @method static \Illuminate\Database\Eloquent\Builder|Premise whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereFloor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Premise whereUpdatedAt($value)
  */
 	class Premise extends \Eloquent {}
 }
@@ -121,23 +105,19 @@ namespace App\Models{
  * App\Models\Provider
  *
  * @property int $id
- * @property string $organization_name
+ * @property string $name
  * @property string $phone_number
  * @property string $address
- * @property string $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $status
  * @method static \Database\Factories\ProviderFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Provider newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Provider query()
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereOrganizationName($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Provider whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Provider whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereUpdatedAt($value)
  */
 	class Provider extends \Eloquent {}
 }
@@ -149,16 +129,14 @@ namespace App\Models{
  * @property int $id
  * @property int $report_id
  * @property int $repairman_id
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $description
  * @method static \Illuminate\Database\Eloquent\Builder|Repair newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Repair newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Repair query()
- * @method static \Illuminate\Database\Eloquent\Builder|Repair whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Repair whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereRepairmanId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Repair whereReportId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Repair whereUpdatedAt($value)
  */
 	class Repair extends \Eloquent {}
 }
@@ -173,18 +151,14 @@ namespace App\Models{
  * @property int $term
  * @property string $ip
  * @property int $removed
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @method static \Illuminate\Database\Eloquent\Builder|Session newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Session newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Session query()
- * @method static \Illuminate\Database\Eloquent\Builder|Session whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereIp($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereRemoved($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereTerm($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Session whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Session whereUserId($value)
  */
 	class Session extends \Eloquent {}
@@ -201,14 +175,12 @@ namespace App\Models{
  * @property string|null $description
  * @property int $provider_id
  * @property int $organization_id
- * @property string $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property int $status
+ * @property-read \App\Models\Provider|null $provider
  * @method static \Database\Factories\TechnicFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic query()
- * @method static \Illuminate\Database\Eloquent\Builder|Technic whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDatePurchase($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereId($value)
@@ -217,7 +189,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Technic whereUpdatedAt($value)
  */
 	class Technic extends \Eloquent {}
 }
@@ -237,8 +208,6 @@ namespace App\Models{
  * @property string|null $avatar
  * @property int $organization_id
  * @property int $status
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \Illuminate\Notifications\DatabaseNotificationCollection|\Illuminate\Notifications\DatabaseNotification[] $notifications
  * @property-read int|null $notifications_count
  * @property-read \Illuminate\Database\Eloquent\Collection|\Laravel\Sanctum\PersonalAccessToken[] $tokens
@@ -248,7 +217,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|User query()
  * @method static \Illuminate\Database\Eloquent\Builder|User whereAvatar($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereFirstname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastname($value)
@@ -259,7 +227,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoneNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  */
 	class User extends \Eloquent {}
 }

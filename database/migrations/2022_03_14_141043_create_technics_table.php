@@ -16,13 +16,12 @@ class CreateTechnicsTable extends Migration
         Schema::create('technics', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name', 64);
-            $table->integer('number');
-            $table->integer('date_purchase');
+            $table->unsignedInteger('number');
+            $table->unsignedInteger('date_purchase');
             $table->string('description', 1024)->nullable();
-            $table->integer('provider_id')->unsigned();
-            $table->integer('organization_id')->unsigned();
-            $table->string('status', 32);
-            $table->timestamps();
+            $table->unsignedInteger('provider_id');
+            $table->unsignedInteger('organization_id');
+            $table->unsignedInteger('status');
         });
     }
 
