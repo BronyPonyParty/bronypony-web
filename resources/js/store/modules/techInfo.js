@@ -5,11 +5,35 @@ export default {
         descriptionShowed: true,
         travelHistoryShowed: false,
         repairHistoryShowed: false,
-        title: 'Описание техники'
+        title: 'Описание техники',
+
+        techDescription: {
+            id: null,
+            name: '',
+            cabinet: null,
+            status: '',
+            provider: '',
+            description: ''
+        }
     },
 
     actions: {
+        getEquipmentInfo(ctx) {
+            const technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
+            const token = ctx.rootGetters['app/getToken'];
+            const url = 'api/' + token + '/getEquipmentInfo';
 
+            axios.post(url, {
+                technic_id
+            }).then(response => {
+                console.log(response.data);
+            }).catch(error => {
+                if (error.response.status === 401) {
+                    ctx.commit('app/setPage', 'login', {root:true});
+                    ctx.commit('app/setToken', '', {root:true});
+                }
+            })
+        }
     },
 
     mutations: {
@@ -39,6 +63,18 @@ export default {
                 state.title = 'История ремонтов техники';
             })
         },
+
+
+        setTechDescription(state, {id, name, cabinet, status, provider, description}) {
+            state.techDescription = {
+                id,
+                name,
+                cabinet,
+                status,
+                provider,
+                description
+            }
+        }
     },
 
     getters: {
@@ -56,6 +92,10 @@ export default {
 
         getTitle(state) {
             return state.title;
+        },
+
+        getTechDescription(state) {
+            return state.techDescription;
         }
     }
 }

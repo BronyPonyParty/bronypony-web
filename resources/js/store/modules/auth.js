@@ -23,6 +23,9 @@ export default {
 
                 ctx.commit('app/setToken',response.data[0], {root:true});
                 ctx.commit('app/setPage', 'statements', {root:true});
+
+                // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
+                ctx.commit('equipment/clearItems', '', {root:true});
             }).catch(error => {
                 if (error.response.status === 422) {
                     // this.errors = error.response.data.errors;
@@ -39,12 +42,8 @@ export default {
             const url = '/api/' + token + '/logout';
 
             axios.post(url).then(response => {
-                //Открытие страницы логина и учитска переменной token
                 commit('app/setPage', 'login', {root:true});
                 commit('app/setToken', '', {root:true});
-
-                // Очистка списка техники
-                commit('equipment/clearItems', '', {root:true});
             }).catch(error => {
                 console.log('logout error: ' + error.response.data.errors)
             });

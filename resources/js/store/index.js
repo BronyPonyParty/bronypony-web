@@ -4,7 +4,7 @@ import authModule from "./modules/auth";
 import appModule from "./modules/app";
 import headerModule from "./modules/header";
 import userModule from "./modules/user";
-import techDescriptionModule from "./modules/techDescription";
+import techInfoModule from "./modules/techInfo";
 import equipmentModule from "./modules/equipment";
 
 Vue.use(Vuex)
@@ -17,7 +17,7 @@ export default new Vuex.Store({
         auth: authModule,
         header: headerModule,
         user: userModule,
-        techDescription: techDescriptionModule,
+        techInfo: techInfoModule,
         equipment: equipmentModule
 
     }

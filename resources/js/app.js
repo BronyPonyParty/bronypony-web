@@ -30,7 +30,7 @@ Vue.component('v-header', require('./components/Header.vue').default);
 Vue.component('v-statements', require('./components/Statements.vue').default);
 Vue.component('v-notice-window', require('./store/modules/popup/NoticeWindow.vue').default);
 Vue.component('v-equipment', require('./components/Equipment.vue').default);
-Vue.component('v-tech-description-window', require('./store/modules/popup/TechDescriptionWindow.vue').default);
+Vue.component('v-tech-info-window', require('./store/modules/popup/TechInfoWindow.vue').default);
 Vue.component('v-feed-back-window', require('./store/modules/popup/FeedBackWindow.vue').default);
 Vue.component('v-password-window', require('./store/modules/popup/passwordWindow.vue').default);
 

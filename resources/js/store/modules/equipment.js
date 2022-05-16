@@ -1,4 +1,4 @@
-export default { // Заготовка
+export default {
     namespaced: true,
 
     state: {
@@ -6,20 +6,21 @@ export default { // Заготовка
     },
 
     actions: {
-        getEquipmentData(ctx) {
+        getEquipmentList(ctx) {
             const token = ctx.rootGetters['app/getToken'];
-            const url = 'api/' + token + '/getEquipmentData';
+            const url = 'api/' + token + '/getEquipmentList';
 
             axios.post(url, {
 
             }).then(response => {
                 response.data.forEach(item => {
                     ctx.commit('setItems', {
+                        id: item.id,
                         name: item.name,
                         number: item.number,
                         date: item.date,
                         description: item.description,
-                        provider: item.organization,
+                        provider: item.provider,
                         status: item.status
                     })
                 })
@@ -33,8 +34,9 @@ export default { // Заготовка
     },
 
     mutations: {
-        setItems(state, {name, number, date, description, provider, status}) {
+        setItems(state, {id, name, number, date, description, provider, status}) {
             state.items.push ({
+                id,
                 name,
                 number,
                 date,

@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    public $timestamps = false;
 
     /**
      * The attributes that are mass assignable.
@@ -30,8 +31,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'created_at',
-        'updated_at',
         'organization_id',
         'status'
     ];

@@ -20,10 +20,6 @@ use App\Models\Technic;
 |
 */
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
 Route::post('login', [LoginController::class, 'login']);
 
 
@@ -31,16 +27,6 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::post('getUserData', [UserController::class, 'getUserData']);
     Route::post('logout', [LoginController::class, 'logout']);
     Route::post('saveUserData', [UserController::class, 'saveUserData']);
-    Route::post('getEquipmentData', [EquipmentController::class, 'getEquipmentData']);
-});
-
-
-Route::get('test', function () {
-    $rows = Technic::get();
-    $mass = [];
-    foreach ($rows as $row) {
-        $mass[] = $row->provider->organization_name;
-    }
-    dd($mass);
-//    echo Technic::find(1)->provider->organization_name;
+    Route::post('getEquipmentList', [EquipmentController::class, 'getEquipmentList']);
+    Route::post('getEquipmentInfo', [EquipmentController::class, 'getEquipmentInfo']);
 });

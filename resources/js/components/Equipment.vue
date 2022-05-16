@@ -24,7 +24,7 @@
 
                 <div class="col-12 col-lg white-block p-3">
                     <div class="techList" v-if="items.length !== 0">
-                        <div class="item justify-content-between p-3 d-flex" v-for="(item, index) in items" :key="item.id" @click="showDescriptionWindow()">
+                        <div class="item justify-content-between p-3 d-flex" v-for="(item) in items" :key="item.id" @click="showInfoWindow(item)">
                             <strong>{{item.name + '-' + item.number}}</strong>
                             <span>{{item.status}}</span>
                         </div>
@@ -44,7 +44,8 @@ export default {
     name: "equipmentList",
 
     mounted() {
-        this.$store.dispatch('equipment/getEquipmentData');
+        if (this.items.length > 0) return; // Загрузка данных работает 1 раз
+        this.$store.dispatch('equipment/getEquipmentList');
     },
 
     computed: {
@@ -58,9 +59,19 @@ export default {
             showWindow: 'app/setWindow'
         }),
 
-        showDescriptionWindow() {
+        showInfoWindow(item) {
+            this.$store.commit('techInfo/setTechDescription', {
+                id: item.id,
+                name: item.name + '-' + item.number,
+                status: item.status,
+                provider: item.provider,
+                description: item.description
+            });
+
+            this.$store.dispatch('techInfo/getEquipmentInfo');
+
             setTimeout(() => {
-                this.showWindow({name: 'techDescriptionWindow'});
+                this.showWindow({name: 'techInfoWindow'});
             }, 0)
         }
     }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
-        <v-tech-description-window v-if="window.name === 'techDescriptionWindow'"></v-tech-description-window>
+        <v-tech-info-window v-if="window.name === 'techInfoWindow'"></v-tech-info-window>
         <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
         <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
 

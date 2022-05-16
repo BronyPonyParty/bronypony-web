@@ -23,19 +23,23 @@
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px" v-if="descriptionShowed">
                             <div class="item-tech">
                                 <span>Техника</span>
-                                <strong>Компьютер 236</strong>
+                                <strong>{{ getTechDescription.name}}</strong>
                             </div>
                             <div class="item-tech">
                                 <span>Кабинет</span>
-                                <strong>101</strong>
+                                <strong>{{ getTechDescription.cabinet }}</strong>
                             </div>
                             <div class="item-tech">
                                 <span>Состояние</span>
-                                <strong>Исправна</strong>
+                                <strong>{{ getTechDescription.status }}</strong>
+                            </div>
+                            <div class="item-tech">
+                                <span>Поставщик</span>
+                                <strong>{{ getTechDescription.provider }}</strong>
                             </div>
 
                             <div style="margin-top: 15px">
-                                Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+                                {{ getTechDescription.description }}
                             </div>
                             <div class="buttons">
                                 <button class="btn cancel-btn text-white" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
@@ -78,37 +82,41 @@
 <script>
 import ClickOutside from 'vue-click-outside';
 export default {
-    name: "TechDescriptionWindow",
+    name: "TechInfoWindow",
 
     computed: {
         descriptionShowed() {
-            return this.$store.getters['techDescription/getDescriptionShowed'];
+            return this.$store.getters['techInfo/getDescriptionShowed'];
         },
 
         travelHistoryShowed() {
-            return this.$store.getters['techDescription/getTravelHistoryShowed'];
+            return this.$store.getters['techInfo/getTravelHistoryShowed'];
         },
 
         repairHistoryShowed() {
-            return this.$store.getters['techDescription/getRepairHistoryShowed'];
+            return this.$store.getters['techInfo/getRepairHistoryShowed'];
         },
 
         title() {
-            return this.$store.getters['techDescription/getTitle'];
+            return this.$store.getters['techInfo/getTitle'];
+        },
+
+        getTechDescription() {
+            return this.$store.getters['techInfo/getTechDescription'];
         }
     },
 
     methods: {
         showRepairHistory() {
-            this.$store.commit('techDescription/showRepairHistory');
+            this.$store.commit('techInfo/showRepairHistory');
         },
 
         showTravelHistory() {
-            this.$store.commit('techDescription/showTravelHistory');
+            this.$store.commit('techInfo/showTravelHistory');
         },
 
         showDescriptionTech() {
-            this.$store.commit('techDescription/showDescriptionTech');
+            this.$store.commit('techInfo/showDescriptionTech');
         },
 
         close() {
