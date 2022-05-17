@@ -18,9 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(UserSeeder::class);
         $this->call(PremiseSeeder::class);
         $this->call(TechnicSeeder::class);
-//        $this->call(Movement_technicSeeder::class);
-//        $this->call(Movement_listSeeder::class);
         $this->call(ReportSeeder::class);
         $this->call(RepairSeeder::class);
+        $this->call(MovingTechnicSeeder::class);
     }
 }

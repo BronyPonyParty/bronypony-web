@@ -14,15 +14,11 @@ namespace App\Models{
 /**
  * App\Models\Movement_list
  *
- * @property int $id
- * @property int $premise_id
- * @property int $movement_technic_id
+ * @property-read \App\Models\Movement_technic|null $movement_technic
+ * @property-read \App\Models\Premise|null $premise
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_list query()
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_list whereMovementTechnicId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_list wherePremiseId($value)
  */
 	class Movement_list extends \Eloquent {}
 }
@@ -31,19 +27,36 @@ namespace App\Models{
 /**
  * App\Models\Movement_technic
  *
- * @property int $id
- * @property int $user_id
- * @property int $technic_id
- * @property int $date
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic query()
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereDate($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereTechnicId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Movement_technic whereUserId($value)
  */
 	class Movement_technic extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
+ * App\Models\MovingTechnic
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $technic_id
+ * @property int $premise_id
+ * @property int $date
+ * @property-read \App\Models\Premise|null $premise
+ * @property-read \App\Models\Technic|null $technic
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic query()
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic whereDate($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic wherePremiseId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic whereTechnicId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|MovingTechnic whereUserId($value)
+ */
+	class MovingTechnic extends \Eloquent {}
 }
 
 namespace App\Models{
