@@ -13,11 +13,11 @@ class CreateMovementListsTable extends Migration
      */
     public function up()
     {
-        Schema::create('movement_lists', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('premise_id');
-            $table->unsignedInteger('movement_technic_id');
-        });
+//        Schema::create('movement_lists', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->unsignedInteger('premise_id');
+//            $table->unsignedInteger('movement_technic_id');
+//        });
     }
 
     /**
@@ -27,6 +27,6 @@ class CreateMovementListsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('movement_lists');
+//        Schema::dropIfExists('movement_lists');
     }
 }

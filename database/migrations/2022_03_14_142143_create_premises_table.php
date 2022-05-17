@@ -15,9 +15,13 @@ class CreatePremisesTable extends Migration
     {
         Schema::create('premises', function (Blueprint $table) {
             $table->increments('id');
+
             $table->unsignedInteger('number');
+
             $table->smallInteger('floor');
+
             $table->unsignedInteger('organization_id');
+            $table->foreign('organization_id')->references('id')->on('organizations');
         });
     }
 

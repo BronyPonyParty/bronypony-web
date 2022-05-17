@@ -15,10 +15,16 @@ class CreateSessionsTable extends Migration
     {
         Schema::create('sessions', function (Blueprint $table) {
             $table->increments('id');
+
             $table->unsignedInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->string('token', 32)->unique();
+
             $table->unsignedInteger('term');
+
             $table->ipAddress('ip');
+
             $table->boolean('removed')->default(false);
         });
     }

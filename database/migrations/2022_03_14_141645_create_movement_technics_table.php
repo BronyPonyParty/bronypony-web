@@ -13,12 +13,12 @@ class CreateMovementTechnicsTable extends Migration
      */
     public function up()
     {
-        Schema::create('movement_technics', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('user_id');
-            $table->unsignedInteger('technic_id');
-            $table->unsignedInteger('date');
-        });
+//        Schema::create('movement_technics', function (Blueprint $table) {
+//            $table->increments('id');
+//            $table->unsignedInteger('user_id');
+//            $table->unsignedInteger('technic_id');
+//            $table->unsignedInteger('date');
+//        });
     }
 
     /**
@@ -28,6 +28,6 @@ class CreateMovementTechnicsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('movement_technics');
+//        Schema::dropIfExists('movement_technics');
     }
 }
