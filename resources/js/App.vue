@@ -8,7 +8,7 @@
         <v-login v-if="page === 'login'"></v-login>
         <v-user v-if="page === 'user'"></v-user>
         <v-statements v-if="page === 'statements'"></v-statements>
-        <v-equipment v-if="page === 'equipment'"></v-equipment>
+        <v-tech v-if="page === 'technical'"></v-tech>
     </div>
 </template>
 

@@ -14,11 +14,16 @@ export default {
             status: '',
             provider: '',
             description: ''
-        }
+        },
+
+        techMovements: [],
+        techRepairs: [],
     },
 
     actions: {
-        getEquipmentInfo(ctx) {
+        getTechInfo(ctx) {
+            ctx.commit('clearTechMovements');
+            ctx.commit('clearTechRepairs');
             const technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
             const token = ctx.rootGetters['app/getToken'];
             const url = 'api/' + token + '/getEquipmentInfo';
@@ -26,7 +31,29 @@ export default {
             axios.post(url, {
                 technic_id
             }).then(response => {
-                console.log(response.data);
+                response.data[0].forEach(item => {
+                    ctx.commit('setTechMovements', {
+                        id: item.id,
+                        user: item.user,
+                        number: item.number,
+                        date: item.date
+                    });
+                });
+
+                ctx.commit('setCabinet');
+
+                    console.log(response.data);
+                response.data[1].forEach(item => {
+                    ctx.commit('setTechRepairs', {
+                        id: item.id,
+                        user: item.user,
+                        userDescription: item.userDescription,
+                        repairman: item.repairman,
+                        repairmanDescription: item.repairmanDescription,
+                        startDate: item.startDate,
+                        endDate: item.endDate
+                    });
+                });
             }).catch(error => {
                 if (error.response.status === 401) {
                     ctx.commit('app/setPage', 'login', {root:true});
@@ -43,7 +70,7 @@ export default {
                 state.repairHistoryShowed = false;
                 state.travelHistoryShowed = false;
                 state.title = 'Описание техники';
-            }, 0)
+            }, 0);
         },
 
         showTravelHistory(state) {
@@ -52,7 +79,7 @@ export default {
                 state.repairHistoryShowed = false;
                 state.descriptionShowed = false;
                 state.title = 'История перемещений';
-            }, 0)
+            }, 0);
         },
 
         showRepairHistory(state) {
@@ -61,7 +88,7 @@ export default {
                 state.travelHistoryShowed = false;
                 state.descriptionShowed = false;
                 state.title = 'История ремонтов техники';
-            })
+            });
         },
 
 
@@ -73,6 +100,46 @@ export default {
                 status,
                 provider,
                 description
+            };
+        },
+
+        setTechMovements(state, {id, user, number, date}) {
+            state.techMovements.push({
+                id,
+                user,
+                number,
+                date
+            });
+        },
+
+        clearTechMovements(state) {
+            state.techMovements = [];
+        },
+
+        setTechRepairs(state, {id, user, userDescription, repairman, repairmanDescription, startDate, endDate, visibility = false, textSwitcher = false, buttonText = 'Описание сотрудника'}) {
+            state.techRepairs.push({
+                id,
+                user,
+                userDescription,
+                repairman,
+                repairmanDescription,
+                startDate,
+                endDate,
+                visibility,
+                textSwitcher,
+                buttonText
+            });
+        },
+
+        clearTechRepairs(state) {
+            state.techRepairs = [];
+        },
+
+        setCabinet(state) {
+            if (state.techMovements.length > 0) {
+                state.techDescription.cabinet = state.techMovements[state.techMovements.length - 1].number;
+            } else {
+                state.techDescription.cabinet = 'Неизвестно';
             }
         }
     },
@@ -96,6 +163,14 @@ export default {
 
         getTechDescription(state) {
             return state.techDescription;
+        },
+
+        getTechMovements(state) {
+            return state.techMovements;
+        },
+
+        getTechRepairs(state) {
+            return state.techRepairs;
         }
     }
 }

@@ -39,7 +39,12 @@
                             </div>
 
                             <div style="margin-top: 15px">
-                                {{ getTechDescription.description }}
+                                <div v-if="getTechDescription.description.length !== 0">
+                                    {{ getTechDescription.description }}
+                                </div>
+                                <div class="h4" style="opacity: 40%" v-else>
+                                    Описание отсутствует
+                                </div>
                             </div>
                             <div class="buttons">
                                 <button class="btn cancel-btn text-white" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
@@ -48,28 +53,64 @@
                         </div>
 
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px;" v-if="repairHistoryShowed">
-                            <div class="techList">
-                                <div class="item justify-content-between p-3 d-flex">
-                                    <strong>Путинцев Александр</strong>
-                                    <div>
-                                        <span>24.04.22 / 24.04.22</span>
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="cur-point" style="margin-left: 10px">
-                                            <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
-                                        </svg>
+                            <div class="techList" v-if="getTechRepairs.length !== 0">
+                                <div class="tech" v-for="(item, index) in getTechRepairs" :key="item.id">
+
+                                    <div class="item justify-content-between p-3 d-flex" @click="showDescription(index)">
+                                        <strong>{{ item.repairman }}</strong>
+                                        <div>
+                                            <span>{{ formatDate(item.startDate) + '/' + formatDate(item.endDate) }}</span>
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="cur-point" style="margin-left: 10px">
+                                                <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <div v-if="item.visibility">
+                                        <div>
+                                            <div v-if="item.textSwitcher">
+                                                <div v-if="item.repairmanDescription.length !== 0">
+                                                    {{ item.repairmanDescription }}
+                                                </div>
+                                                <div class="h4 d-flex justify-content-center" style="opacity: 40%; margin-bottom: 0" v-else>
+                                                    Сотрудник не описал процесс ремонта
+                                                </div>
+                                            </div>
+                                            <div v-else>
+                                                <div v-if="item.userDescription.length !== 0">
+                                                    {{item.userDescription}}
+                                                </div>
+                                                <div class="h4 d-flex justify-content-center" style="opacity: 40%; margin-bottom: 0" v-else>
+                                                    Пользователь не описал причину поломки
+                                                </div>
+                                            </div>
+
+                                            <div class="pt-3" style="text-align: right">
+                                                <button class="btn btn-toggle" @click="switchText(index)">{{item.buttonText}}</button>
+                                            </div>
+                                            <hr>
+                                        </div>
                                     </div>
                                 </div>
+
+                            </div>
+                            <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
+                                Список пуст
                             </div>
                         </div>
 
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px;" v-if="travelHistoryShowed">
-                            <div class="techList">
-                                <div class="item justify-content-between p-3 d-flex">
+                            <div class="techList" v-if="getTechMovements.length !== 0">
+                                <div class="item justify-content-between p-3 d-flex" v-for="item in getTechMovements" :key="item.id">
                                     <div>
-                                        <strong>Путинцев Александр</strong>
-                                        <span class="moving">101/407</span>
+                                        <strong>{{ item.user }}</strong>
+                                        <span class="moving">{{ item.number }}</span>
                                     </div>
-                                    <span>24.04.22</span>
+                                    <span>{{ formatDate(item.date) }}</span>
                                 </div>
+                            </div>
+                            <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
+                                Список пуст
                             </div>
                         </div>
                     </div>
@@ -103,6 +144,14 @@ export default {
 
         getTechDescription() {
             return this.$store.getters['techInfo/getTechDescription'];
+        },
+
+        getTechMovements() {
+            return this.$store.getters['techInfo/getTechMovements'];
+        },
+
+        getTechRepairs() {
+            return this.$store.getters['techInfo/getTechRepairs'];
         }
     },
 
@@ -123,6 +172,27 @@ export default {
             this.$store.commit('app/setWindow', {name: ''});
             this.showDescriptionTech();
         },
+
+        formatDate(date) {
+            if (typeof date !== "number") return 'Неизвестно';
+
+            date = new Date(date * 1000);
+            return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth())) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours()+ ":" + date.getMinutes()
+        },
+
+        showDescription(index) {
+            this.getTechRepairs[index].visibility ^= true;
+        },
+
+        switchText(index) {
+            this.getTechRepairs[index].textSwitcher ^= true;
+
+            if (this.getTechRepairs[index].textSwitcher) {
+                this.getTechRepairs[index].buttonText = 'Описание заявителя';
+            } else {
+                this.getTechRepairs[index].buttonText = 'Описание сотрудника';
+            }
+        }
     },
 
     directives: {
@@ -182,6 +252,14 @@ export default {
             width: 0;
         }
 
+        .tech {
+            margin-bottom: 8px;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
         .item {
             width: 100%;
             background-color: #3C4870;
@@ -200,5 +278,20 @@ export default {
         .item:active {
             background-color: #262E45;
         }
+    }
+
+    .btn-toggle {
+        background-color: #345DD1;
+        border: none;
+        box-shadow: inherit;
+        color: white;
+    }
+
+    .btn-toggle:hover {
+        background-color: #2E51B7;
+    }
+
+    .btn-toggle:active {
+        background-color: #243881;
     }
 </style>

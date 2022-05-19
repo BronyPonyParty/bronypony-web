@@ -2,7 +2,13 @@ export default {
     namespaced: true,
 
     state: {
-        items: []
+        items: [],
+
+        filters: {
+            worked: false,
+            faulty: false,
+            disposed: false
+        }
     },
 
     actions: {
@@ -10,9 +16,7 @@ export default {
             const token = ctx.rootGetters['app/getToken'];
             const url = 'api/' + token + '/getEquipmentList';
 
-            axios.post(url, {
-
-            }).then(response => {
+            axios.post(url, {}).then(response => {
                 response.data.forEach(item => {
                     ctx.commit('setItems', {
                         id: item.id,
@@ -22,12 +26,12 @@ export default {
                         description: item.description,
                         provider: item.provider,
                         status: item.status
-                    })
-                })
+                    });
+                });
             }).catch(error => {
                 if (error.response.status === 401) {
-                    ctx.commit('app/setPage', 'login', {root:true});
-                    ctx.commit('app/setToken', '', {root:true});
+                    ctx.commit('app/setPage', 'login', {root: true});
+                    ctx.commit('app/setToken', '', {root: true});
                 }
             })
         }
@@ -35,7 +39,7 @@ export default {
 
     mutations: {
         setItems(state, {id, name, number, date, description, provider, status}) {
-            state.items.push ({
+            state.items.push({
                 id,
                 name,
                 number,
@@ -48,12 +52,22 @@ export default {
 
         clearItems(state) {
             state.items = [];
-        }
+        },
     },
 
     getters: {
         getItems(state) {
-            return state.items;
+            return state.items.filter(item => {
+                if (state.filters.worked) {
+                    return item.status === 0;
+                } else {
+                    return item;
+                }
+            });
+        },
+
+        getFilters(state) {
+            return state.filters;
         }
     }
 }

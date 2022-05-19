@@ -8,7 +8,7 @@
                 <div class="col-12 col-lg-3 white-block " style="padding-left: 0; padding-right: 0;">
                     <div class="filters">
                         <label class="filter">
-                            <input type="checkbox">
+                            <input type="checkbox" @change="toggleWorkedFilter">
                             <span class="clip">Техника исправна</span>
                         </label>
                         <label class="filter">
@@ -26,7 +26,7 @@
                     <div class="techList" v-if="items.length !== 0">
                         <div class="item justify-content-between p-3 d-flex" v-for="(item) in items" :key="item.id" @click="showInfoWindow(item)">
                             <strong>{{item.name + '-' + item.number}}</strong>
-                            <span>{{item.status}}</span>
+                            <span>{{getStatusText(item.status)}}</span>
                         </div>
                     </div>
                     <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
@@ -51,6 +51,10 @@ export default {
     computed: {
         items() {
             return this.$store.getters['equipment/getItems'];
+        },
+
+        filters() {
+            return this.$store.getters['equipment/getFilters'];
         }
     },
 
@@ -68,11 +72,29 @@ export default {
                 description: item.description
             });
 
-            this.$store.dispatch('techInfo/getEquipmentInfo');
+            this.$store.dispatch('techInfo/getTechInfo');
 
             setTimeout(() => {
                 this.showWindow({name: 'techInfoWindow'});
             }, 0)
+        },
+
+        getStatusText(status) {
+            switch (status) {
+                case 0: {
+                    return 'Исправна';
+                }
+                case 2: {
+                    return 'Неисправна';
+                }
+                case 4: {
+                    return 'Утилизирована';
+                }
+            }
+        },
+
+        toggleWorkedFilter() {
+            this.filters.worked ^= true;
         }
     }
 }

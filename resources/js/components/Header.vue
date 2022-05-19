@@ -11,7 +11,7 @@
 
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
                 <label class="cur-point" @click="getStatementsPage">Список заявлений</label>
-                <label class="cur-point" @click="getEquipmentList">Список техники</label>
+                <label class="cur-point" @click="getTechList">Список техники</label>
             </div>
 
             <div class="d-flex justify-content-center align-items-center position-relative">
@@ -106,8 +106,8 @@ export default {
             this.$store.dispatch('header/getStatementsPage');
         },
 
-        getEquipmentList() {
-            this.$store.dispatch('header/getEquipmentList');
+        getTechList() {
+            this.$store.dispatch('header/getTechList');
         },
 
         logout() {

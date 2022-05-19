@@ -63,8 +63,8 @@ export default {
             ctx.commit('app/setPage', 'statements', {root:true});
         },
 
-        getEquipmentList(ctx) {
-            ctx.commit('app/setPage', 'equipment', {root:true});
+        getTechList(ctx) {
+            ctx.commit('app/setPage', 'technical', {root:true});
         }
     },
 
