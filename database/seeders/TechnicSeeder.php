@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Faker\Generator;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class TechnicSeeder extends Seeder

@@ -40,6 +40,12 @@ Vue.component('v-password-window', require('./store/modules/popup/passwordWindow
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+global.FILTERS = {
+    get WORKED()   { return 1 << 0; },
+    get FAULTY()   { return 1 << 1; },
+    get DISPOSED() { return 1 << 2; },
+};
+
 const app = new Vue({
     el: '#app',
     store

@@ -25,7 +25,7 @@ export default {
                 ctx.commit('app/setPage', 'statements', {root:true});
 
                 // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
-                ctx.commit('equipment/clearItems', '', {root:true});
+                ctx.commit('technical/clearItems', '', {root:true});
             }).catch(error => {
                 if (error.response.status === 422) {
                     // this.errors = error.response.data.errors;

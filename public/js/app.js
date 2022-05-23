@@ -5688,17 +5688,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "equipmentList",
+  data: function data() {
+    return {
+      filters: __webpack_require__.g.FILTERS
+    };
+  },
   mounted: function mounted() {
-    if (this.items.length > 0) return; // Загрузка данных работает 1 раз
-
-    this.$store.dispatch('equipment/getEquipmentList');
+    this.$store.dispatch('technical/loadTechnicList');
   },
   computed: {
     items: function items() {
-      return this.$store.getters['equipment/getItems'];
-    },
-    filters: function filters() {
-      return this.$store.getters['equipment/getFilters'];
+      return this.$store.getters['technical/getSortTechnicList'];
     }
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)({
@@ -5723,7 +5723,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     getStatusText: function getStatusText(status) {
       switch (status) {
-        case 0:
+        case 1:
           {
             return 'Исправна';
           }
@@ -5739,8 +5739,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
       }
     },
-    toggleWorkedFilter: function toggleWorkedFilter() {
-      this.filters.worked ^= true;
+    toggleFilter: function toggleFilter(filter) {
+      this.$store.commit('technical/toggleFilter', filter);
     }
   })
 });
@@ -6213,17 +6213,29 @@ __webpack_require__.r(__webpack_exports__);
       date = new Date(date * 1000);
       return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : date.getMonth()) + "." + date.getFullYear().toString().substr(2, 2) + " " + date.getHours() + ":" + date.getMinutes();
     },
-    showDescription: function showDescription(index) {
-      this.getTechRepairs[index].visibility ^= true;
+    getStatusText: function getStatusText(status) {
+      switch (status) {
+        case 1:
+          {
+            return 'Исправна';
+          }
+
+        case 2:
+          {
+            return 'Неисправна';
+          }
+
+        case 4:
+          {
+            return 'Утилизирована';
+          }
+      }
+    },
+    toggleDescription: function toggleDescription(index) {
+      this.$store.commit('techInfo/toggleVisibility', index);
     },
     switchText: function switchText(index) {
-      this.getTechRepairs[index].textSwitcher ^= true;
-
-      if (this.getTechRepairs[index].textSwitcher) {
-        this.getTechRepairs[index].buttonText = 'Описание заявителя';
-      } else {
-        this.getTechRepairs[index].buttonText = 'Описание сотрудника';
-      }
+      this.$store.commit('techInfo/toggleText', index);
     }
   },
   directives: {
@@ -6348,6 +6360,20 @@ Vue.component('v-password-window', (__webpack_require__(/*! ./store/modules/popu
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+__webpack_require__.g.FILTERS = {
+  get WORKED() {
+    return 1 << 0;
+  },
+
+  get FAULTY() {
+    return 1 << 1;
+  },
+
+  get DISPOSED() {
+    return 1 << 2;
+  }
+
+};
 var app = new Vue({
   el: '#app',
   store: _store__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -6409,7 +6435,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/header */ "./resources/js/store/modules/header.js");
 /* harmony import */ var _modules_user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/user */ "./resources/js/store/modules/user.js");
 /* harmony import */ var _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/techInfo */ "./resources/js/store/modules/techInfo.js");
-/* harmony import */ var _modules_equipment__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/equipment */ "./resources/js/store/modules/equipment.js");
+/* harmony import */ var _modules_technical__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/technical */ "./resources/js/store/modules/technical.js");
 
 
 
@@ -6427,7 +6453,7 @@ vue__WEBPACK_IMPORTED_MODULE_6__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_7_
     header: _modules_header__WEBPACK_IMPORTED_MODULE_2__["default"],
     user: _modules_user__WEBPACK_IMPORTED_MODULE_3__["default"],
     techInfo: _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__["default"],
-    equipment: _modules_equipment__WEBPACK_IMPORTED_MODULE_5__["default"]
+    technical: _modules_technical__WEBPACK_IMPORTED_MODULE_5__["default"]
   }
 }));
 
@@ -6538,7 +6564,7 @@ __webpack_require__.r(__webpack_exports__);
           root: true
         }); // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
 
-        ctx.commit('equipment/clearItems', '', {
+        ctx.commit('technical/clearItems', '', {
           root: true
         });
       })["catch"](function (error) {
@@ -6570,96 +6596,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   mutations: {},
   getters: {}
-});
-
-/***/ }),
-
-/***/ "./resources/js/store/modules/equipment.js":
-/*!*************************************************!*\
-  !*** ./resources/js/store/modules/equipment.js ***!
-  \*************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  namespaced: true,
-  state: {
-    items: [],
-    filters: {
-      worked: false,
-      faulty: false,
-      disposed: false
-    }
-  },
-  actions: {
-    getEquipmentList: function getEquipmentList(ctx) {
-      var token = ctx.rootGetters['app/getToken'];
-      var url = 'api/' + token + '/getEquipmentList';
-      axios.post(url, {}).then(function (response) {
-        response.data.forEach(function (item) {
-          ctx.commit('setItems', {
-            id: item.id,
-            name: item.name,
-            number: item.number,
-            date: item.date,
-            description: item.description,
-            provider: item.provider,
-            status: item.status
-          });
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          ctx.commit('app/setPage', 'login', {
-            root: true
-          });
-          ctx.commit('app/setToken', '', {
-            root: true
-          });
-        }
-      });
-    }
-  },
-  mutations: {
-    setItems: function setItems(state, _ref) {
-      var id = _ref.id,
-          name = _ref.name,
-          number = _ref.number,
-          date = _ref.date,
-          description = _ref.description,
-          provider = _ref.provider,
-          status = _ref.status;
-      state.items.push({
-        id: id,
-        name: name,
-        number: number,
-        date: date,
-        description: description,
-        provider: provider,
-        status: status
-      });
-    },
-    clearItems: function clearItems(state) {
-      state.items = [];
-    }
-  },
-  getters: {
-    getItems: function getItems(state) {
-      return state.items.filter(function (item) {
-        if (state.filters.worked) {
-          return item.status === 0;
-        } else {
-          return item;
-        }
-      });
-    },
-    getFilters: function getFilters(state) {
-      return state.filters;
-    }
-  }
 });
 
 /***/ }),
@@ -6822,7 +6758,7 @@ __webpack_require__.r(__webpack_exports__);
       ctx.commit('clearTechRepairs');
       var technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
       var token = ctx.rootGetters['app/getToken'];
-      var url = 'api/' + token + '/getEquipmentInfo';
+      var url = 'api/' + token + '/getTechnicInfo';
       axios.post(url, {
         technic_id: technic_id
       }).then(function (response) {
@@ -6835,7 +6771,6 @@ __webpack_require__.r(__webpack_exports__);
           });
         });
         ctx.commit('setCabinet');
-        console.log(response.data);
         response.data[1].forEach(function (item) {
           ctx.commit('setTechRepairs', {
             id: item.id,
@@ -6951,6 +6886,18 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         state.techDescription.cabinet = 'Неизвестно';
       }
+    },
+    toggleVisibility: function toggleVisibility(state, index) {
+      state.techRepairs[index].visibility ^= true;
+    },
+    toggleText: function toggleText(state, index) {
+      state.techRepairs[index].textSwitcher ^= true;
+
+      if (state.techRepairs[index].textSwitcher) {
+        state.techRepairs[index].buttonText = 'Описание заявителя';
+      } else {
+        state.techRepairs[index].buttonText = 'Описание сотрудника';
+      }
     }
   },
   getters: {
@@ -6974,6 +6921,93 @@ __webpack_require__.r(__webpack_exports__);
     },
     getTechRepairs: function getTechRepairs(state) {
       return state.techRepairs;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/technical.js":
+/*!*************************************************!*\
+  !*** ./resources/js/store/modules/technical.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
+  state: {
+    items: [],
+    filters: 0
+  },
+  actions: {
+    loadTechnicList: function loadTechnicList(ctx) {
+      if (ctx.state.items.length > 0) return;
+      var token = ctx.rootGetters['app/getToken'];
+      var url = 'api/' + token + '/getTechnicList';
+      axios.post(url, {}).then(function (response) {
+        response.data.forEach(function (item) {
+          ctx.commit('setItems', {
+            id: item.id,
+            name: item.name,
+            number: item.number,
+            date: item.date,
+            description: item.description,
+            provider: item.provider,
+            status: item.status
+          });
+        });
+      })["catch"](function (error) {
+        if (error.response.status === 401) {
+          ctx.commit('app/setPage', 'login', {
+            root: true
+          });
+          ctx.commit('app/setToken', '', {
+            root: true
+          });
+        }
+      });
+    }
+  },
+  mutations: {
+    setItems: function setItems(state, _ref) {
+      var id = _ref.id,
+          name = _ref.name,
+          number = _ref.number,
+          date = _ref.date,
+          description = _ref.description,
+          provider = _ref.provider,
+          status = _ref.status;
+      state.items.push({
+        id: id,
+        name: name,
+        number: number,
+        date: date,
+        description: description,
+        provider: provider,
+        status: status
+      });
+    },
+    clearItems: function clearItems(state) {
+      state.items = [];
+    },
+    toggleFilter: function toggleFilter(state, filter) {
+      state.filters ^= filter;
+    }
+  },
+  getters: {
+    getItems: function getItems(state) {
+      return state.items;
+    },
+    getSortTechnicList: function getSortTechnicList(state) {
+      return state.items.filter(function (item) {
+        if (state.filters === 0) return true;
+        return item.status & state.filters;
+      });
     }
   }
 });
@@ -31778,7 +31812,7 @@ var render = function () {
                 "div",
                 {
                   staticClass: "item-dropdown cur-point clip",
-                  on: { click: _vm.getEquipmentList },
+                  on: { click: _vm.getTechList },
                 },
                 [_vm._v("Список техники")]
               ),
@@ -32229,7 +32263,11 @@ var render = function () {
                 _c("label", { staticClass: "filter" }, [
                   _c("input", {
                     attrs: { type: "checkbox" },
-                    on: { change: _vm.toggleWorkedFilter },
+                    on: {
+                      change: function ($event) {
+                        return _vm.toggleFilter(_vm.filters.WORKED)
+                      },
+                    },
                   }),
                   _vm._v(" "),
                   _c("span", { staticClass: "clip" }, [
@@ -32237,9 +32275,35 @@ var render = function () {
                   ]),
                 ]),
                 _vm._v(" "),
-                _vm._m(0),
+                _c("label", { staticClass: "filter" }, [
+                  _c("input", {
+                    attrs: { type: "checkbox" },
+                    on: {
+                      change: function ($event) {
+                        return _vm.toggleFilter(_vm.filters.FAULTY)
+                      },
+                    },
+                  }),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "clip" }, [
+                    _vm._v("Техника неисправна"),
+                  ]),
+                ]),
                 _vm._v(" "),
-                _vm._m(1),
+                _c("label", { staticClass: "filter" }, [
+                  _c("input", {
+                    attrs: { type: "checkbox" },
+                    on: {
+                      change: function ($event) {
+                        return _vm.toggleFilter(_vm.filters.DISPOSED)
+                      },
+                    },
+                  }),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "clip" }, [
+                    _vm._v("Техника утилизирована"),
+                  ]),
+                ]),
               ]),
             ]
           ),
@@ -32293,28 +32357,7 @@ var render = function () {
     1
   )
 }
-var staticRenderFns = [
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", { staticClass: "filter" }, [
-      _c("input", { attrs: { type: "checkbox" } }),
-      _vm._v(" "),
-      _c("span", { staticClass: "clip" }, [_vm._v("Техника неисправна")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("label", { staticClass: "filter" }, [
-      _c("input", { attrs: { type: "checkbox" } }),
-      _vm._v(" "),
-      _c("span", { staticClass: "clip" }, [_vm._v("Техника утилизирована")]),
-    ])
-  },
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -33034,7 +33077,11 @@ var render = function () {
                           _c("span", [_vm._v("Состояние")]),
                           _vm._v(" "),
                           _c("strong", [
-                            _vm._v(_vm._s(_vm.getTechDescription.status)),
+                            _vm._v(
+                              _vm._s(
+                                _vm.getStatusText(_vm.getTechDescription.status)
+                              )
+                            ),
                           ]),
                         ]),
                         _vm._v(" "),
@@ -33126,7 +33173,9 @@ var render = function () {
                                             "item justify-content-between p-3 d-flex",
                                           on: {
                                             click: function ($event) {
-                                              return _vm.showDescription(index)
+                                              return _vm.toggleDescription(
+                                                index
+                                              )
                                             },
                                           },
                                         },

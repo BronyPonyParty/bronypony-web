@@ -3,18 +3,15 @@ export default {
 
     state: {
         items: [],
-
-        filters: {
-            worked: false,
-            faulty: false,
-            disposed: false
-        }
+        filters: 0
     },
 
     actions: {
-        getEquipmentList(ctx) {
+        loadTechnicList(ctx) {
+            if (ctx.state.items.length > 0) return;
+
             const token = ctx.rootGetters['app/getToken'];
-            const url = 'api/' + token + '/getEquipmentList';
+            const url = 'api/' + token + '/getTechnicList';
 
             axios.post(url, {}).then(response => {
                 response.data.forEach(item => {
@@ -53,21 +50,22 @@ export default {
         clearItems(state) {
             state.items = [];
         },
+
+        toggleFilter(state, filter) {
+            state.filters ^= filter;
+        },
     },
 
     getters: {
         getItems(state) {
-            return state.items.filter(item => {
-                if (state.filters.worked) {
-                    return item.status === 0;
-                } else {
-                    return item;
-                }
-            });
+            return state.items;
         },
 
-        getFilters(state) {
-            return state.filters;
+        getSortTechnicList(state) {
+            return state.items.filter(item => {
+                if (state.filters === 0) return true;
+                return (item.status & state.filters);
+            });
         }
     }
 }

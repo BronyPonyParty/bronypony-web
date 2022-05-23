@@ -30,8 +30,8 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::post('getUserData', [UserController::class, 'getUserData']);
     Route::post('logout', [LoginController::class, 'logout']);
     Route::post('saveUserData', [UserController::class, 'saveUserData']);
-    Route::post('getEquipmentList', [EquipmentController::class, 'getEquipmentList']);
-    Route::post('getEquipmentInfo', [EquipmentController::class, 'getEquipmentInfo']);
+    Route::post('getTechnicList', [EquipmentController::class, 'getTechnicList']);
+    Route::post('getTechnicInfo', [EquipmentController::class, 'getTechnicInfo']);
 });
 
 Route::get('test', function () {

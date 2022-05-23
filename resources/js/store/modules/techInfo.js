@@ -26,7 +26,7 @@ export default {
             ctx.commit('clearTechRepairs');
             const technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
             const token = ctx.rootGetters['app/getToken'];
-            const url = 'api/' + token + '/getEquipmentInfo';
+            const url = 'api/' + token + '/getTechnicInfo';
 
             axios.post(url, {
                 technic_id
@@ -42,7 +42,6 @@ export default {
 
                 ctx.commit('setCabinet');
 
-                    console.log(response.data);
                 response.data[1].forEach(item => {
                     ctx.commit('setTechRepairs', {
                         id: item.id,
@@ -140,6 +139,20 @@ export default {
                 state.techDescription.cabinet = state.techMovements[state.techMovements.length - 1].number;
             } else {
                 state.techDescription.cabinet = 'Неизвестно';
+            }
+        },
+
+        toggleVisibility(state, index) {
+            state.techRepairs[index].visibility ^= true
+        },
+
+        toggleText(state, index) {
+            state.techRepairs[index].textSwitcher ^= true;
+
+            if (state.techRepairs[index].textSwitcher) {
+                state.techRepairs[index].buttonText = 'Описание заявителя';
+            } else {
+                state.techRepairs[index].buttonText = 'Описание сотрудника';
             }
         }
     },

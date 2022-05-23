@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Movement_list;
-use App\Models\Movement_technic;
 use App\Models\MovingTechnic;
 use App\Models\Premise;
+use App\Models\Provider;
 use App\Models\Repair;
 use App\Models\Report;
 use App\Models\Technic;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Auth as AuthFacade;
 
 class EquipmentController extends Controller
 {
-    public function getEquipmentList() {
+    public function getTechnicList() {
         $user = AuthFacade::user();
         $technics = Technic::whereOrganizationId($user->organization_id)->get();
 
@@ -25,7 +24,7 @@ class EquipmentController extends Controller
             if (!in_array($technic->provider_id, $technicProviderIds)) $technicProviderIds[] = $technic->provider_id;
         }
 
-        $providers = \App\Models\Provider::select(['id', 'name'])->whereIn('id', $technicProviderIds)->get();
+        $providers = Provider::select(['id', 'name'])->whereIn('id', $technicProviderIds)->get();
 
         $providerNames = [];
         foreach ($providers as $provider) $providerNames[$provider->id] = $provider->name;
@@ -46,7 +45,8 @@ class EquipmentController extends Controller
         return $mass;
     }
 
-    public function getEquipmentInfo(Request $request) {
+    public function getTechnicInfo(Request $request) {
+        $authUser = AuthFacade::user();
         $technic_id = $request->get('technic_id');
 
         $movingTechnics = MovingTechnic::whereTechnicId($technic_id)->get();
@@ -58,8 +58,8 @@ class EquipmentController extends Controller
             if (!in_array($movingTechnic->premise_id, $premiseIds)) $premiseIds[] = $movingTechnic->premise_id;
         }
 
-        $premises = Premise::whereIn('id', $premiseIds)->get();
-        $users = User::whereIn('id', $userIds)->get();
+        $premises = Premise::whereOrganizationId($authUser->organization_id)->whereIn('id', $premiseIds)->get();
+        $users = User::whereOrganizationId($authUser->organization_id)->whereIn('id', $userIds)->get();
 
         $premiseNumbers = [];
         $premiseFloors = [];
@@ -97,7 +97,7 @@ class EquipmentController extends Controller
             if (!in_array($repair->repairman_id, $userIds)) $userIds[] = $repair->repairman_id;
         };
 
-        $users = User::whereIn('id', $userIds)->get();
+        $users = User::whereOrganizationId($authUser->organization_id)->whereIn('id', $userIds)->get();
 
         $userNames = [];
         foreach ($users as $user) $userNames[$user->id] = $user->lastname . ' ' . $user->firstname;

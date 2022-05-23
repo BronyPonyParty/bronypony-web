@@ -47,7 +47,7 @@
                     </div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="getStatementsPage">Список заявлений</div>
-                    <div class="item-dropdown cur-point clip" @click="getEquipmentList">Список техники</div>
+                    <div class="item-dropdown cur-point clip" @click="getTechList">Список техники</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
                     <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>

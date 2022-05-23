@@ -31,7 +31,7 @@
                             </div>
                             <div class="item-tech">
                                 <span>Состояние</span>
-                                <strong>{{ getTechDescription.status }}</strong>
+                                <strong>{{ getStatusText(getTechDescription.status) }}</strong>
                             </div>
                             <div class="item-tech">
                                 <span>Поставщик</span>
@@ -56,7 +56,7 @@
                             <div class="techList" v-if="getTechRepairs.length !== 0">
                                 <div class="tech" v-for="(item, index) in getTechRepairs" :key="item.id">
 
-                                    <div class="item justify-content-between p-3 d-flex" @click="showDescription(index)">
+                                    <div class="item justify-content-between p-3 d-flex" @click="toggleDescription(index)">
                                         <strong>{{ item.repairman }}</strong>
                                         <div>
                                             <span>{{ formatDate(item.startDate) + '/' + formatDate(item.endDate) }}</span>
@@ -180,18 +180,26 @@ export default {
             return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth())) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours()+ ":" + date.getMinutes()
         },
 
-        showDescription(index) {
-            this.getTechRepairs[index].visibility ^= true;
+        getStatusText(status) {
+            switch (status) {
+                case 1: {
+                    return 'Исправна';
+                }
+                case 2: {
+                    return 'Неисправна';
+                }
+                case 4: {
+                    return 'Утилизирована';
+                }
+            }
+        },
+
+        toggleDescription(index) {
+            this.$store.commit('techInfo/toggleVisibility', index);
         },
 
         switchText(index) {
-            this.getTechRepairs[index].textSwitcher ^= true;
-
-            if (this.getTechRepairs[index].textSwitcher) {
-                this.getTechRepairs[index].buttonText = 'Описание заявителя';
-            } else {
-                this.getTechRepairs[index].buttonText = 'Описание сотрудника';
-            }
+            this.$store.commit('techInfo/toggleText', index);
         }
     },
 

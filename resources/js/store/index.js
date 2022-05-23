@@ -5,7 +5,7 @@ import appModule from "./modules/app";
 import headerModule from "./modules/header";
 import userModule from "./modules/user";
 import techInfoModule from "./modules/techInfo";
-import equipmentModule from "./modules/equipment";
+import technicalModule from "./modules/technical";
 
 Vue.use(Vuex)
 
@@ -18,7 +18,6 @@ export default new Vuex.Store({
         header: headerModule,
         user: userModule,
         techInfo: techInfoModule,
-        equipment: equipmentModule
-
+        technical: technicalModule
     }
 });

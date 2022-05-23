@@ -8,15 +8,15 @@
                 <div class="col-12 col-lg-3 white-block " style="padding-left: 0; padding-right: 0;">
                     <div class="filters">
                         <label class="filter">
-                            <input type="checkbox" @change="toggleWorkedFilter">
+                            <input type="checkbox" @change="toggleFilter(filters.WORKED)">
                             <span class="clip">Техника исправна</span>
                         </label>
                         <label class="filter">
-                            <input type="checkbox">
+                            <input type="checkbox" @change="toggleFilter(filters.FAULTY)">
                             <span class="clip">Техника неисправна</span>
                         </label>
                         <label class="filter">
-                            <input type="checkbox">
+                            <input type="checkbox" @change="toggleFilter(filters.DISPOSED)">
                             <span class="clip">Техника утилизирована</span>
                         </label>
                     </div>
@@ -43,18 +43,17 @@ import {mapMutations} from 'vuex';
 export default {
     name: "equipmentList",
 
+    data: () => ({
+        filters: global.FILTERS
+    }),
+
     mounted() {
-        if (this.items.length > 0) return; // Загрузка данных работает 1 раз
-        this.$store.dispatch('equipment/getEquipmentList');
+        this.$store.dispatch('technical/loadTechnicList');
     },
 
     computed: {
         items() {
-            return this.$store.getters['equipment/getItems'];
-        },
-
-        filters() {
-            return this.$store.getters['equipment/getFilters'];
+            return this.$store.getters['technical/getSortTechnicList'];
         }
     },
 
@@ -81,7 +80,7 @@ export default {
 
         getStatusText(status) {
             switch (status) {
-                case 0: {
+                case 1: {
                     return 'Исправна';
                 }
                 case 2: {
@@ -93,8 +92,8 @@ export default {
             }
         },
 
-        toggleWorkedFilter() {
-            this.filters.worked ^= true;
+        toggleFilter(filter) {
+            this.$store.commit('technical/toggleFilter', filter)
         }
     }
 }
