@@ -3,7 +3,8 @@ export default {
 
     state: {
         items: [],
-        filters: 0
+        filters: 0,
+        searchLine: ''
     },
 
     actions: {
@@ -54,6 +55,10 @@ export default {
         toggleFilter(state, filter) {
             state.filters ^= filter;
         },
+
+        setSearchLine(state, text) {
+            state.searchLine = text;
+        }
     },
 
     getters: {
@@ -61,10 +66,17 @@ export default {
             return state.items;
         },
 
+        getSearchLine(state) {
+            return state.searchLine;
+        },
+
         getSortTechnicList(state) {
             return state.items.filter(item => {
-                if (state.filters === 0) return true;
-                return (item.status & state.filters);
+                let str = (item.name + global.sign + item.number).toLowerCase();
+                if (str.indexOf(state.searchLine.toLowerCase().trim()) > -1) {
+                    if (state.filters === 0) return true;
+                    return item.status & state.filters;
+                }
             });
         }
     }

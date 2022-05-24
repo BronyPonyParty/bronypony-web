@@ -22,10 +22,11 @@
                     </div>
                 </div>
 
-                <div class="col-12 col-lg white-block p-3">
+                <div class="white-block col-12 col-lg p-3">
+                    <input class="form-control form-control-lg search" placeholder="Поиск" :value="searchLine" @input="changeSearchLine">
                     <div class="techList" v-if="items.length !== 0">
                         <div class="item justify-content-between p-3 d-flex" v-for="(item) in items" :key="item.id" @click="showInfoWindow(item)">
-                            <strong>{{item.name + '-' + item.number}}</strong>
+                            <strong>{{item.name + sign + item.number}}</strong>
                             <span>{{getStatusText(item.status)}}</span>
                         </div>
                     </div>
@@ -44,7 +45,8 @@ export default {
     name: "equipmentList",
 
     data: () => ({
-        filters: global.FILTERS
+        filters: global.FILTERS,
+        sign: global.sign
     }),
 
     mounted() {
@@ -54,6 +56,10 @@ export default {
     computed: {
         items() {
             return this.$store.getters['technical/getSortTechnicList'];
+        },
+
+        searchLine() {
+            return this.$store.getters['technical/getSearchLine'];
         }
     },
 
@@ -65,7 +71,7 @@ export default {
         showInfoWindow(item) {
             this.$store.commit('techInfo/setTechDescription', {
                 id: item.id,
-                name: item.name + '-' + item.number,
+                name: item.name + sign + item.number,
                 status: item.status,
                 provider: item.provider,
                 description: item.description
@@ -76,6 +82,10 @@ export default {
             setTimeout(() => {
                 this.showWindow({name: 'techInfoWindow'});
             }, 0)
+        },
+
+        changeSearchLine(event) {
+            this.$store.commit('technical/setSearchLine', event.target.value);
         },
 
         getStatusText(status) {
@@ -182,5 +192,13 @@ export default {
         text-overflow: ellipsis; /* Добавляем многоточие */
         display: inline-block;
         vertical-align: top;
+    }
+
+    .search {
+        margin-bottom: 16px;
+    }
+    .search:focus {
+        border-color: #5374D1;
+        box-shadow: inherit;
     }
 </style>

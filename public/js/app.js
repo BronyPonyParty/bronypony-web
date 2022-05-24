@@ -5685,12 +5685,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "equipmentList",
   data: function data() {
     return {
-      filters: __webpack_require__.g.FILTERS
+      filters: __webpack_require__.g.FILTERS,
+      sign: __webpack_require__.g.sign
     };
   },
   mounted: function mounted() {
@@ -5699,6 +5701,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   computed: {
     items: function items() {
       return this.$store.getters['technical/getSortTechnicList'];
+    },
+    searchLine: function searchLine() {
+      return this.$store.getters['technical/getSearchLine'];
     }
   },
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)({
@@ -5709,7 +5714,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.$store.commit('techInfo/setTechDescription', {
         id: item.id,
-        name: item.name + '-' + item.number,
+        name: item.name + sign + item.number,
         status: item.status,
         provider: item.provider,
         description: item.description
@@ -5720,6 +5725,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           name: 'techInfoWindow'
         });
       }, 0);
+    },
+    changeSearchLine: function changeSearchLine(event) {
+      this.$store.commit('technical/setSearchLine', event.target.value);
     },
     getStatusText: function getStatusText(status) {
       switch (status) {
@@ -6374,6 +6382,7 @@ __webpack_require__.g.FILTERS = {
   }
 
 };
+__webpack_require__.g.sign = '#';
 var app = new Vue({
   el: '#app',
   store: _store__WEBPACK_IMPORTED_MODULE_0__["default"]
@@ -6942,7 +6951,8 @@ __webpack_require__.r(__webpack_exports__);
   namespaced: true,
   state: {
     items: [],
-    filters: 0
+    filters: 0,
+    searchLine: ''
   },
   actions: {
     loadTechnicList: function loadTechnicList(ctx) {
@@ -6997,16 +7007,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     toggleFilter: function toggleFilter(state, filter) {
       state.filters ^= filter;
+    },
+    setSearchLine: function setSearchLine(state, text) {
+      state.searchLine = text;
     }
   },
   getters: {
     getItems: function getItems(state) {
       return state.items;
     },
+    getSearchLine: function getSearchLine(state) {
+      return state.searchLine;
+    },
     getSortTechnicList: function getSortTechnicList(state) {
       return state.items.filter(function (item) {
-        if (state.filters === 0) return true;
-        return item.status & state.filters;
+        var str = (item.name + __webpack_require__.g.sign + item.number).toLowerCase();
+
+        if (str.indexOf(state.searchLine.toLowerCase().trim()) > -1) {
+          if (state.filters === 0) return true;
+          return item.status & state.filters;
+        }
       });
     }
   }
@@ -12332,7 +12352,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\nstrong {\n  font-weight: 600;\n}\n.white-block {\n  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16);\n  background-color: white;\n  border-radius: 8px;\n}\n.filters {\n  border-radius: 5px;\n  background-color: white;\n}\n.filters input[type=checkbox] {\n  height: 16px;\n  width: 16px;\n  min-height: 16px;\n  min-width: 16px;\n  cursor: pointer;\n  margin: 8px 16px;\n}\n.filters span {\n  padding-left: 8px;\n}\n.filters label {\n  align-items: center;\n  display: flex;\n}\n.filters .filter {\n  cursor: pointer;\n  padding-top: 5px;\n  padding-bottom: 5px;\n}\n.filters .filter:last-child {\n  border-radius: 0 0 5px 5px;\n}\n.filters .filter:first-child {\n  border-radius: 5px 5px 0 0;\n}\n.filters .filter:hover {\n  background-color: #E9E9E9;\n}\n.techList {\n  border-radius: 5px;\n}\n.techList .item {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item:last-child {\n  margin-bottom: 0;\n}\n.techList .item:hover {\n  background-color: #353F62;\n}\n.techList .item:active {\n  background-color: #262E45;\n}\n.clip {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  height: auto;\n  /* Высота/ background: #fc0; /* Цвет фона */\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "@charset \"UTF-8\";\nstrong {\n  font-weight: 600;\n}\n.white-block {\n  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.16);\n  background-color: white;\n  border-radius: 8px;\n}\n.filters {\n  border-radius: 5px;\n  background-color: white;\n}\n.filters input[type=checkbox] {\n  height: 16px;\n  width: 16px;\n  min-height: 16px;\n  min-width: 16px;\n  cursor: pointer;\n  margin: 8px 16px;\n}\n.filters span {\n  padding-left: 8px;\n}\n.filters label {\n  align-items: center;\n  display: flex;\n}\n.filters .filter {\n  cursor: pointer;\n  padding-top: 5px;\n  padding-bottom: 5px;\n}\n.filters .filter:last-child {\n  border-radius: 0 0 5px 5px;\n}\n.filters .filter:first-child {\n  border-radius: 5px 5px 0 0;\n}\n.filters .filter:hover {\n  background-color: #E9E9E9;\n}\n.techList {\n  border-radius: 5px;\n}\n.techList .item {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item:last-child {\n  margin-bottom: 0;\n}\n.techList .item:hover {\n  background-color: #353F62;\n}\n.techList .item:active {\n  background-color: #262E45;\n}\n.clip {\n  white-space: nowrap;\n  /* Запрещаем перенос строк */\n  overflow: hidden;\n  /* Обрезаем все, что не помещается в область */\n  max-width: 100%;\n  /* Ширина*/\n  height: auto;\n  /* Высота/ background: #fc0; /* Цвет фона */\n  max-height: 50px;\n  text-overflow: ellipsis;\n  /* Добавляем многоточие */\n  display: inline-block;\n  vertical-align: top;\n}\n.search {\n  margin-bottom: 16px;\n}\n.search:focus {\n  border-color: #5374D1;\n  box-shadow: inherit;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -32308,7 +32328,14 @@ var render = function () {
             ]
           ),
           _vm._v(" "),
-          _c("div", { staticClass: "col-12 col-lg white-block p-3" }, [
+          _c("div", { staticClass: "white-block col-12 col-lg p-3" }, [
+            _c("input", {
+              staticClass: "form-control form-control-lg search",
+              attrs: { placeholder: "Поиск" },
+              domProps: { value: _vm.searchLine },
+              on: { input: _vm.changeSearchLine },
+            }),
+            _vm._v(" "),
             _vm.items.length !== 0
               ? _c(
                   "div",
@@ -32327,7 +32354,7 @@ var render = function () {
                       },
                       [
                         _c("strong", [
-                          _vm._v(_vm._s(item.name + "-" + item.number)),
+                          _vm._v(_vm._s(item.name + _vm.sign + item.number)),
                         ]),
                         _vm._v(" "),
                         _c("span", [

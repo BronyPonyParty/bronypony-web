@@ -46,6 +46,8 @@ global.FILTERS = {
     get DISPOSED() { return 1 << 2; },
 };
 
+global.sign = '#';
+
 const app = new Vue({
     el: '#app',
     store
