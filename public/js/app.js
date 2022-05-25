@@ -5579,29 +5579,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   name: "Statements",
   data: function data() {
     return {
-      show: false,
-      items: [{
-        id: 0,
-        name: 'Техника-236',
-        status: 'Ожидание',
-        date: '24.04.22/16:38:12',
-        repairman: 'Отсутствует',
-        cabinet: '392',
-        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
-        button: '',
-        visibility: false
-      }, {
-        id: 1,
-        name: 'Вопрос',
-        status: 'Выполняется',
-        date: '24.04.22/16:24:44',
-        repairman: 'Путинцев Александр Александрович',
-        cabinet: '101',
-        description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
-        button: '',
-        visibility: false
-      }]
+      show: false
     };
+  },
+  computed: {
+    items: function items() {
+      return this.$store.getters['statements/getItems'];
+    }
   },
   directives: {
     ClickOutside: (vue_click_outside__WEBPACK_IMPORTED_MODULE_0___default())
@@ -5610,7 +5594,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     setWindow: 'app/setWindow'
   })), {}, {
     toggleDropdown: function toggleDropdown(index) {
-      this.items[index].visibility ^= true;
+      this.$store.commit('statements/setVisibility', index);
     },
     showWindow: function showWindow(name, description) {
       var _this = this;
@@ -6437,14 +6421,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _modules_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/auth */ "./resources/js/store/modules/auth.js");
 /* harmony import */ var _modules_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/app */ "./resources/js/store/modules/app.js");
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/header */ "./resources/js/store/modules/header.js");
 /* harmony import */ var _modules_user__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/user */ "./resources/js/store/modules/user.js");
 /* harmony import */ var _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/techInfo */ "./resources/js/store/modules/techInfo.js");
 /* harmony import */ var _modules_technical__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/technical */ "./resources/js/store/modules/technical.js");
+/* harmony import */ var _modules_statements__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/statements */ "./resources/js/store/modules/statements.js");
 
 
 
@@ -6453,8 +6438,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_6__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_7__["default"]);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_7__["default"].Store({
+
+vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_8__["default"]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_8__["default"].Store({
   namespaced: true,
   modules: {
     app: _modules_app__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6462,7 +6448,8 @@ vue__WEBPACK_IMPORTED_MODULE_6__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_7_
     header: _modules_header__WEBPACK_IMPORTED_MODULE_2__["default"],
     user: _modules_user__WEBPACK_IMPORTED_MODULE_3__["default"],
     techInfo: _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__["default"],
-    technical: _modules_technical__WEBPACK_IMPORTED_MODULE_5__["default"]
+    technical: _modules_technical__WEBPACK_IMPORTED_MODULE_5__["default"],
+    statements: _modules_statements__WEBPACK_IMPORTED_MODULE_6__["default"]
   }
 }));
 
@@ -6726,6 +6713,57 @@ __webpack_require__.r(__webpack_exports__);
     },
     popupMenuShowed: function popupMenuShowed(state) {
       return state.popupMenuShowed;
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/store/modules/statements.js":
+/*!**************************************************!*\
+  !*** ./resources/js/store/modules/statements.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
+  state: {
+    items: [{
+      id: 0,
+      name: 'Техника-236',
+      status: 'Ожидание',
+      date: '24.04.22/16:38:12',
+      repairman: 'Отсутствует',
+      cabinet: '392',
+      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
+      button: '',
+      visibility: false
+    }, {
+      id: 1,
+      name: 'Вопрос',
+      status: 'Выполняется',
+      date: '24.04.22/16:24:44',
+      repairman: 'Путинцев Александр Александрович',
+      cabinet: '101',
+      description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
+      button: '',
+      visibility: false
+    }]
+  },
+  actions: {},
+  mutations: {
+    setVisibility: function setVisibility(state, index) {
+      state.items[index].visibility ^= true;
+    }
+  },
+  getters: {
+    getItems: function getItems(state) {
+      return state.items;
     }
   }
 });

@@ -10,8 +10,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Middleware\Auth;
 
-use App\Models\Technic;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
