@@ -14,12 +14,12 @@
 
 <script>
 import {mapGetters, mapMutations} from 'vuex';
-
 export default {
     name: "App",
 
     mounted() {
         this.$store.dispatch('user/getUserData');
+        this.$store.dispatch('socket/socket');
     },
 
     computed: mapGetters({

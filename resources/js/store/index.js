@@ -7,6 +7,7 @@ import userModule from "./modules/user";
 import techInfoModule from "./modules/techInfo";
 import technicalModule from "./modules/technical";
 import statementsModule from "./modules/statements";
+import socketModule from "./modules/socket";
 
 Vue.use(Vuex)
 
@@ -21,5 +22,6 @@ export default new Vuex.Store({
         techInfo: techInfoModule,
         technical: technicalModule,
         statements: statementsModule,
+        socket: socketModule,
     }
 });

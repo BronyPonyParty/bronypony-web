@@ -5288,6 +5288,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   name: "App",
   mounted: function mounted() {
     this.$store.dispatch('user/getUserData');
+    this.$store.dispatch('socket/socket');
   },
   computed: (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
     page: 'app/getPage',
@@ -5605,6 +5606,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           description: description
         });
       }, 0);
+    },
+    getStatusText: function getStatusText(status) {
+      switch (status) {
+        case 1:
+          {
+            return 'Ожидание';
+          }
+
+        case 2:
+          {
+            return 'Выполняется';
+          }
+      }
     }
   })
 });
@@ -6394,6 +6408,25 @@ try {
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+axios.interceptors.response.use(function (response) {
+  return response;
+}, function (error) {
+  if (error.response.status === 401) {
+    try {
+      this.$store.commit('app/setPage', 'login', {
+        root: true
+      });
+      this.$store.commit('app/setToken', '', {
+        root: true
+      });
+    } catch (e) {
+      console.log(e);
+    } // this.$store.commit('app/setToken', '', {root:true});
+
+  } else {
+    return Promise.reject(error);
+  }
+});
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -6421,8 +6454,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
 /* harmony import */ var _modules_auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/auth */ "./resources/js/store/modules/auth.js");
 /* harmony import */ var _modules_app__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/app */ "./resources/js/store/modules/app.js");
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/header */ "./resources/js/store/modules/header.js");
@@ -6430,6 +6463,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/techInfo */ "./resources/js/store/modules/techInfo.js");
 /* harmony import */ var _modules_technical__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/technical */ "./resources/js/store/modules/technical.js");
 /* harmony import */ var _modules_statements__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/statements */ "./resources/js/store/modules/statements.js");
+/* harmony import */ var _modules_socket__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/socket */ "./resources/js/store/modules/socket.js");
 
 
 
@@ -6439,8 +6473,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_8__["default"]);
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_8__["default"].Store({
+
+vue__WEBPACK_IMPORTED_MODULE_8__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_9__["default"]);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vuex__WEBPACK_IMPORTED_MODULE_9__["default"].Store({
   namespaced: true,
   modules: {
     app: _modules_app__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -6449,7 +6484,8 @@ vue__WEBPACK_IMPORTED_MODULE_7__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_8_
     user: _modules_user__WEBPACK_IMPORTED_MODULE_3__["default"],
     techInfo: _modules_techInfo__WEBPACK_IMPORTED_MODULE_4__["default"],
     technical: _modules_technical__WEBPACK_IMPORTED_MODULE_5__["default"],
-    statements: _modules_statements__WEBPACK_IMPORTED_MODULE_6__["default"]
+    statements: _modules_statements__WEBPACK_IMPORTED_MODULE_6__["default"],
+    socket: _modules_socket__WEBPACK_IMPORTED_MODULE_7__["default"]
   }
 }));
 
@@ -6719,6 +6755,63 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/store/modules/socket.js":
+/*!**********************************************!*\
+  !*** ./resources/js/store/modules/socket.js ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  namespaced: true,
+  state: {
+    conn: new WebSocket('ws://localhost:8080')
+  },
+  actions: {
+    socket: function socket(ctx) {
+      ctx.state.conn.onopen = function (e) {
+        console.log('Connection established!');
+        ctx.dispatch('send');
+      };
+
+      ctx.state.conn.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        console.log(data);
+      };
+
+      ctx.state.conn.onclose = function (e) {
+        console.log('connection close');
+      };
+
+      ctx.state.conn.onerror = function (e) {
+        console.log('connection error');
+      };
+    },
+    send: function send(ctx) {
+      // let data = {
+      //     id: 3,
+      //     name: 'Техника-99',
+      //     status: 1,
+      //     date: '24.04.22 18:09:17',
+      //     repairman: 'Отсутствует',
+      //     cabinet: '455',
+      //     description: 'wow',
+      //     button: '',
+      //     visibility: false
+      // }
+      ctx.state.conn.send('{"message": "new statement", "id": "3", "name": "Техника-99", "status": "1", "date": "24.04.22 18:09:17", "repairman": "Отсутствует", "cabinet":"399", "description":"wow"}'); // console.log('Отправлено: ' + data);
+    }
+  },
+  mutations: {},
+  getters: {}
+});
+
+/***/ }),
+
 /***/ "./resources/js/store/modules/statements.js":
 /*!**************************************************!*\
   !*** ./resources/js/store/modules/statements.js ***!
@@ -6736,7 +6829,7 @@ __webpack_require__.r(__webpack_exports__);
     items: [{
       id: 0,
       name: 'Техника-236',
-      status: 'Ожидание',
+      status: 1,
       date: '24.04.22/16:38:12',
       repairman: 'Отсутствует',
       cabinet: '392',
@@ -6745,10 +6838,10 @@ __webpack_require__.r(__webpack_exports__);
       visibility: false
     }, {
       id: 1,
-      name: 'Вопрос',
-      status: 'Выполняется',
+      name: 'Техника-255',
+      status: 2,
       date: '24.04.22/16:24:44',
-      repairman: 'Путинцев Александр Александрович',
+      repairman: 'Путинцев Александр',
       cabinet: '101',
       description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
       button: '',
@@ -6759,6 +6852,12 @@ __webpack_require__.r(__webpack_exports__);
   mutations: {
     setVisibility: function setVisibility(state, index) {
       state.items[index].visibility ^= true;
+    },
+    pushItem: function pushItem(state, _ref) {
+      var id = _ref.id,
+          name = _ref.name,
+          status = _ref.status;
+      state.items.push();
     }
   },
   getters: {
@@ -7009,15 +7108,11 @@ __webpack_require__.r(__webpack_exports__);
             status: item.status
           });
         });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          ctx.commit('app/setPage', 'login', {
-            root: true
-          });
-          ctx.commit('app/setToken', '', {
-            root: true
-          });
-        }
+      })["catch"](function (error) {// console.log(error.response.status);
+        // if (error.response.status === 401) {
+        //     ctx.commit('app/setPage', 'login', {root: true});
+        //     ctx.commit('app/setToken', '', {root: true});
+        // }
       });
     }
   },
@@ -32126,7 +32221,7 @@ var render = function () {
                           ]),
                           _vm._v(" "),
                           _c("td", { staticClass: "wb default-td" }, [
-                            _vm._v(_vm._s(item.status)),
+                            _vm._v(_vm._s(_vm.getStatusText(item.status))),
                           ]),
                           _vm._v(" "),
                           _c("td", { staticClass: "wb default-td" }, [

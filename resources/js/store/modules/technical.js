@@ -27,10 +27,11 @@ export default {
                     });
                 });
             }).catch(error => {
-                if (error.response.status === 401) {
-                    ctx.commit('app/setPage', 'login', {root: true});
-                    ctx.commit('app/setToken', '', {root: true});
-                }
+                // console.log(error.response.status);
+                // if (error.response.status === 401) {
+                //     ctx.commit('app/setPage', 'login', {root: true});
+                //     ctx.commit('app/setToken', '', {root: true});
+                // }
             })
         }
     },

@@ -12,7 +12,7 @@
                             <tbody>
                                 <tr>
                                     <td class="wb default-td">{{ item.name }}</td>
-                                    <td class="wb default-td">{{ item.status }}</td>
+                                    <td class="wb default-td">{{ getStatusText(item.status) }}</td>
                                     <td class="wb default-td">{{ item.date }}</td>
                                     <td style="text-align: center; width: 64px;" class="default-td">
                                         <button type="button" class="btn dropdown-button" @click="toggleDropdown(index)">
@@ -90,6 +90,17 @@ export default {
             setTimeout(() =>{
                 this.setWindow({name: name, description: description});
             }, 0)
+        },
+
+        getStatusText(status) {
+            switch (status) {
+                case 1: {
+                    return 'Ожидание';
+                }
+                case 2: {
+                    return 'Выполняется';
+                }
+            }
         }
     }
 
