@@ -3,7 +3,7 @@
         <div style="width: 400px">
             <div class="row justify-content-center align-items-center" style="padding-bottom: 64px;">
                 <div class="col">
-                    <div v-click-outside="close">
+                    <div>
                         <div class="card-body text-white d-flex notification" style="border-radius: 5px 5px 0 0">
                             <strong>Внимание</strong>
                             <button class="btn float-end close-btn" @click="close" style="border: none; box-shadow: inherit;">
@@ -15,7 +15,7 @@
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
                             {{window.description}}
 
-                            <div class="buttons" style="text-align: right">
+                            <div class="button" style="text-align: right">
                                 <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>Взять</strong></button>
                             </div>
                         </div>
@@ -27,14 +27,9 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
 import {mapMutations, mapGetters} from 'vuex';
 export default {
     name: "popup",
-
-    directives: {
-        ClickOutside
-    },
 
     computed: mapGetters ({
         window: 'app/getWindow'
@@ -98,7 +93,7 @@ export default {
         background-color: #252D42;
     }
 
-    .buttons {
+    .button {
         padding-top: 30px;
     }
 

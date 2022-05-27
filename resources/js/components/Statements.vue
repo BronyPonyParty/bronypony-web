@@ -1,6 +1,5 @@
 <template>
     <div>
-        <v-header></v-header>
 
         <div class="container py-5">
             <div class="row justify-content-center">
@@ -58,7 +57,6 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
 import {mapMutations} from 'vuex';
 export default {
     name: "Statements",
@@ -71,10 +69,6 @@ export default {
         items() {
             return this.$store.getters['statements/getItems'];
         }
-    },
-
-    directives: {
-        ClickOutside
     },
 
     methods: {

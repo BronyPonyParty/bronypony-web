@@ -50,3 +50,7 @@ Route::get('test', function () {
 
     dd(\Illuminate\Support\Facades\DB::getQueryLog());
 });
+
+Route::any('test2', function () {
+    return 'lol';
+});

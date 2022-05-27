@@ -3,7 +3,7 @@
         <div style="width: 600px">
             <div class="row justify-content-center align-items-center" style="margin-top: 230px;">
                 <div class="col">
-                    <div v-click-outside="close">
+                    <div>
                         <div class="card-body text-white d-flex notification" style="border-radius: 5px 5px 0 0">
                             <div>
                                 <button class="btn back-button" style="border: none; box-shadow: inherit;" @click="showDescriptionTech" v-if="repairHistoryShowed || travelHistoryShowed">
@@ -121,7 +121,6 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside';
 export default {
     name: "TechInfoWindow",
 
@@ -202,10 +201,6 @@ export default {
             this.$store.commit('techInfo/toggleText', index);
         }
     },
-
-    directives: {
-        ClickOutside
-    }
 }
 </script>
 
@@ -216,6 +211,8 @@ export default {
 
     .item-tech {
         margin-bottom: 5px;
+        display: flex;
+        gap: 10px;
     }
 
     .moving {
@@ -286,6 +283,12 @@ export default {
         .item:active {
             background-color: #262E45;
         }
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        padding-top: 30px;
     }
 
     .btn-toggle {

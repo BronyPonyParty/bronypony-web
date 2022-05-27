@@ -1,5 +1,4 @@
-import Vue from "vue";
-import Vuex from 'vuex';
+import { createStore } from 'vuex';
 import authModule from "./modules/auth";
 import appModule from "./modules/app";
 import headerModule from "./modules/header";
@@ -9,9 +8,7 @@ import technicalModule from "./modules/technical";
 import statementsModule from "./modules/statements";
 import socketModule from "./modules/socket";
 
-Vue.use(Vuex)
-
-export default new Vuex.Store({
+export default createStore({
     namespaced: true,
 
     modules: {

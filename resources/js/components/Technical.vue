@@ -1,6 +1,5 @@
 <template>
     <div>
-        <v-header></v-header>
 
         <div class="container py-4">
             <div class="h2">Список техники</div>

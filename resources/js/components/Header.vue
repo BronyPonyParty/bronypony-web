@@ -14,7 +14,7 @@
                 <label class="cur-point" @click="getTechList">Список техники</label>
             </div>
 
-            <div class="d-flex justify-content-center align-items-center position-relative">
+            <div class="d-flex justify-content-center align-items-center position-relative" id="user-cap-menu">
                 <div class="nav-item profile cur-point rounded-circle d-none d-sm-block" @click="popupProfileToggle" tabindex="0">
                    <img :src="profileInfo.avatar" alt="avatar" class="rounded-circle">
 
@@ -22,7 +22,7 @@
                         <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                     </svg>
                 </div>
-                    <div class="dropdown-popup d-none d-sm-block" tabindex="1" v-if="popupProfile" v-click-outside="popupProfileOutside">
+                    <div class="dropdown-popup d-none d-sm-block" tabindex="1"  v-if="popupProfile">
                         <div class="item-dropdown cur-point" style="white-space: normal;">
                             Вошли как
                             <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
@@ -40,7 +40,7 @@
                     <path  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
                 </svg>
             </div>
-                <div class="dropdown-popup d-sm-none" tabindex="2"  v-if="popupMenu" v-click-outside="popupMenuOutside">
+                <div class="dropdown-popup d-sm-none" tabindex="2" v-if="popupMenu">
                     <div class="item-dropdown cur-point" style="white-space: normal;">
                         Вошли как
                         <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
 export default {
     name: "Header",
 
@@ -75,6 +74,10 @@ export default {
         profileInfo() {
             return this.$store.getters['user/getProfileInfo'];
         }
+    },
+
+    destroyed() {
+        console.log('destroyed');
     },
 
     methods: {
@@ -113,10 +116,6 @@ export default {
         logout() {
             this.$store.dispatch('auth/logout');
         }
-    },
-
-    directives: {
-        ClickOutside
     }
 }
 </script>

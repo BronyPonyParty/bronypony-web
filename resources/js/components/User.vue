@@ -1,6 +1,5 @@
 <template>
     <div>
-        <v-header></v-header>
 
         <div class="container py-5">
             <div class="row py-2 gap-3 align-items-start">
@@ -39,7 +38,7 @@
                                     <img :src="profileInfo.newAvatar" alt="Avatar" class="rounded-circle">
                                 </div>
                             </div>
-                            <div class="edit-group">
+                            <div class="edit-group buttons">
                                 <button class="btn save-button text-white" :disabled="equal" style="border: none; box-shadow: inherit;" @click="saveUserData">
                                     Сохранить
                                 </button>
@@ -171,6 +170,11 @@ export default {
         text-overflow: ellipsis; /* Добавляем многоточие */
         display: inline-block;
         vertical-align: top;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
     }
 
     .edit-list {

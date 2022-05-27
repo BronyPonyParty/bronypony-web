@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth as AuthFacade;
 class EquipmentController extends Controller
 {
     public function getTechnicList() {
-        abort (401);
+//        abort (401);
         $user = AuthFacade::user();
         $technics = Technic::whereOrganizationId($user->organization_id)->get();
 

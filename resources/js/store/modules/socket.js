@@ -2,7 +2,7 @@ export default {
     namespaced: true,
 
     state: {
-        conn: new WebSocket('ws://localhost:8080')
+        // conn: new WebSocket('ws://localhost:8080')
     },
 
     actions: {

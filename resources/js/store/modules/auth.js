@@ -1,3 +1,4 @@
+import axios from "axios";
 export default {
     namespaced: true,
 
@@ -35,6 +36,10 @@ export default {
                     console.log(error.response.data.errors);
                 }
             });
+        },
+
+        test(ctx) {
+            api(ctx, 'dfg');
         },
 
         logout({rootGetters, commit}) {

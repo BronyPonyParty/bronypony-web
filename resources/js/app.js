@@ -1,5 +1,9 @@
-// import { createApp } from 'vue';
-import store from './store';
+import { createApp } from 'vue'
+import App from './App.vue'
+import store from './store'
+import axios from 'axios'
+
+window.axios = axios
 
 /**
  * First we will load all of this project's JavaScript dependencies which
@@ -7,9 +11,7 @@ import store from './store';
  * building robust, powerful web applications using Vue and Laravel.
  */
 
-require('./bootstrap');
-
-window.Vue = require('vue').default;
+// require('./bootstrap');
 
 /**
  * The following block of code may be used to automatically register your
@@ -23,16 +25,16 @@ window.Vue = require('vue').default;
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('v-app', require('./App.vue').default);
-Vue.component('v-login', require('./components/Login.vue').default);
-Vue.component('v-user', require('./components/User.vue').default);
-Vue.component('v-header', require('./components/Header.vue').default);
-Vue.component('v-statements', require('./components/Statements.vue').default);
-Vue.component('v-notice-window', require('./store/modules/popup/NoticeWindow.vue').default);
-Vue.component('v-tech', require('./components/Technical.vue').default);
-Vue.component('v-tech-info-window', require('./store/modules/popup/TechInfoWindow.vue').default);
-Vue.component('v-feed-back-window', require('./store/modules/popup/FeedBackWindow.vue').default);
-Vue.component('v-password-window', require('./store/modules/popup/passwordWindow.vue').default);
+// Vue.component('v-app', require('./App.vue').default);
+// Vue.component('v-login', require('./components/Login.vue').default);
+// Vue.component('v-user', require('./components/User.vue').default);
+// Vue.component('v-header', require('./components/Header.vue').default);
+// Vue.component('v-statements', require('./components/Statements.vue').default);
+// Vue.component('v-notice-window', require('./store/modules/popup/NoticeWindow.vue').default);
+// Vue.component('v-tech', require('./components/Technical.vue').default);
+// Vue.component('v-tech-info-window', require('./store/modules/popup/TechInfoWindow.vue').default);
+// Vue.component('v-feed-back-window', require('./store/modules/popup/FeedBackWindow.vue').default);
+// Vue.component('v-password-window', require('./store/modules/popup/passwordWindow.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -48,7 +50,38 @@ global.FILTERS = {
 
 global.sign = '#';
 
-const app = new Vue({
-    el: '#app',
-    store
+// const app = new Vue({
+//     el: '#app',
+//     store
+// });
+
+const app = createApp(App);
+app.provide('api', function (method, data = {}, catchDefault = true) {
+    let that = this;
+    let token = localStorage.getItem('token');
+    let url = 'api/';
+
+    if (method === 'login') {
+        url += method;
+    } else {
+        url += token + '/' + method;
+    }
+
+    let catchDefaultFunction = function (error) {
+        if (error.response.status == 401) {
+            ctx.commit('app/setPage', 'login', {root:true});
+            ctx.commit('app/setToken', '', {root:true});
+        } else {
+            console.log('Неизвестная ошибка');
+        }
+    };
+
+    return new Promise(function (thenFunction, catchFunction) {
+        axios.post(url, data).then(r => {
+            thenFunction(r.data);
+        }).catch(catchDefault ? catchDefaultFunction : catchFunction);
+    });
 });
+
+app.use(store);
+app.mount('#app');

@@ -3,7 +3,7 @@
         <div style="width: 600px">
             <div class="row justify-content-center align-items-center" style="margin-top: 230px;">
                 <div class="col">
-                    <div v-click-outside="close">
+                    <div>
                         <div class="card-body text-white d-flex notification" style="border-radius: 5px 5px 0 0">
                             <strong>Обратная связь</strong>
                             <button class="btn float-end close-btn" @click="close" style="border: none; box-shadow: inherit;">
@@ -39,15 +39,10 @@
 </template>
 
 <script>
-import ClickOutside from 'vue-click-outside'
 import {mapMutations} from 'vuex';
 
 export default {
     name: "FeedBackWindow",
-
-    directives: {
-        ClickOutside
-    },
 
     methods: {
         ...mapMutations({

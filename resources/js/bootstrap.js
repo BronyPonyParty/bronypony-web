@@ -13,22 +13,6 @@ try {
 window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
-
-axios.interceptors.response.use(function (response) {
-    return response;
-}, function (error) {
-    if (error.response.status === 401) {
-        try {
-            this.$store.commit('app/setPage', 'login', {root: true});
-            this.$store.commit('app/setToken', '', {root: true});
-        } catch (e) {
-            console.log(e);
-        }
-        // this.$store.commit('app/setToken', '', {root:true});
-    } else {
-        return Promise.reject(error);
-    }
-});
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
