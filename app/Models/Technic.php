@@ -13,6 +13,10 @@ class Technic extends Model
         return $this->hasOne(Provider::class, 'id', 'provider_id');
     }
 
+    public function movingTechnic() {
+        return $this->hasOne(MovingTechnic::class, 'id', 'technic_id');
+    }
+
 
     protected $hidden = [
         'organization_id'

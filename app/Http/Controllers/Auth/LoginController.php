@@ -16,7 +16,7 @@ class LoginController extends Controller
         $login = $request->post('login');
         $password = $request->post('password');
 
-        $user = User::whereLogin($login)->wherePassword(md5($password))->where('status', '!=', 0)->first();
+        $user = User::whereLogin($login)->wherePassword(md5($password))->where('status', '!=', 1)->first();
 
         if (empty($user)) abort(400, 'Неверные данные входа');
 

@@ -1,4 +1,3 @@
-import axios from "axios";
 export default {
     namespaced: true,
 
@@ -22,73 +21,29 @@ export default {
     },
 
     actions: {
-        getTechInfo(ctx) {
-            ctx.commit('clearTechMovements');
-            ctx.commit('clearTechRepairs');
-            const technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
-            const token = ctx.rootGetters['app/getToken'];
-            const url = 'api/' + token + '/getTechnicInfo';
 
-            axios.post(url, {
-                technic_id
-            }).then(response => {
-                response.data[0].forEach(item => {
-                    ctx.commit('setTechMovements', {
-                        id: item.id,
-                        user: item.user,
-                        number: item.number,
-                        date: item.date
-                    });
-                });
-
-                ctx.commit('setCabinet');
-
-                response.data[1].forEach(item => {
-                    ctx.commit('setTechRepairs', {
-                        id: item.id,
-                        user: item.user,
-                        userDescription: item.userDescription,
-                        repairman: item.repairman,
-                        repairmanDescription: item.repairmanDescription,
-                        startDate: item.startDate,
-                        endDate: item.endDate
-                    });
-                });
-            }).catch(error => {
-                if (error.response.status === 401) {
-                    ctx.commit('app/setPage', 'login', {root:true});
-                    ctx.commit('app/setToken', '', {root:true});
-                }
-            })
-        }
     },
 
     mutations: {
         showDescriptionTech(state) {
-            setTimeout(() => {
-                state.descriptionShowed = true;
-                state.repairHistoryShowed = false;
-                state.travelHistoryShowed = false;
-                state.title = 'Описание техники';
-            }, 0);
+            state.descriptionShowed = true;
+            state.repairHistoryShowed = false;
+            state.travelHistoryShowed = false;
+            state.title = 'Описание техники';
         },
 
         showTravelHistory(state) {
-            setTimeout(() => {
-                state.travelHistoryShowed = true;
-                state.repairHistoryShowed = false;
-                state.descriptionShowed = false;
-                state.title = 'История перемещений';
-            }, 0);
+            state.travelHistoryShowed = true;
+            state.repairHistoryShowed = false;
+            state.descriptionShowed = false;
+            state.title = 'История перемещений';
         },
 
         showRepairHistory(state) {
-            setTimeout(() => {
-                state.repairHistoryShowed = true;
-                state.travelHistoryShowed = false;
-                state.descriptionShowed = false;
-                state.title = 'История ремонтов техники';
-            });
+            state.repairHistoryShowed = true;
+            state.travelHistoryShowed = false;
+            state.descriptionShowed = false;
+            state.title = 'История ремонтов техники';
         },
 
 

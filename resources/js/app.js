@@ -68,11 +68,20 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
     }
 
     let catchDefaultFunction = function (error) {
-        if (error.response.status == 401) {
-            ctx.commit('app/setPage', 'login', {root:true});
-            ctx.commit('app/setToken', '', {root:true});
-        } else {
-            console.log('Неизвестная ошибка');
+        switch (error.response.status) {
+            case 401: {
+                that.$store.dispatch('auth/logout');
+                break;
+            }
+
+            case 400: {
+                console.log('Плохой запрос');
+                break;
+            }
+
+            default: {
+                console.log('Неизвестная ошибка');
+            }
         }
     };
 

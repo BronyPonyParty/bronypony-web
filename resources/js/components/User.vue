@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div class="container py-5">
             <div class="row py-2 gap-3 align-items-start">
                 <div class="col-12 col-lg-3 white-block " style="padding-left: 0; padding-right: 0;">
@@ -65,6 +64,7 @@
 <script>
 export default {
     name: "User",
+    inject: ['api'],
 
     computed: {
         profileInfo() {
@@ -105,7 +105,28 @@ export default {
                 return;
             }
 
-            this.$store.dispatch('user/saveUserData');
+            const userData = this.$store.getters['user/getProfileInfo'];
+            const avatar = this.$store.getters['user/getSelectedFile'];
+
+
+            const formData = new FormData();
+            formData.append('avatar', avatar);
+            formData.append('firstname', userData.newFirstname);
+            formData.append('lastname', userData.newLastname);
+            formData.append('middlename', userData.newMiddlename);
+
+
+            this.api('user/saveUserData', formData).then(data => {
+                this.$store.commit('user/setProfileInfo', {
+                    id: data.id,
+                    firstname: data.firstname,
+                    lastname: data.lastname,
+                    middlename: data.middlename,
+                    mail: data.mail,
+                    phoneNumber: data.phone_number,
+                    avatar: data.avatar,
+                });
+            })
         },
 
         removeRedOnFirstname() {

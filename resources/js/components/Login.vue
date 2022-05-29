@@ -36,11 +36,24 @@
 
 <script>
 export default {
+    name: 'Login',
+    inject: ['api'],
+
     methods: {
         authorization() {
-            this.$store.dispatch('auth/login', {
-                login: this.$refs.login.value,
-                password: this.$refs.password.value
+            this.api('login', {login: this.$refs.login.value, password: this.$refs.password.value}).then(data => {
+                this.$store.commit('user/setProfileInfo', {
+                    id: data[1].id,
+                    firstname: data[1].firstname,
+                    lastname: data[1].lastname,
+                    middlename: data[1].middlename,
+                    mail: data[1].mail,
+                    phoneNumber: data[1].phone_number,
+                    avatar: data[1].avatar,
+                });
+
+                this.$store.commit('app/setToken', data[0]);
+                this.$store.commit('app/setPage', 'statements');
             });
         },
     }

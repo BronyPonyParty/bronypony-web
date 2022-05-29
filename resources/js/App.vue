@@ -3,7 +3,7 @@
         <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
         <v-tech-info-window v-if="window.name === 'techInfoWindow'"></v-tech-info-window>
         <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
-        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
+<!--        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>-->
 
         <v-header v-if="page !== 'login'"></v-header>
         <v-login v-if="page === 'login'"></v-login>
@@ -41,25 +41,9 @@ export default {
     },
 
     mounted() {
-        // this.api('login', {login, password}).then(data => {
-        //     this.$store.commit('user/setProfileInfo', {
-        //         id: data[1].id,
-        //         firstname: data[1].firstname,
-        //         lastname: data[1].lastname,
-        //         middlename: data[1].middlename,
-        //         mail: data[1].mail,
-        //         phoneNumber: data[1].phone_number,
-        //         avatar: data[1].avatar,
-        //     });
-        //
-        //     this.$store.commit('app/setToken',response.data[0]);
-        //     this.$store.commit('app/setPage', 'statements');
-        //
-        //     // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
-        //     this.$store.commit('technical/clearItems', '');
-        // });
+        if (this.$store.getters['app/getToken'].length !== 32) return;
 
-        this.api('getUserData').then(data => {
+        this.api('user/getUserData').then(data => {
             this.$store.commit('user/setProfileInfo', {
                 id: data.id,
                 firstname: data.firstname,
@@ -72,12 +56,6 @@ export default {
 
             if (this.$store.getters['app/getPage'] === 'login') this.$store.commit('app/setPage', 'statements');
         })
-
-        // this.api('getUserData', {}).then(data => {
-        //     console.log(data);
-        // });
-        // this.$store.dispatch('user/getUserData');
-        // this.$store.dispatch('socket/socket');
     },
 
     computed: mapGetters({
@@ -105,10 +83,11 @@ export default {
 
     created() {
         document.addEventListener("click", e => {
-            const w = e.composedPath().includes(document.getElementById('user-cap-menu'));
-            if (!w) {
-                if (this.$store.getters['header/PopupProfile']) {
-                    this.$store.dispatch('header/popupProfileToggle');
+            const w0 = e.composedPath().includes(document.getElementById('user-cap-profile'));
+            const w2 = e.composedPath().includes(document.getElementById('mobile-cap-menu'));
+            if (!w0 && !w2) {
+                if (this.$store.getters['header/popupMenu']) {
+                    this.$store.dispatch('header/popupMenuToggle');
                 }
             }
         });

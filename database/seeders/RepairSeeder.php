@@ -18,18 +18,6 @@ class RepairSeeder extends Seeder
         $faker = app(Generator::class);
 
         $data[] = [
-            'report_id' => 1,
-            'repairman_id' => 8,
-            'description' => ''
-        ];
-
-        $data[] = [
-            'report_id' => 2,
-            'repairman_id' => 2,
-            'description' => $faker->realText()
-        ];
-
-        $data[] = [
             'report_id' => 3,
             'repairman_id' => 10,
             'description' => $faker->realText(120)

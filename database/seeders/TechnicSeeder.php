@@ -26,7 +26,7 @@ class TechnicSeeder extends Seeder
                 'description' => $faker->realTextBetween(200, 1000),
                 'provider_id' => rand(1, 2),
                 'organization_id' => 1,
-                'status' => rand(0, 10) <= 8 ? 0 : 2
+                'status' => rand(0, 10) <= 8 ? 1 : 2
             ];
         }
 
@@ -38,7 +38,7 @@ class TechnicSeeder extends Seeder
                 'description' => $faker->realTextBetween(200, 1000),
                 'provider_id' => rand(1, 2),
                 'organization_id' => 2,
-                'status' => rand(0, 10) <= 8 ? 0 : 2
+                'status' => rand(0, 10) <= 8 ? 1 : 2
             ];
         }
 

@@ -18,8 +18,6 @@ class CreatePremisesTable extends Migration
 
             $table->unsignedInteger('number');
 
-            $table->smallInteger('floor');
-
             $table->unsignedInteger('organization_id');
             $table->foreign('organization_id')->references('id')->on('organizations');
         });

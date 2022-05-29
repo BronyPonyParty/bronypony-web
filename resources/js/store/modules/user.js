@@ -1,4 +1,3 @@
-import axios from "axios";
 export default {
     namespaced: true,
 
@@ -22,69 +21,6 @@ export default {
     },
 
     actions: {
-        getUserData ({rootGetters, commit}) {
-            const token = rootGetters['app/getToken'];
-
-            if (token.length !== 32) {
-                commit('app/setPage', 'login', {root:true});
-                return;
-            }
-
-            const url = '/api/' + token + '/getUserData';
-
-            axios.post(url).then(response => {
-                commit('setProfileInfo', {
-                    id: response.data.id,
-                    firstname: response.data.firstname,
-                    lastname: response.data.lastname,
-                    middlename: response.data.middlename,
-                    mail: response.data.mail,
-                    phoneNumber: response.data.phone_number,
-                    avatar: response.data.avatar,
-                });
-
-                if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {root:true});
-            }).catch(error => {
-                if (error.response.status === 401) {
-                    commit('app/setPage', 'login', {root:true});
-                    commit('app/setToken', '', {root:true});
-                }
-            });
-        },
-
-        saveUserData(ctx) {
-            const token = ctx.rootGetters['app/getToken'];
-            const url = '/api/' + token + '/saveUserData';
-            const userData = ctx.rootGetters['user/getProfileInfo'];
-            const avatar = ctx.rootGetters['user/getSelectedFile'];
-
-
-            const formData = new FormData();
-            formData.append('avatar', avatar);
-            formData.append('firstname', userData.newFirstname);
-            formData.append('lastname', userData.newLastname);
-            formData.append('middlename', userData.newMiddlename);
-
-
-
-            axios.post(url, formData).then(response => {
-                ctx.commit('setProfileInfo', {
-                    id: response.data.id,
-                    firstname: response.data.firstname,
-                    lastname: response.data.lastname,
-                    middlename: response.data.middlename,
-                    mail: response.data.mail,
-                    phoneNumber: response.data.phone_number,
-                    avatar: response.data.avatar,
-                });
-            }).catch(error => {
-                if (error.response.status === 401) {
-                    ctx.commit('app/setPage', 'login', {root:true});
-                    ctx.commit('app/setToken', '', {root:true});
-                }
-            })
-        },
-
         loadAvatar(ctx, {file, fileValue}) {
             if (fileValue === '') return; // Если пользователь нажимает отмена в выборе файла
             if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');

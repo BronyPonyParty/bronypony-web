@@ -10,50 +10,55 @@
             </a>
 
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
-                <label class="cur-point" @click="getStatementsPage">Список заявлений</label>
-                <label class="cur-point" @click="getTechList">Список техники</label>
+                <label class="cur-point" @click="setPage('statements')">Список заявлений</label>
+                <label class="cur-point" @click="setPage('technical')">Список техники</label>
             </div>
 
-            <div class="d-flex justify-content-center align-items-center position-relative" id="user-cap-menu">
-                <div class="nav-item profile cur-point rounded-circle d-none d-sm-block" @click="popupProfileToggle" tabindex="0">
+            <div class="d-flex justify-content-center align-items-center position-relative" id="user-cap-profile">
+                <div class="nav-item profile cur-point rounded-circle d-none d-sm-block" @click="popupMenuToggle" tabindex="0">
                    <img :src="profileInfo.avatar" alt="avatar" class="rounded-circle">
 
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="d-none d-sm-block cur-point position-absolute" style="margin-left: 40px; height: 100%; top: 0">
                         <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                     </svg>
                 </div>
-                    <div class="dropdown-popup d-none d-sm-block" tabindex="1"  v-if="popupProfile">
-                        <div class="item-dropdown cur-point" style="white-space: normal;">
-                            Вошли как
-                            <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
-                        </div>
-                        <hr>
-                        <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
-                        <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
-                        <hr>
-                        <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
-                    </div>
-            </div>
 
-            <div class="float-end my-auto d-sm-none list position-relative" @click="popupMenuToggle">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
-                    <path  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-                </svg>
-            </div>
-                <div class="dropdown-popup d-sm-none" tabindex="2" v-if="popupMenu">
+                <div class="dropdown-popup d-none d-sm-block" v-if="popupMenu">
                     <div class="item-dropdown cur-point" style="white-space: normal;">
                         Вошли как
                         <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
                     </div>
                     <hr>
-                    <div class="item-dropdown cur-point clip" @click="getStatementsPage">Список заявлений</div>
-                    <div class="item-dropdown cur-point clip" @click="getTechList">Список техники</div>
-                    <hr>
-                    <div class="item-dropdown cur-point clip" @click="showFeedBackWindow">Обратная связь</div>
-                    <div class="item-dropdown cur-point clip" @click="getUserPage">Настройки</div>
+                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBack')">Обратная связь</div>
+                    <div class="item-dropdown cur-point clip" @click="setPage('user')">Настройки</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
                 </div>
+            </div>
+
+            <div class="float-end my-auto d-sm-none list position-relative" id="mobile-cap-menu">
+                <div @click="popupMenuToggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16">
+                        <path  d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+                    </svg>
+                </div>
+
+                <div class="dropdown-popup d-sm-none" v-if="popupMenu">
+                    <div class="item-dropdown cur-point" style="white-space: normal;">
+                        Вошли как
+                        <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
+                    </div>
+                    <hr>
+                    <div class="item-dropdown cur-point clip" @click="setPage('statements')">Список заявлений</div>
+                    <div class="item-dropdown cur-point clip" @click="setPage('technical')">Список техники</div>
+                    <hr>
+                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBack')">Обратная связь</div>
+                    <div class="item-dropdown cur-point clip" @click="setPage('user')">Настройки</div>
+                    <hr>
+                    <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
+                </div>
+
+            </div>
         </div>
     </nav>
 </template>
@@ -61,12 +66,9 @@
 <script>
 export default {
     name: "Header",
+    inject: ['api'],
 
     computed: {
-        popupProfile() {
-            return this.$store.getters['header/PopupProfile'];
-        },
-
         popupMenu() {
             return this.$store.getters['header/popupMenu'];
         },
@@ -76,45 +78,26 @@ export default {
         }
     },
 
-    destroyed() {
-        console.log('destroyed');
-    },
-
     methods: {
-        popupProfileToggle() {
-            this.$store.dispatch('header/popupProfileToggle');
-        },
-
-        popupProfileOutside() {
-            this.$store.dispatch('header/popupProfileOutside');
-        },
-
-        popupMenuOutside() {
-            this.$store.dispatch('header/popupMenuOutside');
-        },
-
         popupMenuToggle() {
             this.$store.dispatch('header/popupMenuToggle');
         },
 
-        showFeedBackWindow() {
-            this.$store.dispatch('header/showFeedBackWindow');
+        setWindow(window) {
+            this.$store.commit('app/setWindow', {name: window});
+            this.popupMenuToggle();
         },
 
-        getUserPage() {
-            this.$store.dispatch('header/getUserPage');
-        },
-
-        getStatementsPage() {
-            this.$store.dispatch('header/getStatementsPage');
-        },
-
-        getTechList() {
-            this.$store.dispatch('header/getTechList');
+        setPage(page) {
+            this.$store.commit('app/setPage', page);
+            this.popupMenuToggle();
         },
 
         logout() {
-            this.$store.dispatch('auth/logout');
+            this.api('logout').then(() => {
+                this.$store.dispatch('auth/logout');
+            });
+            this.popupMenuToggle();
         }
     }
 }

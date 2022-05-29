@@ -1,4 +1,3 @@
-import axios from "axios";
 export default {
     namespaced: true,
 
@@ -9,32 +8,7 @@ export default {
     },
 
     actions: {
-        loadTechnicList(ctx) {
-            if (ctx.state.items.length > 0) return;
 
-            const token = ctx.rootGetters['app/getToken'];
-            const url = 'api/' + token + '/getTechnicList';
-
-            axios.post(url, {}).then(response => {
-                response.data.forEach(item => {
-                    ctx.commit('setItems', {
-                        id: item.id,
-                        name: item.name,
-                        number: item.number,
-                        date: item.date,
-                        description: item.description,
-                        provider: item.provider,
-                        status: item.status
-                    });
-                });
-            }).catch(error => {
-                // console.log(error.response.status);
-                // if (error.response.status === 401) {
-                //     ctx.commit('app/setPage', 'login', {root: true});
-                //     ctx.commit('app/setToken', '', {root: true});
-                // }
-            })
-        }
     },
 
     mutations: {

@@ -59,7 +59,7 @@ class UserSeeder extends Seeder
             'phone_number' => null,
             'mail' => 'Oleg@yandex.ru',
             'organization_id' => 2,
-            'status' => 0
+            'status' => 1
         ];
 
         $data[] = [

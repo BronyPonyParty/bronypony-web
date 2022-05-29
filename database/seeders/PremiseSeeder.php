@@ -16,26 +16,23 @@ class PremiseSeeder extends Seeder
     {
         $data = [];
 
-        for ($i = 1; $i <= 10; $i++) {
+        for ($i = 101; $i <= 112; $i++) {
             $data[] = [
                 'number' => $i,
-                'floor' => 1,
                 'organization_id' => 1
             ];
         }
 
-        for ($i = 11; $i <= 16; $i++) {
+        for ($i = 201; $i <= 212; $i++) {
             $data[] = [
                 'number' => $i,
-                'floor' => 2,
                 'organization_id' => 1
             ];
         }
 
-        for ($i = 1; $i <= 8; $i++) {
+        for ($i = 101; $i <= 115; $i++) {
             $data[] = [
                 'number' => $i,
-                'floor' => 1,
                 'organization_id' => 2
             ];
         }

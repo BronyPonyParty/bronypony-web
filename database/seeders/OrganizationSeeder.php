@@ -19,7 +19,7 @@ class OrganizationSeeder extends Seeder
             'address' => '672520, г. Сураж, ул. Чапаевский пер, дом 57',
             'phone_number' => '79336609156',
             'registration_date' => 1589544995,
-            'status' => 0
+            'status' => 1
         ];
 
         $data[] = [
@@ -27,7 +27,7 @@ class OrganizationSeeder extends Seeder
             'address' => '607204, г. Курагино, ул. Золотистый пер, дом 177',
             'phone_number' => '79616013079',
             'registration_date' => 1533259600,
-            'status' => 0
+            'status' => 1
         ];
 
         DB::table('organizations')->insert($data);

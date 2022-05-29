@@ -60,10 +60,17 @@
 import {mapMutations} from 'vuex';
 export default {
     name: "Statements",
+    inject: ['api'],
 
     data: () => ({
         show: false,
     }),
+
+    mounted() {
+        this.api('statement/get').then(data => {
+            console.log(data);
+        })
+    },
 
     computed: {
         items() {
@@ -81,9 +88,7 @@ export default {
         },
 
         showWindow(name, description) {
-            setTimeout(() =>{
-                this.setWindow({name: name, description: description});
-            }, 0)
+            this.setWindow({name: name, description: description});
         },
 
         getStatusText(status) {

@@ -42,6 +42,7 @@
 import {mapMutations} from 'vuex';
 export default {
     name: "equipmentList",
+    inject: ['api'],
 
     data: () => ({
         filters: global.FILTERS,
@@ -49,7 +50,20 @@ export default {
     }),
 
     mounted() {
-        this.$store.dispatch('technical/loadTechnicList');
+        if (this.$store.getters['technical/getItems'].length > 0) return;
+        this.api('technic/getList').then(data => {
+            data.forEach(item => {
+                this.$store.commit('technical/setItems', {
+                    id: item.id,
+                    name: item.name,
+                    number: item.number,
+                    date: item.date,
+                    description: item.description,
+                    provider: item.provider,
+                    status: item.status
+                })
+            })
+        })
     },
 
     computed: {
@@ -76,11 +90,38 @@ export default {
                 description: item.description
             });
 
-            this.$store.dispatch('techInfo/getTechInfo');
+            // Очистка массива от прошлой техники
+            this.$store.commit('techInfo/clearTechMovements');
+            this.$store.commit('techInfo/clearTechRepairs');
 
-            setTimeout(() => {
-                this.showWindow({name: 'techInfoWindow'});
-            }, 0)
+            const technic_id = this.$store.getters['techInfo/getTechDescription'].id;
+
+            this.api('technic/getInfo', {technic_id: technic_id}).then(data => {
+                data[0].forEach(item => {
+                    this.$store.commit('techInfo/setTechMovements', {
+                        id: item.id,
+                        user: item.user,
+                        number: item.number,
+                        date: item.date
+                    });
+                });
+
+                this.$store.commit('techInfo/setCabinet');
+
+                data[1].forEach(item => {
+                    this.$store.commit('techInfo/setTechRepairs', {
+                        id: item.id,
+                        user: item.user,
+                        userDescription: item.userDescription,
+                        repairman: item.repairman,
+                        repairmanDescription: item.repairmanDescription,
+                        startDate: item.startDate,
+                        endDate: item.endDate
+                    });
+                });
+            });
+
+            this.showWindow({name: 'techInfoWindow'});
         },
 
         changeSearchLine(event) {

@@ -12,10 +12,9 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
 
-class EquipmentController extends Controller
+class TechnicController extends Controller
 {
     public function getTechnicList() {
-//        abort (401);
         $user = AuthFacade::user();
         $technics = Technic::whereOrganizationId($user->organization_id)->get();
 

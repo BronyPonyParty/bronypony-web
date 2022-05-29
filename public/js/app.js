@@ -19778,24 +19778,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     var _this = this;
 
-    // this.api('login', {login, password}).then(data => {
-    //     this.$store.commit('user/setProfileInfo', {
-    //         id: data[1].id,
-    //         firstname: data[1].firstname,
-    //         lastname: data[1].lastname,
-    //         middlename: data[1].middlename,
-    //         mail: data[1].mail,
-    //         phoneNumber: data[1].phone_number,
-    //         avatar: data[1].avatar,
-    //     });
-    //
-    //     this.$store.commit('app/setToken',response.data[0]);
-    //     this.$store.commit('app/setPage', 'statements');
-    //
-    //     // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
-    //     this.$store.commit('technical/clearItems', '');
-    // });
-    this.api('getUserData').then(function (data) {
+    if (this.$store.getters['app/getToken'].length !== 32) return;
+    this.api('user/getUserData').then(function (data) {
       _this.$store.commit('user/setProfileInfo', {
         id: data.id,
         firstname: data.firstname,
@@ -19807,11 +19791,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
 
       if (_this.$store.getters['app/getPage'] === 'login') _this.$store.commit('app/setPage', 'statements');
-    }); // this.api('getUserData', {}).then(data => {
-    //     console.log(data);
-    // });
-    // this.$store.dispatch('user/getUserData');
-    // this.$store.dispatch('socket/socket');
+    });
   },
   computed: (0,vuex__WEBPACK_IMPORTED_MODULE_9__.mapGetters)({
     page: 'app/getPage',
@@ -19835,11 +19815,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _this2 = this;
 
     document.addEventListener("click", function (e) {
-      var w = e.composedPath().includes(document.getElementById('user-cap-menu'));
+      var w0 = e.composedPath().includes(document.getElementById('user-cap-profile'));
+      var w2 = e.composedPath().includes(document.getElementById('mobile-cap-menu'));
 
-      if (!w) {
-        if (_this2.$store.getters['header/PopupProfile']) {
-          _this2.$store.dispatch('header/popupProfileToggle');
+      if (!w0 && !w2) {
+        if (_this2.$store.getters['header/popupMenu']) {
+          _this2.$store.dispatch('header/popupMenuToggle');
         }
       }
     });
@@ -19861,10 +19842,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Header",
+  inject: ['api'],
   computed: {
-    popupProfile: function popupProfile() {
-      return this.$store.getters['header/PopupProfile'];
-    },
     popupMenu: function popupMenu() {
       return this.$store.getters['header/popupMenu'];
     },
@@ -19872,36 +19851,27 @@ __webpack_require__.r(__webpack_exports__);
       return this.$store.getters['user/getProfileInfo'];
     }
   },
-  destroyed: function destroyed() {
-    console.log('destroyed');
-  },
   methods: {
-    popupProfileToggle: function popupProfileToggle() {
-      this.$store.dispatch('header/popupProfileToggle');
-    },
-    popupProfileOutside: function popupProfileOutside() {
-      this.$store.dispatch('header/popupProfileOutside');
-    },
-    popupMenuOutside: function popupMenuOutside() {
-      this.$store.dispatch('header/popupMenuOutside');
-    },
     popupMenuToggle: function popupMenuToggle() {
       this.$store.dispatch('header/popupMenuToggle');
     },
-    showFeedBackWindow: function showFeedBackWindow() {
-      this.$store.dispatch('header/showFeedBackWindow');
+    setWindow: function setWindow(window) {
+      this.$store.commit('app/setWindow', {
+        name: window
+      });
+      this.popupMenuToggle();
     },
-    getUserPage: function getUserPage() {
-      this.$store.dispatch('header/getUserPage');
-    },
-    getStatementsPage: function getStatementsPage() {
-      this.$store.dispatch('header/getStatementsPage');
-    },
-    getTechList: function getTechList() {
-      this.$store.dispatch('header/getTechList');
+    setPage: function setPage(page) {
+      this.$store.commit('app/setPage', page);
+      this.popupMenuToggle();
     },
     logout: function logout() {
-      this.$store.dispatch('auth/logout');
+      var _this = this;
+
+      this.api('logout').then(function () {
+        _this.$store.dispatch('auth/logout');
+      });
+      this.popupMenuToggle();
     }
   }
 });
@@ -19920,11 +19890,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'Login',
+  inject: ['api'],
   methods: {
     authorization: function authorization() {
-      this.$store.dispatch('auth/login', {
+      var _this = this;
+
+      this.api('login', {
         login: this.$refs.login.value,
         password: this.$refs.password.value
+      }).then(function (data) {
+        _this.$store.commit('user/setProfileInfo', {
+          id: data[1].id,
+          firstname: data[1].firstname,
+          lastname: data[1].lastname,
+          middlename: data[1].middlename,
+          mail: data[1].mail,
+          phoneNumber: data[1].phone_number,
+          avatar: data[1].avatar
+        });
+
+        _this.$store.commit('app/setToken', data[0]);
+
+        _this.$store.commit('app/setPage', 'statements');
       });
     }
   }
@@ -19953,10 +19941,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Statements",
+  inject: ['api'],
   data: function data() {
     return {
       show: false
     };
+  },
+  mounted: function mounted() {
+    this.api('statement/get').then(function (data) {
+      console.log(data);
+    });
   },
   computed: {
     items: function items() {
@@ -19970,14 +19964,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.commit('statements/setVisibility', index);
     },
     showWindow: function showWindow(name, description) {
-      var _this = this;
-
-      setTimeout(function () {
-        _this.setWindow({
-          name: name,
-          description: description
-        });
-      }, 0);
+      this.setWindow({
+        name: name,
+        description: description
+      });
     },
     getStatusText: function getStatusText(status) {
       switch (status) {
@@ -20018,6 +20008,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "equipmentList",
+  inject: ['api'],
   data: function data() {
     return {
       filters: __webpack_require__.g.FILTERS,
@@ -20025,7 +20016,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   mounted: function mounted() {
-    this.$store.dispatch('technical/loadTechnicList');
+    var _this = this;
+
+    if (this.$store.getters['technical/getItems'].length > 0) return;
+    this.api('technic/getList').then(function (data) {
+      data.forEach(function (item) {
+        _this.$store.commit('technical/setItems', {
+          id: item.id,
+          name: item.name,
+          number: item.number,
+          date: item.date,
+          description: item.description,
+          provider: item.provider,
+          status: item.status
+        });
+      });
+    });
   },
   computed: {
     items: function items() {
@@ -20039,7 +20045,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     showWindow: 'app/setWindow'
   })), {}, {
     showInfoWindow: function showInfoWindow(item) {
-      var _this = this;
+      var _this2 = this;
 
       this.$store.commit('techInfo/setTechDescription', {
         id: item.id,
@@ -20047,13 +20053,40 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         status: item.status,
         provider: item.provider,
         description: item.description
-      });
-      this.$store.dispatch('techInfo/getTechInfo');
-      setTimeout(function () {
-        _this.showWindow({
-          name: 'techInfoWindow'
+      }); // Очистка массива от прошлой техники
+
+      this.$store.commit('techInfo/clearTechMovements');
+      this.$store.commit('techInfo/clearTechRepairs');
+      var technic_id = this.$store.getters['techInfo/getTechDescription'].id;
+      this.api('technic/getInfo', {
+        technic_id: technic_id
+      }).then(function (data) {
+        data[0].forEach(function (item) {
+          _this2.$store.commit('techInfo/setTechMovements', {
+            id: item.id,
+            user: item.user,
+            number: item.number,
+            date: item.date
+          });
         });
-      }, 0);
+
+        _this2.$store.commit('techInfo/setCabinet');
+
+        data[1].forEach(function (item) {
+          _this2.$store.commit('techInfo/setTechRepairs', {
+            id: item.id,
+            user: item.user,
+            userDescription: item.userDescription,
+            repairman: item.repairman,
+            repairmanDescription: item.repairmanDescription,
+            startDate: item.startDate,
+            endDate: item.endDate
+          });
+        });
+      });
+      this.showWindow({
+        name: 'techInfoWindow'
+      });
     },
     changeSearchLine: function changeSearchLine(event) {
       this.$store.commit('technical/setSearchLine', event.target.value);
@@ -20097,6 +20130,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "User",
+  inject: ['api'],
   computed: {
     profileInfo: function profileInfo() {
       return this.$store.getters['user/getProfileInfo'];
@@ -20114,6 +20148,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     saveUserData: function saveUserData() {
+      var _this = this;
+
       var firstname = this.$refs.firstname.value;
       var lastname = this.$refs.lastname.value;
       var middlename = this.$refs.middlename.value;
@@ -20125,7 +20161,24 @@ __webpack_require__.r(__webpack_exports__);
         return;
       }
 
-      this.$store.dispatch('user/saveUserData');
+      var userData = this.$store.getters['user/getProfileInfo'];
+      var avatar = this.$store.getters['user/getSelectedFile'];
+      var formData = new FormData();
+      formData.append('avatar', avatar);
+      formData.append('firstname', userData.newFirstname);
+      formData.append('lastname', userData.newLastname);
+      formData.append('middlename', userData.newMiddlename);
+      this.api('user/saveUserData', formData).then(function (data) {
+        _this.$store.commit('user/setProfileInfo', {
+          id: data.id,
+          firstname: data.firstname,
+          lastname: data.lastname,
+          middlename: data.middlename,
+          mail: data.mail,
+          phoneNumber: data.phone_number,
+          avatar: data.avatar
+        });
+      });
     },
     removeRedOnFirstname: function removeRedOnFirstname() {
       this.$refs.firstname.classList.remove('border-red');
@@ -20363,8 +20416,6 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
 
   var _component_v_feed_back_window = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("v-feed-back-window");
 
-  var _component_v_password_window = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("v-password-window");
-
   var _component_v_header = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("v-header");
 
   var _component_v_login = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("v-login");
@@ -20381,18 +20432,16 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     key: 1
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.window.name === 'feedBack' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_feed_back_window, {
     key: 2
-  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.window.name === 'passwordWindow' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_password_window, {
+  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("        <v-password-window v-if=\"window.name === 'passwordWindow'\"></v-password-window>"), _ctx.page !== 'login' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_header, {
     key: 3
-  })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.page !== 'login' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_header, {
-    key: 4
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.page === 'login' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_login, {
-    key: 5
+    key: 4
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.page === 'user' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_user, {
-    key: 6
+    key: 5
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.page === 'statements' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_statements, {
-    key: 7
+    key: 6
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _ctx.page === 'technical' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_v_technical, {
-    key: 8
+    key: 7
   })) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
 }
 
@@ -20433,7 +20482,7 @@ var _hoisted_4 = {
 };
 var _hoisted_5 = {
   "class": "d-flex justify-content-center align-items-center position-relative",
-  id: "user-cap-menu"
+  id: "user-cap-profile"
 };
 var _hoisted_6 = ["src"];
 var _hoisted_7 = {
@@ -20460,8 +20509,7 @@ var _hoisted_8 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_9 = [_hoisted_8];
 var _hoisted_10 = {
   key: 0,
-  "class": "dropdown-popup d-none d-sm-block",
-  tabindex: "1"
+  "class": "dropdown-popup d-none d-sm-block"
 };
 var _hoisted_11 = {
   "class": "item-dropdown cur-point",
@@ -20488,7 +20536,12 @@ var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_16 = {
+  "class": "float-end my-auto d-sm-none list position-relative",
+  id: "mobile-cap-menu"
+};
+
+var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     width: "32",
@@ -20503,30 +20556,23 @@ var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_17 = [_hoisted_16];
-var _hoisted_18 = {
-  key: 0,
-  "class": "dropdown-popup d-sm-none",
-  tabindex: "2"
-};
+var _hoisted_18 = [_hoisted_17];
 var _hoisted_19 = {
+  key: 0,
+  "class": "dropdown-popup d-sm-none"
+};
+var _hoisted_20 = {
   "class": "item-dropdown cur-point",
   style: {
     "white-space": "normal"
   }
 };
 
-var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Вошли как ");
+var _hoisted_21 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)(" Вошли как ");
 
-var _hoisted_21 = {
+var _hoisted_22 = {
   "class": "clip"
 };
-
-var _hoisted_22 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
-  /* HOISTED */
-  );
-});
 
 var _hoisted_23 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
@@ -20540,21 +20586,27 @@ var _hoisted_24 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
+var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
+  /* HOISTED */
+  );
+});
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("nav", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [_hoisted_3, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "cur-point",
-    onClick: _cache[0] || (_cache[0] = function () {
-      return $options.getStatementsPage && $options.getStatementsPage.apply($options, arguments);
+    onClick: _cache[0] || (_cache[0] = function ($event) {
+      return $options.setPage('statements');
     })
   }, "Список заявлений"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
     "class": "cur-point",
-    onClick: _cache[1] || (_cache[1] = function () {
-      return $options.getTechList && $options.getTechList.apply($options, arguments);
+    onClick: _cache[1] || (_cache[1] = function ($event) {
+      return $options.setPage('technical');
     })
   }, "Список техники")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "nav-item profile cur-point rounded-circle d-none d-sm-block",
     onClick: _cache[2] || (_cache[2] = function () {
-      return $options.popupProfileToggle && $options.popupProfileToggle.apply($options, arguments);
+      return $options.popupMenuToggle && $options.popupMenuToggle.apply($options, arguments);
     }),
     tabindex: "0"
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
@@ -20563,56 +20615,55 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "class": "rounded-circle"
   }, null, 8
   /* PROPS */
-  , _hoisted_6), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_7, _hoisted_9))]), $options.popupProfile ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.profileInfo.firstname + ' ' + $options.profileInfo.lastname), 1
+  , _hoisted_6), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_7, _hoisted_9))]), $options.popupMenu ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [_hoisted_12, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", _hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.profileInfo.firstname + ' ' + $options.profileInfo.lastname), 1
   /* TEXT */
   )]), _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[3] || (_cache[3] = function () {
-      return $options.showFeedBackWindow && $options.showFeedBackWindow.apply($options, arguments);
+    onClick: _cache[3] || (_cache[3] = function ($event) {
+      return $options.setWindow('feedBack');
     })
   }, "Обратная связь"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[4] || (_cache[4] = function () {
-      return $options.getUserPage && $options.getUserPage.apply($options, arguments);
+    onClick: _cache[4] || (_cache[4] = function ($event) {
+      return $options.setPage('user');
     })
   }, "Настройки"), _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
     onClick: _cache[5] || (_cache[5] = function () {
       return $options.logout && $options.logout.apply($options, arguments);
     })
-  }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "float-end my-auto d-sm-none list position-relative",
+  }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     onClick: _cache[6] || (_cache[6] = function () {
       return $options.popupMenuToggle && $options.popupMenuToggle.apply($options, arguments);
     })
-  }, _hoisted_17), $options.popupMenu ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_18, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.profileInfo.firstname + ' ' + $options.profileInfo.lastname), 1
+  }, _hoisted_18), $options.popupMenu ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", _hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.profileInfo.firstname + ' ' + $options.profileInfo.lastname), 1
   /* TEXT */
-  )]), _hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  )]), _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[7] || (_cache[7] = function () {
-      return $options.getStatementsPage && $options.getStatementsPage.apply($options, arguments);
+    onClick: _cache[7] || (_cache[7] = function ($event) {
+      return $options.setPage('statements');
     })
   }, "Список заявлений"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[8] || (_cache[8] = function () {
-      return $options.getTechList && $options.getTechList.apply($options, arguments);
+    onClick: _cache[8] || (_cache[8] = function ($event) {
+      return $options.setPage('technical');
     })
-  }, "Список техники"), _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Список техники"), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[9] || (_cache[9] = function () {
-      return $options.showFeedBackWindow && $options.showFeedBackWindow.apply($options, arguments);
+    onClick: _cache[9] || (_cache[9] = function ($event) {
+      return $options.setWindow('feedBack');
     })
   }, "Обратная связь"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[10] || (_cache[10] = function () {
-      return $options.getUserPage && $options.getUserPage.apply($options, arguments);
+    onClick: _cache[10] || (_cache[10] = function ($event) {
+      return $options.setPage('user');
     })
-  }, "Настройки"), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Настройки"), _hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
     onClick: _cache[11] || (_cache[11] = function () {
       return $options.logout && $options.logout.apply($options, arguments);
     })
-  }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]);
+  }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]);
 }
 
 /***/ }),
@@ -21984,15 +22035,23 @@ app.provide('api', function (method) {
   }
 
   var catchDefaultFunction = function catchDefaultFunction(error) {
-    if (error.response.status == 401) {
-      ctx.commit('app/setPage', 'login', {
-        root: true
-      });
-      ctx.commit('app/setToken', '', {
-        root: true
-      });
-    } else {
-      console.log('Неизвестная ошибка');
+    switch (error.response.status) {
+      case 401:
+        {
+          that.$store.dispatch('auth/logout');
+          break;
+        }
+
+      case 400:
+        {
+          console.log('Плохой запрос');
+          break;
+        }
+
+      default:
+        {
+          console.log('Неизвестная ошибка');
+        }
     }
   };
 
@@ -22128,69 +22187,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {},
   actions: {
-    login: function login(ctx, _ref) {
-      var login = _ref.login,
-          password = _ref.password;
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/login', {
-        login: login,
-        password: password
-      }).then(function (response) {
-        ctx.commit('user/setProfileInfo', {
-          id: response.data[1].id,
-          firstname: response.data[1].firstname,
-          lastname: response.data[1].lastname,
-          middlename: response.data[1].middlename,
-          mail: response.data[1].mail,
-          phoneNumber: response.data[1].phone_number,
-          avatar: response.data[1].avatar
-        }, {
-          root: true
-        });
-        ctx.commit('app/setToken', response.data[0], {
-          root: true
-        });
-        ctx.commit('app/setPage', 'statements', {
-          root: true
-        }); // Очистка массива с данными при входе, возможно его можно поместить в более удобное место
-
-        ctx.commit('technical/clearItems', '', {
-          root: true
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 422) {
-          // this.errors = error.response.data.errors;
-          console.log(error.response.data.errors);
-        } else if (error.response.status === 400) {
-          // this.errors = error.response.data.message;
-          console.log(error.response.data.errors);
-        }
+    logout: function logout(_ref) {
+      var commit = _ref.commit;
+      commit('app/setPage', 'login', {
+        root: true
       });
-    },
-    test: function test(ctx) {
-      api(ctx, 'dfg');
-    },
-    logout: function logout(_ref2) {
-      var rootGetters = _ref2.rootGetters,
-          commit = _ref2.commit;
-      var token = rootGetters['app/getToken'];
-      var url = '/api/' + token + '/logout';
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url).then(function (response) {
-        commit('app/setPage', 'login', {
-          root: true
-        });
-        commit('app/setToken', '', {
-          root: true
-        });
-      })["catch"](function (error) {
-        console.log('logout error: ' + error.response.data.errors);
+      commit('app/setToken', '', {
+        root: true
       });
+      location.reload(); // Перезагрузка страницы, для удалениях всех данных | заменить
     }
   },
   mutations: {},
@@ -22213,109 +22222,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
-    popupProfile: false,
-    popupProfileShowed: false,
-    popupMenu: false,
-    popupMenuShowed: false
+    popupMenu: false
   },
   actions: {
-    popupProfileToggle: function popupProfileToggle(ctx) {
-      ctx.commit('setPopupProfile');
-      setTimeout(function () {
-        ctx.commit('setPopupProfileShowed');
-      }, 0);
-    },
-    popupProfileOutside: function popupProfileOutside(ctx) {
-      if (ctx.rootGetters['header/popupProfileShowed']) {
-        if (ctx.rootGetters['header/PopupProfile']) {
-          ctx.commit('setPopupProfileFalse');
-          ctx.commit('setPopupProfileShowedFalse');
-        }
-      }
-    },
     popupMenuToggle: function popupMenuToggle(ctx) {
       ctx.commit('setPopupMenu');
-      setTimeout(function () {
-        ctx.commit('setPopupMenuShowed');
-      }, 0);
-    },
-    popupMenuOutside: function popupMenuOutside(ctx) {
-      if (ctx.rootGetters['header/popupMenuShowed']) {
-        if (ctx.rootGetters['header/popupMenu']) {
-          ctx.commit('setPopupMenu');
-          ctx.commit('setPopupMenuShowed');
-        }
-      }
-    },
-    showFeedBackWindow: function showFeedBackWindow(ctx) {
-      setTimeout(function () {
-        ctx.commit('app/setWindow', {
-          name: 'feedBack'
-        }, {
-          root: true
-        });
-      }, 0);
-
-      if (ctx.rootGetters['header/PopupProfile']) {
-        ctx.dispatch('popupProfileToggle');
-      } else {
-        ctx.dispatch('popupMenuToggle');
-      }
-    },
-    getUserPage: function getUserPage(ctx) {
-      ctx.commit('app/setPage', 'user', {
-        root: true
-      });
-    },
-    getStatementsPage: function getStatementsPage(ctx) {
-      ctx.commit('app/setPage', 'statements', {
-        root: true
-      });
-    },
-    getTechList: function getTechList(ctx) {
-      ctx.commit('app/setPage', 'technical', {
-        root: true
-      });
     }
   },
   mutations: {
-    setPopupProfile: function setPopupProfile(state) {
-      state.popupProfile = !state.popupProfile;
-    },
-    setPopupProfileShowed: function setPopupProfileShowed(state) {
-      state.popupProfileShowed = state.popupProfile;
-    },
-    setPopupProfileFalse: function setPopupProfileFalse(state) {
-      state.popupProfile = false;
-    },
-    setPopupProfileShowedFalse: function setPopupProfileShowedFalse(state) {
-      state.popupProfileShowed = false;
-    },
     setPopupMenu: function setPopupMenu(state) {
-      state.popupMenu = !state.popupMenu;
-    },
-    setPopupMenuFalse: function setPopupMenuFalse(state) {
-      state.popupMenu = false;
-    },
-    setPopupMenuShowed: function setPopupMenuShowed(state) {
-      state.popupMenuShowed = state.popupMenu;
-    },
-    setPopupMenuShowedFalse: function setPopupMenuShowedFalse(state) {
-      state.popupMenuShowed = false;
+      state.popupMenu ^= true;
     }
   },
   getters: {
-    PopupProfile: function PopupProfile(state) {
-      return state.popupProfile;
-    },
-    popupProfileShowed: function popupProfileShowed(state) {
-      return state.popupProfileShowed;
-    },
     popupMenu: function popupMenu(state) {
       return state.popupMenu;
-    },
-    popupMenuShowed: function popupMenuShowed(state) {
-      return state.popupMenuShowed;
     }
   }
 });
@@ -22396,7 +22317,7 @@ __webpack_require__.r(__webpack_exports__);
       id: 0,
       name: 'Техника-236',
       status: 1,
-      date: '24.04.22/16:38:12',
+      date: '24.04.22 16:38:12',
       repairman: 'Отсутствует',
       cabinet: '392',
       description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
@@ -22406,7 +22327,7 @@ __webpack_require__.r(__webpack_exports__);
       id: 1,
       name: 'Техника-255',
       status: 2,
-      date: '24.04.22/16:24:44',
+      date: '24.04.22 16:24:44',
       repairman: 'Путинцев Александр',
       cabinet: '101',
       description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum, Aldus PageMaker',
@@ -22446,9 +22367,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
@@ -22467,72 +22385,25 @@ __webpack_require__.r(__webpack_exports__);
     techMovements: [],
     techRepairs: []
   },
-  actions: {
-    getTechInfo: function getTechInfo(ctx) {
-      ctx.commit('clearTechMovements');
-      ctx.commit('clearTechRepairs');
-      var technic_id = ctx.rootGetters['techInfo/getTechDescription'].id;
-      var token = ctx.rootGetters['app/getToken'];
-      var url = 'api/' + token + '/getTechnicInfo';
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, {
-        technic_id: technic_id
-      }).then(function (response) {
-        response.data[0].forEach(function (item) {
-          ctx.commit('setTechMovements', {
-            id: item.id,
-            user: item.user,
-            number: item.number,
-            date: item.date
-          });
-        });
-        ctx.commit('setCabinet');
-        response.data[1].forEach(function (item) {
-          ctx.commit('setTechRepairs', {
-            id: item.id,
-            user: item.user,
-            userDescription: item.userDescription,
-            repairman: item.repairman,
-            repairmanDescription: item.repairmanDescription,
-            startDate: item.startDate,
-            endDate: item.endDate
-          });
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          ctx.commit('app/setPage', 'login', {
-            root: true
-          });
-          ctx.commit('app/setToken', '', {
-            root: true
-          });
-        }
-      });
-    }
-  },
+  actions: {},
   mutations: {
     showDescriptionTech: function showDescriptionTech(state) {
-      setTimeout(function () {
-        state.descriptionShowed = true;
-        state.repairHistoryShowed = false;
-        state.travelHistoryShowed = false;
-        state.title = 'Описание техники';
-      }, 0);
+      state.descriptionShowed = true;
+      state.repairHistoryShowed = false;
+      state.travelHistoryShowed = false;
+      state.title = 'Описание техники';
     },
     showTravelHistory: function showTravelHistory(state) {
-      setTimeout(function () {
-        state.travelHistoryShowed = true;
-        state.repairHistoryShowed = false;
-        state.descriptionShowed = false;
-        state.title = 'История перемещений';
-      }, 0);
+      state.travelHistoryShowed = true;
+      state.repairHistoryShowed = false;
+      state.descriptionShowed = false;
+      state.title = 'История перемещений';
     },
     showRepairHistory: function showRepairHistory(state) {
-      setTimeout(function () {
-        state.repairHistoryShowed = true;
-        state.travelHistoryShowed = false;
-        state.descriptionShowed = false;
-        state.title = 'История ремонтов техники';
-      });
+      state.repairHistoryShowed = true;
+      state.travelHistoryShowed = false;
+      state.descriptionShowed = false;
+      state.title = 'История ремонтов техники';
     },
     setTechDescription: function setTechDescription(state, _ref) {
       var id = _ref.id,
@@ -22653,9 +22524,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
@@ -22663,31 +22531,7 @@ __webpack_require__.r(__webpack_exports__);
     filters: 0,
     searchLine: ''
   },
-  actions: {
-    loadTechnicList: function loadTechnicList(ctx) {
-      if (ctx.state.items.length > 0) return;
-      var token = ctx.rootGetters['app/getToken'];
-      var url = 'api/' + token + '/getTechnicList';
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, {}).then(function (response) {
-        response.data.forEach(function (item) {
-          ctx.commit('setItems', {
-            id: item.id,
-            name: item.name,
-            number: item.number,
-            date: item.date,
-            description: item.description,
-            provider: item.provider,
-            status: item.status
-          });
-        });
-      })["catch"](function (error) {// console.log(error.response.status);
-        // if (error.response.status === 401) {
-        //     ctx.commit('app/setPage', 'login', {root: true});
-        //     ctx.commit('app/setToken', '', {root: true});
-        // }
-      });
-    }
-  },
+  actions: {},
   mutations: {
     setItems: function setItems(state, _ref) {
       var id = _ref.id,
@@ -22750,9 +22594,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
@@ -22772,77 +22613,9 @@ __webpack_require__.r(__webpack_exports__);
     selectedFile: ''
   },
   actions: {
-    getUserData: function getUserData(_ref) {
-      var rootGetters = _ref.rootGetters,
-          commit = _ref.commit;
-      var token = rootGetters['app/getToken'];
-
-      if (token.length !== 32) {
-        commit('app/setPage', 'login', {
-          root: true
-        });
-        return;
-      }
-
-      var url = '/api/' + token + '/getUserData';
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url).then(function (response) {
-        commit('setProfileInfo', {
-          id: response.data.id,
-          firstname: response.data.firstname,
-          lastname: response.data.lastname,
-          middlename: response.data.middlename,
-          mail: response.data.mail,
-          phoneNumber: response.data.phone_number,
-          avatar: response.data.avatar
-        });
-        if (rootGetters['app/getPage'] === 'login') commit('app/setPage', 'statements', {
-          root: true
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          commit('app/setPage', 'login', {
-            root: true
-          });
-          commit('app/setToken', '', {
-            root: true
-          });
-        }
-      });
-    },
-    saveUserData: function saveUserData(ctx) {
-      var token = ctx.rootGetters['app/getToken'];
-      var url = '/api/' + token + '/saveUserData';
-      var userData = ctx.rootGetters['user/getProfileInfo'];
-      var avatar = ctx.rootGetters['user/getSelectedFile'];
-      var formData = new FormData();
-      formData.append('avatar', avatar);
-      formData.append('firstname', userData.newFirstname);
-      formData.append('lastname', userData.newLastname);
-      formData.append('middlename', userData.newMiddlename);
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post(url, formData).then(function (response) {
-        ctx.commit('setProfileInfo', {
-          id: response.data.id,
-          firstname: response.data.firstname,
-          lastname: response.data.lastname,
-          middlename: response.data.middlename,
-          mail: response.data.mail,
-          phoneNumber: response.data.phone_number,
-          avatar: response.data.avatar
-        });
-      })["catch"](function (error) {
-        if (error.response.status === 401) {
-          ctx.commit('app/setPage', 'login', {
-            root: true
-          });
-          ctx.commit('app/setToken', '', {
-            root: true
-          });
-        }
-      });
-    },
-    loadAvatar: function loadAvatar(ctx, _ref2) {
-      var file = _ref2.file,
-          fileValue = _ref2.fileValue;
+    loadAvatar: function loadAvatar(ctx, _ref) {
+      var file = _ref.file,
+          fileValue = _ref.fileValue;
       if (fileValue === '') return; // Если пользователь нажимает отмена в выборе файла
 
       if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
@@ -22867,14 +22640,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mutations: {
-    setProfileInfo: function setProfileInfo(state, _ref3) {
-      var id = _ref3.id,
-          firstname = _ref3.firstname,
-          lastname = _ref3.lastname,
-          middlename = _ref3.middlename,
-          mail = _ref3.mail,
-          phoneNumber = _ref3.phoneNumber,
-          avatar = _ref3.avatar;
+    setProfileInfo: function setProfileInfo(state, _ref2) {
+      var id = _ref2.id,
+          firstname = _ref2.firstname,
+          lastname = _ref2.lastname,
+          middlename = _ref2.middlename,
+          mail = _ref2.mail,
+          phoneNumber = _ref2.phoneNumber,
+          avatar = _ref2.avatar;
       state.user.id = id;
       state.user.firstname = firstname;
       state.user.lastname = lastname;

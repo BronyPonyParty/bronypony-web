@@ -20,6 +20,8 @@ class CreateTechnicsTable extends Migration
 
             $table->unsignedInteger('number');
 
+            $table->unsignedInteger('cabinet')->nullable();
+
             $table->unsignedInteger('date_purchase');
 
             $table->string('description', 1024)->nullable();

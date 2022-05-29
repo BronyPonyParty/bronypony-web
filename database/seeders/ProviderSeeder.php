@@ -18,14 +18,14 @@ class ProviderSeeder extends Seeder
             'name' => 'Best computers',
             'phone_number' => '79565805965',
             'address' => '672026, г. Моршанск, ул. Гурзуфская, дом 3',
-            'status' => 0
+            'status' => 1
         ];
 
         $data[] = [
             'name' => 'Best of the Best',
             'phone_number' => '79972245714',
             'address' => '168130, г. Туймазы, ул. Новомещерский проезд, дом 174',
-            'status' => 0
+            'status' => 1
         ];
 
         DB::table('providers')->insert($data);

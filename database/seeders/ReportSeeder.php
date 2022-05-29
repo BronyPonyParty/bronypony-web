@@ -23,7 +23,7 @@ class ReportSeeder extends Seeder
             'description' => $faker->realText(),
             'create_date' => 1652623012,
             'complete_date' => null,
-            'status' => 0
+            'status' => 1
         ];
 
         $data[] = [
@@ -32,7 +32,7 @@ class ReportSeeder extends Seeder
             'description' => $faker->realText(512),
             'create_date' => 1652727404,
             'complete_date' => null,
-            'status' => 2
+            'status' => 1
         ];
 
         $data[] = [

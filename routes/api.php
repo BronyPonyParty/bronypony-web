@@ -1,13 +1,10 @@
 <?php
 
-use App\Models\MovingTechnic;
-use App\Models\Premise;
-use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\EquipmentController;
+use App\Http\Controllers\TechnicController;
+use App\Http\Controllers\StatementController;
 use App\Http\Middleware\Auth;
 
 /*
@@ -25,32 +22,31 @@ Route::post('login', [LoginController::class, 'login']);
 
 
 Route::prefix('{token}')->middleware(Auth::class)->group(function () {
-    Route::post('getUserData', [UserController::class, 'getUserData']);
     Route::post('logout', [LoginController::class, 'logout']);
-    Route::post('saveUserData', [UserController::class, 'saveUserData']);
-    Route::post('getTechnicList', [EquipmentController::class, 'getTechnicList']);
-    Route::post('getTechnicInfo', [EquipmentController::class, 'getTechnicInfo']);
+
+    Route::post('user/getUserData', [UserController::class, 'getUserData']);
+    Route::post('user/saveUserData', [UserController::class, 'saveUserData']);
+
+    Route::post('technic/getList', [TechnicController::class, 'getTechnicList']);
+    Route::post('technic/getInfo', [TechnicController::class, 'getTechnicInfo']);
+
+    Route::any('statement/get', [StatementController::class, 'get']);
+    Route::post('statement/accept', [StatementController::class, 'accept']);
+    Route::post('statement/complete', [StatementController::class, 'complete']);
 });
 
 Route::get('test', function () {
-    \Illuminate\Support\Facades\DB::enableQueryLog();
+    DB::enableQueryLog();
 
-    $usersIds = [];
-    $rows = \App\Models\MovingTechnic::where('technic_id', 2)->get();
-    foreach ($rows as $row) $usersIds[] = $row->user_id;
+//    $repairs = Repair::whereHas('user', $filter = function ($query) {
+//        $query->where('organization_id', 1);
+//    })->with(['user' => $filter])->get();
 
-    $users_rows = \App\Models\User::select(['id', 'lastname'])->whereIn('id', $usersIds)->get();
+//    foreach ($users as $user) {
+//        echo $user . '<br>';
+//    }
 
-    $usernames = [];
-    foreach ($users_rows as $row) $usernames[$row->id] = $row->lastname;
 
-    foreach ($rows as $row) {
-        echo $usernames[$row->user_id] . '<br>';
-    }
-
-    dd(\Illuminate\Support\Facades\DB::getQueryLog());
-});
-
-Route::any('test2', function () {
-    return 'lol';
+//    dd($mass);
+    dd(DB::getQueryLog());
 });
