@@ -20,7 +20,7 @@
                             </button>
                         </div>
 
-                        <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px" v-if="descriptionShowed">
+                        <div class="card-body bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px;" v-if="descriptionShowed">
                             <div class="item-tech">
                                 <span>Техника</span>
                                 <strong>{{ getTechDescription.name}}</strong>
@@ -37,6 +37,10 @@
                                 <span>Поставщик</span>
                                 <strong>{{ getTechDescription.provider }}</strong>
                             </div>
+                            <div class="item-tech">
+                                <span>Дата покупки</span>
+                                <strong>{{ formatDate(getTechDescription.date, false) }}</strong>
+                            </div>
 
                             <div style="margin-top: 15px">
                                 <div v-if="getTechDescription.description.length !== 0">
@@ -52,7 +56,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px;" v-if="repairHistoryShowed">
+                        <div class="card-body bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px" v-if="repairHistoryShowed">
                             <div class="techList" v-if="getTechRepairs.length !== 0">
                                 <div class="tech" v-for="(item, index) in getTechRepairs" :key="item.id">
 
@@ -99,7 +103,7 @@
                             </div>
                         </div>
 
-                        <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px;" v-if="travelHistoryShowed">
+                        <div class="card-body bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px" v-if="travelHistoryShowed">
                             <div class="techList" v-if="getTechMovements.length !== 0">
                                 <div class="item justify-content-between p-3 d-flex" v-for="item in getTechMovements" :key="item.id">
                                     <div>
@@ -172,11 +176,12 @@ export default {
             this.showDescriptionTech();
         },
 
-        formatDate(date) {
+        formatDate(date, time = true) {
             if (typeof date !== "number") return 'Неизвестно';
-
             date = new Date(date * 1000);
-            return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth())) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours()+ ":" + date.getMinutes()
+
+            if (time) return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours() + ":" + (date.getMinutes().toString().length < 2 ? '0' + (date.getMinutes()) : date.getMinutes());
+            return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2);
         },
 
         getStatusText(status) {
@@ -207,6 +212,14 @@ export default {
 <style lang="scss" scoped>
     strong {
         font-weight: 600;
+    }
+
+    .custom-scroll {
+        overflow-y: scroll;
+
+        &::-webkit-scrollbar {
+            width: 0;
+        }
     }
 
     .item-tech {

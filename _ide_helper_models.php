@@ -75,12 +75,10 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $number
- * @property int $floor
  * @property int $organization_id
  * @method static \Illuminate\Database\Eloquent\Builder|Premise newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Premise newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Premise query()
- * @method static \Illuminate\Database\Eloquent\Builder|Premise whereFloor($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Premise whereOrganizationId($value)
@@ -118,6 +116,8 @@ namespace App\Models{
  * @property int $report_id
  * @property int $repairman_id
  * @property string|null $description
+ * @property-read \App\Models\Report|null $report
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Repair newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Repair newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Repair query()
@@ -140,6 +140,8 @@ namespace App\Models{
  * @property int $create_date
  * @property int|null $complete_date
  * @property int $status
+ * @property-read \App\Models\Technic|null $technic
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder|Report newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Report newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Report query()
@@ -184,16 +186,19 @@ namespace App\Models{
  * @property int $id
  * @property string $name
  * @property int $number
+ * @property int|null $cabinet
  * @property int $date_purchase
  * @property string|null $description
  * @property int $provider_id
  * @property int $organization_id
  * @property int $status
+ * @property-read \App\Models\MovingTechnic|null $movingTechnic
  * @property-read \App\Models\Provider|null $provider
  * @method static \Database\Factories\TechnicFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Technic whereCabinet($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDatePurchase($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereId($value)

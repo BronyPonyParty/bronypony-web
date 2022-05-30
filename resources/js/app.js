@@ -69,13 +69,19 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
 
     let catchDefaultFunction = function (error) {
         switch (error.response.status) {
-            case 401: {
+            case 401: { // Unauthorized
                 that.$store.dispatch('auth/logout');
                 break;
             }
 
-            case 400: {
+            case 400: { // Bad Request
                 console.log('Плохой запрос');
+                console.log(JSON.parse(error.response.data.message));
+                break;
+            }
+
+            case 422: { // Unprocessable Entity
+                console.log('Unprocessable Entity');
                 break;
             }
 

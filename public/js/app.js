@@ -20025,6 +20025,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           id: item.id,
           name: item.name,
           number: item.number,
+          cabinet: item.cabinet,
           date: item.date,
           description: item.description,
           provider: item.provider,
@@ -20050,9 +20051,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.$store.commit('techInfo/setTechDescription', {
         id: item.id,
         name: item.name + sign + item.number,
-        status: item.status,
+        cabinet: item.cabinet,
+        date: item.date,
+        description: item.description,
         provider: item.provider,
-        description: item.description
+        status: item.status
       }); // Очистка массива от прошлой техники
 
       this.$store.commit('techInfo/clearTechMovements');
@@ -20069,9 +20072,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             date: item.date
           });
         });
-
-        _this2.$store.commit('techInfo/setCabinet');
-
         data[1].forEach(function (item) {
           _this2.$store.commit('techInfo/setTechRepairs', {
             id: item.id,
@@ -20329,9 +20329,11 @@ __webpack_require__.r(__webpack_exports__);
       this.showDescriptionTech();
     },
     formatDate: function formatDate(date) {
+      var time = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
       if (typeof date !== "number") return 'Неизвестно';
       date = new Date(date * 1000);
-      return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : date.getMonth()) + "." + date.getFullYear().toString().substr(2, 2) + " " + date.getHours() + ":" + date.getMinutes();
+      if (time) return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + "." + date.getFullYear().toString().substr(2, 2) + " " + date.getHours() + ":" + (date.getMinutes().toString().length < 2 ? '0' + date.getMinutes() : date.getMinutes());
+      return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + "." + date.getFullYear().toString().substr(2, 2);
     },
     getStatusText: function getStatusText(status) {
       switch (status) {
@@ -21553,9 +21555,10 @@ var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
 var _hoisted_10 = [_hoisted_9];
 var _hoisted_11 = {
   key: 0,
-  "class": "card-body bg-white text-black",
+  "class": "card-body bg-white text-black custom-scroll",
   style: {
-    "border-radius": "0 0 5px 5px"
+    "border-radius": "0 0 5px 5px",
+    "max-height": "600px"
   }
 };
 var _hoisted_12 = {
@@ -21599,52 +21602,63 @@ var _hoisted_19 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_20 = {
+  "class": "item-tech"
+};
+
+var _hoisted_21 = /*#__PURE__*/_withScopeId(function () {
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, "Дата покупки", -1
+  /* HOISTED */
+  );
+});
+
+var _hoisted_22 = {
   style: {
     "margin-top": "15px"
   }
 };
-var _hoisted_21 = {
+var _hoisted_23 = {
   key: 0
 };
-var _hoisted_22 = {
+var _hoisted_24 = {
   key: 1,
   "class": "h4",
   style: {
     "opacity": "40%"
   }
 };
-var _hoisted_23 = {
+var _hoisted_25 = {
   "class": "buttons"
 };
 
-var _hoisted_24 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_26 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "История ремонтов", -1
   /* HOISTED */
   );
 });
 
-var _hoisted_25 = [_hoisted_24];
+var _hoisted_27 = [_hoisted_26];
 
-var _hoisted_26 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "История перемещений", -1
   /* HOISTED */
   );
 });
 
-var _hoisted_27 = [_hoisted_26];
-var _hoisted_28 = {
+var _hoisted_29 = [_hoisted_28];
+var _hoisted_30 = {
   key: 1,
-  "class": "card-body bg-white text-black",
+  "class": "card-body bg-white text-black custom-scroll",
   style: {
-    "border-radius": "0 0 5px 5px"
+    "border-radius": "0 0 5px 5px",
+    "max-height": "600px"
   }
 };
-var _hoisted_29 = {
+var _hoisted_31 = {
   key: 0,
   "class": "techList"
 };
-var _hoisted_30 = ["onClick"];
-var _hoisted_31 = {
+var _hoisted_32 = ["onClick"];
+var _hoisted_33 = {
   width: "16",
   height: "16",
   fill: "currentColor",
@@ -21655,7 +21669,7 @@ var _hoisted_31 = {
   }
 };
 
-var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_34 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("path", {
     d: "M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"
   }, null, -1
@@ -21663,31 +21677,17 @@ var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_33 = [_hoisted_32];
-var _hoisted_34 = {
-  key: 0
-};
-var _hoisted_35 = {
-  key: 0
-};
+var _hoisted_35 = [_hoisted_34];
 var _hoisted_36 = {
   key: 0
 };
 var _hoisted_37 = {
-  key: 1,
-  "class": "h4 d-flex justify-content-center",
-  style: {
-    "opacity": "40%",
-    "margin-bottom": "0"
-  }
-};
-var _hoisted_38 = {
-  key: 1
-};
-var _hoisted_39 = {
   key: 0
 };
-var _hoisted_40 = {
+var _hoisted_38 = {
+  key: 0
+};
+var _hoisted_39 = {
   key: 1,
   "class": "h4 d-flex justify-content-center",
   style: {
@@ -21695,42 +21695,57 @@ var _hoisted_40 = {
     "margin-bottom": "0"
   }
 };
+var _hoisted_40 = {
+  key: 1
+};
 var _hoisted_41 = {
+  key: 0
+};
+var _hoisted_42 = {
+  key: 1,
+  "class": "h4 d-flex justify-content-center",
+  style: {
+    "opacity": "40%",
+    "margin-bottom": "0"
+  }
+};
+var _hoisted_43 = {
   "class": "pt-3",
   style: {
     "text-align": "right"
   }
 };
-var _hoisted_42 = ["onClick"];
+var _hoisted_44 = ["onClick"];
 
-var _hoisted_43 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_45 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", null, null, -1
   /* HOISTED */
   );
 });
 
-var _hoisted_44 = {
+var _hoisted_46 = {
   key: 1,
   "class": "h1 d-flex justify-content-center",
   style: {
     "opacity": "40%"
   }
 };
-var _hoisted_45 = {
+var _hoisted_47 = {
   key: 2,
-  "class": "card-body bg-white text-black",
+  "class": "card-body bg-white text-black custom-scroll",
   style: {
-    "border-radius": "0 0 5px 5px"
+    "border-radius": "0 0 5px 5px",
+    "max-height": "600px"
   }
 };
-var _hoisted_46 = {
+var _hoisted_48 = {
   key: 0,
   "class": "techList"
 };
-var _hoisted_47 = {
+var _hoisted_49 = {
   "class": "moving"
 };
-var _hoisted_48 = {
+var _hoisted_50 = {
   key: 1,
   "class": "h1 d-flex justify-content-center",
   style: {
@@ -21767,9 +21782,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getTechDescription.provider), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [$options.getTechDescription.description.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getTechDescription.description), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate($options.getTechDescription.date, false)), 1
   /* TEXT */
-  )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_22, " Описание отсутствует "))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [$options.getTechDescription.description.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.getTechDescription.description), 1
+  /* TEXT */
+  )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_24, " Описание отсутствует "))]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn cancel-btn text-white",
     style: {
       "border": "none",
@@ -21778,7 +21795,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[2] || (_cache[2] = function () {
       return $options.showRepairHistory && $options.showRepairHistory.apply($options, arguments);
     })
-  }, _hoisted_25), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  }, _hoisted_27), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn yes-btn text-white",
     style: {
       "border": "none",
@@ -21787,7 +21804,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[3] || (_cache[3] = function () {
       return $options.showTravelHistory && $options.showTravelHistory.apply($options, arguments);
     })
-  }, _hoisted_27)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.repairHistoryShowed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_28, [$options.getTechRepairs.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_29, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getTechRepairs, function (item, index) {
+  }, _hoisted_29)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.repairHistoryShowed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_30, [$options.getTechRepairs.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_31, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getTechRepairs, function (item, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       "class": "tech",
       key: item.id
@@ -21800,36 +21817,36 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     /* TEXT */
     ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(item.startDate) + '/' + $options.formatDate(item.endDate)), 1
     /* TEXT */
-    ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_31, _hoisted_33))])], 8
+    ), ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("svg", _hoisted_33, _hoisted_35))])], 8
     /* PROPS */
-    , _hoisted_30), item.visibility ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [item.textSwitcher ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_35, [item.repairmanDescription.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_36, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.repairmanDescription), 1
+    , _hoisted_32), item.visibility ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_36, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [item.textSwitcher ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_37, [item.repairmanDescription.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_38, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.repairmanDescription), 1
     /* TEXT */
-    )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_37, " Сотрудник не описал процесс ремонта "))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_38, [item.userDescription.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_39, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.userDescription), 1
+    )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_39, " Сотрудник не описал процесс ремонта "))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_40, [item.userDescription.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_41, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.userDescription), 1
     /* TEXT */
-    )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_40, " Пользователь не описал причину поломки "))])), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_42, " Пользователь не описал причину поломки "))])), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_43, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "btn btn-toggle",
       onClick: function onClick($event) {
         return $options.switchText(index);
       }
     }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.buttonText), 9
     /* TEXT, PROPS */
-    , _hoisted_42)]), _hoisted_43])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
+    , _hoisted_44)]), _hoisted_45])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_44, " Список пуст "))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.travelHistoryShowed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_45, [$options.getTechMovements.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_46, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getTechMovements, function (item) {
+  ))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_46, " Список пуст "))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.travelHistoryShowed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_47, [$options.getTechMovements.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_48, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getTechMovements, function (item) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
       "class": "item justify-content-between p-3 d-flex",
       key: item.id
     }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.user), 1
     /* TEXT */
-    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_47, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.number), 1
+    ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", _hoisted_49, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(item.number), 1
     /* TEXT */
     )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("span", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.formatDate(item.date)), 1
     /* TEXT */
     )]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_48, " Список пуст "))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])]);
+  ))])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_50, " Список пуст "))])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])]);
 }
 
 /***/ }),
@@ -22038,13 +22055,23 @@ app.provide('api', function (method) {
     switch (error.response.status) {
       case 401:
         {
+          // Unauthorized
           that.$store.dispatch('auth/logout');
           break;
         }
 
       case 400:
         {
+          // Bad Request
           console.log('Плохой запрос');
+          console.log(JSON.parse(error.response.data.message));
+          break;
+        }
+
+      case 422:
+        {
+          // Unprocessable Entity
+          console.log('Unprocessable Entity');
           break;
         }
 
@@ -22409,16 +22436,18 @@ __webpack_require__.r(__webpack_exports__);
       var id = _ref.id,
           name = _ref.name,
           cabinet = _ref.cabinet,
-          status = _ref.status,
+          date = _ref.date,
+          description = _ref.description,
           provider = _ref.provider,
-          description = _ref.description;
+          status = _ref.status;
       state.techDescription = {
         id: id,
         name: name,
         cabinet: cabinet,
-        status: status,
+        date: date,
+        description: description,
         provider: provider,
-        description: description
+        status: status
       };
     },
     setTechMovements: function setTechMovements(state, _ref2) {
@@ -22465,13 +22494,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     clearTechRepairs: function clearTechRepairs(state) {
       state.techRepairs = [];
-    },
-    setCabinet: function setCabinet(state) {
-      if (state.techMovements.length > 0) {
-        state.techDescription.cabinet = state.techMovements[state.techMovements.length - 1].number;
-      } else {
-        state.techDescription.cabinet = 'Неизвестно';
-      }
     },
     toggleVisibility: function toggleVisibility(state, index) {
       state.techRepairs[index].visibility ^= true;
@@ -22537,6 +22559,7 @@ __webpack_require__.r(__webpack_exports__);
       var id = _ref.id,
           name = _ref.name,
           number = _ref.number,
+          cabinet = _ref.cabinet,
           date = _ref.date,
           description = _ref.description,
           provider = _ref.provider,
@@ -22545,6 +22568,7 @@ __webpack_require__.r(__webpack_exports__);
         id: id,
         name: name,
         number: number,
+        cabinet: cabinet || 'Неизвестно',
         date: date,
         description: description,
         provider: provider,
@@ -22902,7 +22926,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "strong[data-v-d764f2bc] {\n  font-weight: 600;\n}\n.item-tech[data-v-d764f2bc] {\n  margin-bottom: 5px;\n  display: flex;\n  gap: 10px;\n}\n.moving[data-v-d764f2bc] {\n  margin-left: 5px;\n  font-weight: 200;\n}\n.popup-layout[data-v-d764f2bc] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: normal;\n  display: flex;\n}\n.back-button[data-v-d764f2bc] {\n  fill: white;\n}\n.back-button[data-v-d764f2bc]:hover {\n  background-color: #353D62;\n}\n.back-button[data-v-d764f2bc]:active {\n  background-color: #252D42;\n}\n.head[data-v-d764f2bc] {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.techList[data-v-d764f2bc] {\n  border-radius: 5px;\n  max-height: 500px;\n  overflow-y: scroll;\n}\n.techList[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.techList .tech[data-v-d764f2bc] {\n  margin-bottom: 8px;\n}\n.techList .tech[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc] {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc]:hover {\n  background-color: #353F62;\n}\n.techList .item[data-v-d764f2bc]:active {\n  background-color: #262E45;\n}\n.buttons[data-v-d764f2bc] {\n  display: flex;\n  gap: 10px;\n  padding-top: 30px;\n}\n.btn-toggle[data-v-d764f2bc] {\n  background-color: #345DD1;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-toggle[data-v-d764f2bc]:hover {\n  background-color: #2E51B7;\n}\n.btn-toggle[data-v-d764f2bc]:active {\n  background-color: #243881;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "strong[data-v-d764f2bc] {\n  font-weight: 600;\n}\n.custom-scroll[data-v-d764f2bc] {\n  overflow-y: scroll;\n}\n.custom-scroll[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.item-tech[data-v-d764f2bc] {\n  margin-bottom: 5px;\n  display: flex;\n  gap: 10px;\n}\n.moving[data-v-d764f2bc] {\n  margin-left: 5px;\n  font-weight: 200;\n}\n.popup-layout[data-v-d764f2bc] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: normal;\n  display: flex;\n}\n.back-button[data-v-d764f2bc] {\n  fill: white;\n}\n.back-button[data-v-d764f2bc]:hover {\n  background-color: #353D62;\n}\n.back-button[data-v-d764f2bc]:active {\n  background-color: #252D42;\n}\n.head[data-v-d764f2bc] {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.techList[data-v-d764f2bc] {\n  border-radius: 5px;\n  max-height: 500px;\n  overflow-y: scroll;\n}\n.techList[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.techList .tech[data-v-d764f2bc] {\n  margin-bottom: 8px;\n}\n.techList .tech[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc] {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc]:hover {\n  background-color: #353F62;\n}\n.techList .item[data-v-d764f2bc]:active {\n  background-color: #262E45;\n}\n.buttons[data-v-d764f2bc] {\n  display: flex;\n  gap: 10px;\n  padding-top: 30px;\n}\n.btn-toggle[data-v-d764f2bc] {\n  background-color: #345DD1;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-toggle[data-v-d764f2bc]:hover {\n  background-color: #2E51B7;\n}\n.btn-toggle[data-v-d764f2bc]:active {\n  background-color: #243881;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

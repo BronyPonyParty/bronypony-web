@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <div class="container py-4">
             <div class="h2">Список техники</div>
             <div class="row py-2 gap-3 align-items-start">
@@ -57,6 +56,7 @@ export default {
                     id: item.id,
                     name: item.name,
                     number: item.number,
+                    cabinet: item.cabinet,
                     date: item.date,
                     description: item.description,
                     provider: item.provider,
@@ -85,9 +85,11 @@ export default {
             this.$store.commit('techInfo/setTechDescription', {
                 id: item.id,
                 name: item.name + sign + item.number,
-                status: item.status,
+                cabinet: item.cabinet,
+                date: item.date,
+                description: item.description,
                 provider: item.provider,
-                description: item.description
+                status: item.status,
             });
 
             // Очистка массива от прошлой техники
@@ -105,8 +107,6 @@ export default {
                         date: item.date
                     });
                 });
-
-                this.$store.commit('techInfo/setCabinet');
 
                 data[1].forEach(item => {
                     this.$store.commit('techInfo/setTechRepairs', {

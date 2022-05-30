@@ -47,14 +47,15 @@ export default {
         },
 
 
-        setTechDescription(state, {id, name, cabinet, status, provider, description}) {
+        setTechDescription(state, {id, name, cabinet, date, description, provider, status}) {
             state.techDescription = {
                 id,
                 name,
                 cabinet,
-                status,
+                date,
+                description,
                 provider,
-                description
+                status,
             };
         },
 
@@ -88,14 +89,6 @@ export default {
 
         clearTechRepairs(state) {
             state.techRepairs = [];
-        },
-
-        setCabinet(state) {
-            if (state.techMovements.length > 0) {
-                state.techDescription.cabinet = state.techMovements[state.techMovements.length - 1].number;
-            } else {
-                state.techDescription.cabinet = 'Неизвестно';
-            }
         },
 
         toggleVisibility(state, index) {

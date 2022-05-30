@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacades;
+use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
@@ -13,16 +14,26 @@ class UserController extends Controller
     }
 
     public function saveUserData(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'firstname' => 'required|max:32',
+            'lastname' =>'required|max:32',
+            'middlename' => 'max:32'
+        ], [
+            'firstname.required' => 'Поле с именем не может быть пустым',
+            'lastname.required' => 'Поле с фамилией не может быть пустым',
+            'max' => 'Максимальная длина полей 32 символа'
+        ]);
+
+        if ($validator->fails()) {
+            abort(400, $validator->getMessageBag());
+        }
+
         $user = AuthFacades::user();
         $avatar = $request->file('avatar');
         $hashAvatar = '';
         $firstname = $request->post('firstname');
         $lastname = $request->post('lastname');
         $middlename = $request->post('middlename');
-
-        if (empty($firstname) || strlen($firstname) > 32) abort(400, 'Пустая или длинная строка');
-        if (empty($lastname) || strlen($lastname) > 32) abort(400, 'Пустая или длинная строка');
-        if (strlen($middlename) > 32) abort(400, 'Длинная строка');
 
         if (!empty($avatar)) $hashAvatar = hash_file('md5', $avatar);
 

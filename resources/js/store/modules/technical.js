@@ -12,11 +12,12 @@ export default {
     },
 
     mutations: {
-        setItems(state, {id, name, number, date, description, provider, status}) {
+        setItems(state, {id, name, number, cabinet, date, description, provider, status}) {
             state.items.push({
                 id,
                 name,
                 number,
+                cabinet: cabinet || 'Неизвестно',
                 date,
                 description,
                 provider,

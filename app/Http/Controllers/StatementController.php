@@ -4,11 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Repair;
 use App\Models\Report;
-use App\Models\Technic;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
-use Illuminate\Support\Facades\DB;
 
 class StatementController extends Controller
 {

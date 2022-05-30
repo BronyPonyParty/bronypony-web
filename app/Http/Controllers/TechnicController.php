@@ -3,31 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Models\MovingTechnic;
-use App\Models\Premise;
-use App\Models\Provider;
 use App\Models\Repair;
-use App\Models\Report;
 use App\Models\Technic;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
+use Illuminate\Support\Facades\Validator;
 
 class TechnicController extends Controller
 {
-    public function getTechnicList() {
+    public function getList() {
         $user = AuthFacade::user();
-        $technics = Technic::whereOrganizationId($user->organization_id)->get();
 
-
-        $technicProviderIds = [];
-        foreach ($technics as $technic) {
-            if (!in_array($technic->provider_id, $technicProviderIds)) $technicProviderIds[] = $technic->provider_id;
-        }
-
-        $providers = Provider::select(['id', 'name'])->whereIn('id', $technicProviderIds)->get();
-
-        $providerNames = [];
-        foreach ($providers as $provider) $providerNames[$provider->id] = $provider->name;
+        // Запрос на взятие техники с условием, что техника находится в организации из которой пользователь подал запрос
+        $technics = Technic::with('provider:id,name')
+            ->select(['id','name','number','cabinet','date_purchase','description','provider_id','status'])
+            ->where('organization_id', $user->organization_id)->get();
 
         $mass = [];
         foreach ($technics as $technic) {
@@ -35,9 +25,10 @@ class TechnicController extends Controller
                 'id' => $technic->id,
                 'name' => $technic->name,
                 'number' => $technic->number,
+                'cabinet' => $technic->cabinet,
                 'date' => $technic->date_purchase,
                 'description' => $technic->description,
-                'provider' => $providerNames[$technic->provider_id],
+                'provider' => $technic->provider->name,
                 'status' => $technic->status
             ];
         }
@@ -45,76 +36,66 @@ class TechnicController extends Controller
         return $mass;
     }
 
-    public function getTechnicInfo(Request $request) {
-        $authUser = AuthFacade::user();
+    public function getInfo(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'technic_id' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) {
+            abort(400, 'Хм. Данная ошибка не должна была возникнуть не прикаких обстоятельствах');
+        }
+
+        $user = AuthFacade::user();
         $technic_id = $request->get('technic_id');
 
-        $movingTechnics = MovingTechnic::whereTechnicId($technic_id)->get();
+        // Получаем историю передвижения техники с условием, technic_id = id нужной нам техники
+        // Исключаем возможность получить данные из разных организаций
+        $movingTechnics = MovingTechnic::whereHas('user', function ($query) use ($user, $technic_id) {
+            $query->where('organization_id', $user->organization_id);
+        })->with('user:id,firstname,lastname', 'premise:id,number')
+            ->select(['id', 'user_id', 'premise_id', 'date'])
+            ->where('technic_id', $technic_id)
+            ->get();
 
-        $userIds = [];
-        $premiseIds = [];
-        foreach ($movingTechnics as $movingTechnic) {
-            if (!in_array($movingTechnic->user_id, $userIds)) $userIds[] = $movingTechnic->user_id;
-            if (!in_array($movingTechnic->premise_id, $premiseIds)) $premiseIds[] = $movingTechnic->premise_id;
-        }
-
-        $premises = Premise::whereOrganizationId($authUser->organization_id)->whereIn('id', $premiseIds)->get();
-        $users = User::whereOrganizationId($authUser->organization_id)->whereIn('id', $userIds)->get();
-
-        $premiseNumbers = [];
-        $premiseFloors = [];
-        foreach ($premises as $premise) {
-            $premiseNumbers[$premise->id] = $premise->number < 10 ? 0 . $premise->number : $premise->number;
-            $premiseFloors[$premise->id] = $premise->floor;
-        }
-
-        $userNames = [];
-        foreach ($users as $user) $userNames[$user->id] = $user->lastname . ' ' . $user->firstname;
 
         $movingMass = [];
-        for ($i = 0; $i < count($movingTechnics); $i++) {
+        foreach ($movingTechnics as $technic) {
             $movingMass[] = [
-                'id'   => $movingTechnics[$i]->id,
-                'user' => $userNames[$movingTechnics[$i]->user_id],
-                'number'   =>  $premiseFloors[$movingTechnics[$i]->premise_id] . $premiseNumbers[$movingTechnics[$i]->premise_id],
-                'date' => $movingTechnics[$i]->date
+                'id' => $technic->id,
+                'user' => $technic->user->firstname . ' ' . $technic->user->lastname,
+                'number' => $technic->premise->number,
+                'date' => $technic->date
             ];
         }
 
+        // Делаю запрос к таблицы Repairs, дальше через связь обращаюсь к таблице reports,
+        // внутри также обращаюсь через связь к таблице technics и по условиям отбираю
+        // id техники = technic_id который отправил пользователь,
+        // также по условию в таблице reports status = 4,
+        // в итоге получаем данные в таблице Repairs отобранные по этим условиям.
+        // Исключаем возможность получить данные из разных организаций
+        $repairs = Repair::whereHas('report', $filters = function ($query) use ($technic_id, $user) {
+            $query->whereHas('technic', function ($query) use ($technic_id, $user) {
+                $query->where('id', $technic_id)
+                    ->where('organization_id', $user->organization_id);
+            })->with('user:id,firstname,lastname')
+                ->select(['id', 'user_id', 'description', 'create_date', 'complete_date'])
+                ->where('status', 4);})
+            ->with(['user:id,firstname,lastname', 'report' => $filters])
+            ->get();
 
-        $reports = Report::whereTechnicId($technic_id)->where('status', 4)->get(); // Отобрать только готовые ремонты
-
-        $reportIds = [];
-        $userIds = [];
-        foreach ($reports as $report) {
-            $reportIds[] = $report->id;
-            if (!in_array($report->user_id, $userIds)) $userIds[] = $report->user_id;
-        }
-
-        $repairs = Repair::whereIn('report_id', $reportIds)->get();
-
-        foreach ($repairs as $repair) {
-            if (!in_array($repair->repairman_id, $userIds)) $userIds[] = $repair->repairman_id;
-        };
-
-        $users = User::whereOrganizationId($authUser->organization_id)->whereIn('id', $userIds)->get();
-
-        $userNames = [];
-        foreach ($users as $user) $userNames[$user->id] = $user->lastname . ' ' . $user->firstname;
-
-        $reportRow = [];
-        foreach ($reports as $report) $reportRow[$report->id] = $report;
+        if (empty($repairs[0])) return [$movingMass, []];
 
         $repairMass = [];
         foreach ($repairs as $repair) {
             $repairMass[] = [
                 'id' => $repair->id,
-                'user' => $userNames[$reportRow[$repair->id]->user_id],
-                'repairman' => $userNames[$repair->repairman_id],
-                'userDescription' => $reportRow[$repair->id]->description,
+                'user' => $repair->report->user->firstname . ' ' . $repair->report->user->lastname,
+                'repairman' => $repair->user->firstname . ' ' . $repair->user->lastname,
+                'userDescription' => $repair->report->description,
                 'repairmanDescription' => $repair->description,
-                'startDate' => $reportRow[$repair->id]->create_date,
-                'endDate' => $reportRow[$repair->id]->complete_date
+                'startDate' => $repair->report->create_date,
+                'endDate' => $repair->report->complete_date
             ];
         }
 
