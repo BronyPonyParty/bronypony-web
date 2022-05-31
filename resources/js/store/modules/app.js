@@ -13,7 +13,13 @@ export default {
 
         window: {
             name: '',
-            description: ''
+            title: '',
+            type: '',
+            buttonText: '',
+            description: '',
+            width: 0,
+            height: 0,
+            id: null
         },
     },
 

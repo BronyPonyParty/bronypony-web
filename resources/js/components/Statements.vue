@@ -10,9 +10,9 @@
                         <table class="table" style="table-layout: fixed; border: none" v-for="(item, index) in items" :key="item.id">
                             <tbody>
                                 <tr>
-                                    <td class="wb default-td">{{ item.name }}</td>
+                                    <td class="wb default-td">{{ item.techName + sign + item.techNumber}}</td>
                                     <td class="wb default-td">{{ getStatusText(item.status) }}</td>
-                                    <td class="wb default-td">{{ item.date }}</td>
+                                    <td class="wb default-td">{{ formatDate(item.date) }}</td>
                                     <td style="text-align: center; width: 64px;" class="default-td">
                                         <button type="button" class="btn dropdown-button" @click="toggleDropdown(index)">
                                             <svg width="16" height="16" fill="white" viewBox="0 0 18 18" class="cur-point">
@@ -26,12 +26,16 @@
                                     <td colspan="4">
                                         <div class="profile-info p-2">
                                             <div class="row d-flex">
-                                                <div class="col-5 col-md-3 col-lg-3 col-xl-2">Откликнулся</div>
-                                                <strong class="col-7 col-md-9 col-lg-9 col-xl-10 ellipsis-text">{{ item.repairman }}</strong>
+                                                <div class="col-5 col-md-3 col-lg-3 col-xl-2">Заявитель</div>
+                                                <strong class="col-7 col-md-9 col-lg-9 col-xl-10 ellipsis-text">{{ item.user }}</strong>
                                             </div>
                                             <div class="row">
                                                 <div class="col-5 col-md-3 col-lg-3 col-xl-2">Кабинет</div>
                                                 <strong class="col-7 col-md-9 col-lg-9 col-xl-10">{{ item.cabinet }}</strong>
+                                            </div>
+                                            <div class="row" v-if="item.status === 2">
+                                                <div class="col-5 col-md-3 col-lg-3 col-xl-2">Выполняется</div>
+                                                <strong class="col-7 col-md-9 col-lg-9 col-xl-10">{{ item.repairMan }}</strong>
                                             </div>
 
                                             <div class="row pt-3">
@@ -40,8 +44,11 @@
                                                 </div>
                                             </div>
                                             <div class="row pt-3">
-                                                <div class="col" style="text-align: right">
-                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Вы уверены, что хотите взять данное заявление?')"><strong>За работу</strong></button>
+                                                <div class="col" style="text-align: right" v-if="item.status === 1">
+                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', item.id)"><strong>За работу</strong></button>
+                                                </div>
+                                                <div class="col" style="text-align: right" v-else-if="item.repairManId === user.id">
+                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id)"><strong>Завершить</strong></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -63,18 +70,16 @@ export default {
     inject: ['api'],
 
     data: () => ({
-        show: false,
+        sign: global.sign
     }),
-
-    mounted() {
-        this.api('statement/get').then(data => {
-            console.log(data);
-        })
-    },
 
     computed: {
         items() {
             return this.$store.getters['statements/getItems'];
+        },
+
+        user() {
+            return this.$store.getters['user/getProfileInfo'];
         }
     },
 
@@ -87,8 +92,8 @@ export default {
             this.$store.commit('statements/setVisibility', index);
         },
 
-        showWindow(name, description) {
-            this.setWindow({name: name, description: description});
+        showWindow(name, title, type, buttonText, description, width, height, id) {
+            this.setWindow({name, title, type, buttonText, description, width, height, id});
         },
 
         getStatusText(status) {
@@ -100,7 +105,15 @@ export default {
                     return 'Выполняется';
                 }
             }
-        }
+        },
+
+        formatDate(date, time = true) {
+            if (typeof date !== "number") return 'Неизвестно';
+            date = new Date(date * 1000);
+
+            if (time) return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours() + ":" + (date.getMinutes().toString().length < 2 ? '0' + (date.getMinutes()) : date.getMinutes());
+            return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2);
+        },
     }
 
 }

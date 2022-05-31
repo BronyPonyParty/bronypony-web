@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Repair;
 use App\Models\Report;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
+use Illuminate\Support\Facades\Validator;
 
 class StatementController extends Controller
 {
@@ -55,13 +57,18 @@ class StatementController extends Controller
             $repairMan = $report->status === 1 ? '' : $userNames[$repairReportRow[$report->id]->repairman_id]->firstname .
                 ' ' . $userNames[$repairReportRow[$report->id]->repairman_id]->lastname;
 
+            // Проверяем чему равен статус текущего заявления, если 1 то возврашаем пустоту, id ремонтника
+            $repairManId = $report->status === 1 ? '' : $repairReportRow[$report->id]->repairman_id;
+
             $mass[] = [
-                'technicName' => $report->technic->name,
-                'technicNumber' => $report->technic->number,
+                'id' => $report->id,
+                'techName' => $report->technic->name,
+                'techNumber' => $report->technic->number,
                 'date' => $report->create_date,
                 'user' => $userNames[$report->user_id]->firstname . ' ' . $userNames[$report->user_id]->lastname,
-                'userDescription' => $report->description,
+                'description' => $report->description,
                 'repairMan' => $repairMan,
+                'repairManId' => $repairManId,
                 'cabinet' => $report->technic->cabinet,
                 'status' => $report->status,
             ];
@@ -70,11 +77,65 @@ class StatementController extends Controller
         return $mass;
     }
 
-    public function accept() {
+    public function accept(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer'
+        ]);
 
+        if ($validator->fails()) {
+            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть не прикаких обстоятельствах'));
+        }
+
+        $user = AuthFacade::user();
+        $report_id = $request->post('id');
+
+        $report = Report::whereHas('user', function ($query) use ($user) {
+            $query->where('organization_id', $user->organization_id);
+        })->select('id')->where('status', 1)->where('id', $report_id)->first();
+
+        if (empty($report)) abort(400, json_encode('Вы пытаетесь взять заявление которого не существует, либо оно кем-то занято'));
+
+
+        $report->status = 2;
+        $report->save();
+
+        $repair = new Repair;
+        $repair->report_id = $report->id;
+        $repair->repairman_id = $user->id;
+        $repair->save();
+
+        return 'OK';
     }
 
-    public function complete() {
+    public function complete(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|integer',
+            'description' => 'max:512'
+        ]);
 
+        if ($validator->fails()) {
+            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть не прикаких обстоятельствах'));
+        }
+
+        $user = AuthFacade::user();
+        $report_id = $request->post('id');
+        $description = $request->post('description');
+
+        // Делаем запрос в таблицу repairs и выполняем подзапрос где по условию достём только ту запись
+        // которую нужно завершить, и дополнительным условием проверяем её статус, дабы избежать повторного сохранения,
+        // также по условию авторизованный пользователь должен быть ремонтником
+        $repair = Repair::whereHas('report', function ($query) use ($report_id) {
+            $query->where('id', $report_id)->where('status', 2);
+        })->with('report')->where('repairman_id', $user->id)->first();
+
+        if (empty($repair)) abort(400, json_encode('Данного заявления не существует'));
+
+        $repair->description = $description;
+        $repair->report->status = 4;
+        $repair->report->complete_date = time();
+        $repair->report->save();
+        $repair->save();
+
+        return 'OK';
     }
 }

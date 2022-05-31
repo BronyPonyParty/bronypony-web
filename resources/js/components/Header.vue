@@ -12,6 +12,7 @@
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
                 <label class="cur-point" @click="setPage('statements')">Список заявлений</label>
                 <label class="cur-point" @click="setPage('technical')">Список техники</label>
+                <label class="cur-point" @click="test()">тест</label>
             </div>
 
             <div class="d-flex justify-content-center align-items-center position-relative" id="user-cap-profile">
@@ -98,6 +99,10 @@ export default {
                 this.$store.dispatch('auth/logout');
             });
             this.popupMenuToggle();
+        },
+
+        test() {
+            this.$store.commit('statements/changeItemProperty', [0, 'techName', 'ПК']);
         }
     }
 }

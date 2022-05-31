@@ -92,4 +92,8 @@ export default {
             }
         }
     }
+
+    .border-red {
+        border-color: red
+    }
 </style>

@@ -42,7 +42,7 @@ class TechnicController extends Controller
         ]);
 
         if ($validator->fails()) {
-            abort(400, 'Хм. Данная ошибка не должна была возникнуть не прикаких обстоятельствах');
+            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть не прикаких обстоятельствах'));
         }
 
         $user = AuthFacade::user();

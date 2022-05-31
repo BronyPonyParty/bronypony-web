@@ -54,7 +54,26 @@ export default {
 
                 this.$store.commit('app/setToken', data[0]);
                 this.$store.commit('app/setPage', 'statements');
+
+
+                this.api('statement/get').then(data => {
+                    data.forEach(item => {
+                        this.$store.commit('statements/pushItem', {
+                            'id': item.id,
+                            'techName': item.techName,
+                            'techNumber': item.techNumber,
+                            'date': item.date,
+                            'user': item.user,
+                            'description': item.description,
+                            'repairMan': item.repairMan,
+                            'repairManId': item.repairManId,
+                            'cabinet': item.cabinet,
+                            'status': item.status
+                        });
+                    });
+                });
             });
+
         },
     }
 }

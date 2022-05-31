@@ -6,6 +6,7 @@
 <!--        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>-->
 
         <v-header v-if="page !== 'login'"></v-header>
+
         <v-login v-if="page === 'login'"></v-login>
         <v-user v-if="page === 'user'"></v-user>
         <v-statements v-if="page === 'statements'"></v-statements>
@@ -55,6 +56,23 @@ export default {
             });
 
             if (this.$store.getters['app/getPage'] === 'login') this.$store.commit('app/setPage', 'statements');
+
+            this.api('statement/get').then(data => {
+                data.forEach(item => {
+                    this.$store.commit('statements/pushItem', {
+                        'id': item.id,
+                        'techName': item.techName,
+                        'techNumber': item.techNumber,
+                        'date': item.date,
+                        'user': item.user,
+                        'description': item.description,
+                        'repairMan': item.repairMan,
+                        'repairManId': item.repairManId,
+                        'cabinet': item.cabinet,
+                        'status': item.status
+                    });
+                });
+            });
         })
     },
 

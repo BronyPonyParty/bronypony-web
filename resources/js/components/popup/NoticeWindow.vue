@@ -1,11 +1,11 @@
 <template>
     <div class="popup-layout bg-black bg-opacity-50">
-        <div style="width: 400px">
+        <div :style="{ width: window.width + 'px' }">
             <div class="row justify-content-center align-items-center" style="padding-bottom: 64px;">
                 <div class="col">
                     <div>
                         <div class="card-body text-white d-flex notification" style="border-radius: 5px 5px 0 0">
-                            <strong>Внимание</strong>
+                            <strong>{{ window.title }}</strong>
                             <button class="btn float-end close-btn" @click="close" style="border: none; box-shadow: inherit;">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="close-icon">
                                     <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path>
@@ -13,10 +13,14 @@
                             </button>
                         </div>
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            {{window.description}}
+                            <div style="padding-bottom: 10px; font-size: 16px;">
+                                {{window.description}}
+                            </div>
+
+                            <textarea placeholder="Описание" maxlength="512" ref="description" @focus="removeRed()" class="form-control form-control-lg outline-text custom-scroll" :style="{ height: window.height + 'px' }"></textarea>
 
                             <div class="button" style="text-align: right">
-                                <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>Взять</strong></button>
+                                <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>{{ window.buttonText }}</strong></button>
                             </div>
                         </div>
                     </div>
@@ -30,6 +34,7 @@
 import {mapMutations, mapGetters} from 'vuex';
 export default {
     name: "popup",
+    inject: ['api'],
 
     computed: mapGetters ({
         window: 'app/getWindow'
@@ -45,7 +50,25 @@ export default {
         },
 
         accept() {
-            alert('Заказ взят');
+            if (this.window.type === 'accept') {
+                this.api('statement/accept', {id: this.window.id}).then(data => {
+                    this.close();
+                });
+            } else if (this.window.type === 'complete') {
+                if (this.$refs.description.value.length > 512) {
+                    this.$refs.description.classList.add('border-red');
+                    return;
+                }
+
+                this.api('statement/complete', {id: this.window.id, description: this.$refs.description.value}).then(data => {
+                    console.log(data);
+                    this.close();
+                });
+            }
+        },
+
+        removeRed() {
+            this.$refs.description.classList.remove('border-red');
         }
     }
 }
@@ -63,6 +86,14 @@ export default {
         width: 1.3em;
         height: 1.3em;
         fill: white;
+    }
+
+    .custom-scroll {
+        overflow-y: scroll;
+
+        &::-webkit-scrollbar {
+            width: 0;
+        }
     }
 
     .popup-layout {
@@ -94,7 +125,7 @@ export default {
     }
 
     .button {
-        padding-top: 30px;
+        padding-top: 16px;
     }
 
     .cancel-btn {
@@ -115,5 +146,9 @@ export default {
     }
     .yes-btn:active {
         background-color: #185641;
+    }
+
+    .border-red {
+        border-color: red
     }
 </style>

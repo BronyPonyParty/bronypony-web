@@ -32,7 +32,7 @@ class LoginController extends Controller
 
         $user = User::whereLogin($login)->wherePassword(md5($password))->where('status', '!=', 1)->first();
 
-        if (empty($user)) abort(400, 'Неверные данные входа');
+        if (empty($user)) abort(400, json_encode('Неверные данные входа'));
 
         //Если данные оказались верны
         $token = '';

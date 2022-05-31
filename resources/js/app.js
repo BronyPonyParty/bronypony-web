@@ -75,13 +75,17 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
             }
 
             case 400: { // Bad Request
-                console.log('Плохой запрос');
                 console.log(JSON.parse(error.response.data.message));
                 break;
             }
 
             case 422: { // Unprocessable Entity
                 console.log('Unprocessable Entity');
+                break;
+            }
+
+            case 403: {
+                console.log(JSON.parse(error.response.data.message));
                 break;
             }
 
