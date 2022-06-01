@@ -19763,7 +19763,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "App",
-  inject: ['api'],
+  inject: ['api', 'socket'],
   components: {
     vNoticeWindow: _components_popup_NoticeWindow__WEBPACK_IMPORTED_MODULE_0__["default"],
     vTechInfoWindow: _components_popup_TechInfoWindow__WEBPACK_IMPORTED_MODULE_1__["default"],
@@ -19778,10 +19778,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   mounted: function mounted() {
     var _this = this;
 
-    if (this.$store.getters['app/getToken'].length !== 32) return;
+    if (this.$store.getters['app/getToken'].length !== 32) {
+      this.$store.commit('app/setPage', 'login');
+      return;
+    }
+
     this.api('user/getUserData').then(function (data) {
       _this.$store.commit('user/setProfileInfo', {
         id: data.id,
+        organization_id: data.organization_id,
         firstname: data.firstname,
         lastname: data.lastname,
         middlename: data.middlename,
@@ -19807,6 +19812,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
             'status': item.status
           });
         });
+      });
+
+      _this.socket().then(function (res) {
+        var data = {
+          message: 'join room',
+          user: _this.$store.getters['user/getProfileInfo']
+        };
+
+        _this.$store.dispatch('socket/send', data); // Подключение к комнате соета
+
       });
     });
   },
@@ -19841,6 +19856,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       }
     });
+    this.$store.dispatch('socket/socket'); // Подключение по сокету
   }
 });
 
@@ -19889,9 +19905,6 @@ __webpack_require__.r(__webpack_exports__);
         _this.$store.dispatch('auth/logout');
       });
       this.popupMenuToggle();
-    },
-    test: function test() {
-      this.$store.commit('statements/changeItemProperty', [0, 'techName', 'ПК']);
     }
   }
 });
@@ -19911,7 +19924,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Login',
-  inject: ['api'],
+  inject: ['api', 'socket'],
   methods: {
     authorization: function authorization() {
       var _this = this;
@@ -19922,6 +19935,7 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (data) {
         _this.$store.commit('user/setProfileInfo', {
           id: data[1].id,
+          organization_id: data[1].organization_id,
           firstname: data[1].firstname,
           lastname: data[1].lastname,
           middlename: data[1].middlename,
@@ -19949,6 +19963,16 @@ __webpack_require__.r(__webpack_exports__);
               'status': item.status
             });
           });
+        });
+
+        _this.socket().then(function (res) {
+          var data = {
+            message: 'join room',
+            user: _this.$store.getters['user/getProfileInfo']
+          };
+
+          _this.$store.dispatch('socket/send', data); // Подключение к комнате соета
+
         });
       });
     }
@@ -19998,7 +20022,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     toggleDropdown: function toggleDropdown(index) {
       this.$store.commit('statements/setVisibility', index);
     },
-    showWindow: function showWindow(name, title, type, buttonText, description, width, height, id) {
+    showWindow: function showWindow(name, title, type, buttonText, description, width, height, id, index) {
       this.setWindow({
         name: name,
         title: title,
@@ -20007,7 +20031,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         description: description,
         width: width,
         height: height,
-        id: id
+        id: id,
+        index: index
       });
     },
     getStatusText: function getStatusText(status) {
@@ -20183,9 +20208,13 @@ __webpack_require__.r(__webpack_exports__);
     profileInfo: function profileInfo() {
       return this.$store.getters['user/getProfileInfo'];
     },
+    newProfileInfo: function newProfileInfo() {
+      return this.$store.getters['user/getNewProfileInfo'];
+    },
     equal: function equal() {
       var user = this.$store.getters['user/getProfileInfo'];
-      return user.firstname === user.newFirstname.trim() && user.lastname === user.newLastname.trim() && user.middlename === user.newMiddlename.trim() && user.avatar === user.newAvatar;
+      var newUser = this.$store.getters['user/getNewProfileInfo'];
+      return user.firstname === newUser.firstname.trim() && user.lastname === newUser.lastname.trim() && user.middlename === newUser.middlename.trim() && user.avatar === newUser.avatar;
     }
   },
   methods: {
@@ -20210,12 +20239,13 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       var userData = this.$store.getters['user/getProfileInfo'];
+      var newUserData = this.$store.getters['user/getNewProfileInfo'];
       var avatar = this.$store.getters['user/getSelectedFile'];
       var formData = new FormData();
       formData.append('avatar', avatar);
-      formData.append('firstname', userData.newFirstname);
-      formData.append('lastname', userData.newLastname);
-      formData.append('middlename', userData.newMiddlename);
+      formData.append('firstname', newUserData.firstname);
+      formData.append('lastname', newUserData.lastname);
+      formData.append('middlename', newUserData.middlename);
       this.api('user/saveUserData', formData).then(function (data) {
         _this.$store.commit('user/setProfileInfo', {
           id: data.id,
@@ -20305,9 +20335,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "popup",
-  inject: ['api'],
+  inject: ['api', 'socket'],
   computed: (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)({
-    window: 'app/getWindow'
+    window: 'app/getWindow',
+    user: 'user/getProfileInfo'
   }),
   methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapMutations)({
     setWindow: 'app/setWindow'
@@ -20324,7 +20355,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.api('statement/accept', {
           id: this.window.id
         }).then(function (data) {
-          _this.close();
+          _this.$store.commit('statements/changeItemProperty', [_this.window.index, 'repairMan', _this.user.firstname + ' ' + _this.user.lastname]);
+
+          _this.$store.commit('statements/changeItemProperty', [_this.window.index, 'repairManId', _this.user.id]);
+
+          _this.$store.commit('statements/changeItemProperty', [_this.window.index, 'status', 2]);
+
+          _this.socket().then(function (res) {
+            var data = {
+              message: 'accept statement',
+              statementId: _this.window.id
+            };
+
+            _this.$store.dispatch('socket/send', data);
+
+            _this.close();
+          });
         });
       } else if (this.window.type === 'complete') {
         if (this.$refs.description.value.length > 512) {
@@ -20332,13 +20378,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           return;
         }
 
-        this.api('statement/complete', {
-          id: this.window.id,
-          description: this.$refs.description.value
+        this.api('statement/accept', {
+          id: this.window.id
         }).then(function (data) {
-          console.log(data);
+          _this.$store.commit('statements/removeItem', _this.window.index);
 
-          _this.close();
+          _this.socket().then(function (res) {
+            var data = {
+              message: 'complete statement',
+              statementId: _this.window.id
+            };
+
+            _this.$store.dispatch('socket/send', data);
+
+            _this.close();
+          });
         });
       }
     },
@@ -20679,14 +20733,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[1] || (_cache[1] = function ($event) {
       return $options.setPage('technical');
     })
-  }, "Список техники"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
-    "class": "cur-point",
-    onClick: _cache[2] || (_cache[2] = function ($event) {
-      return $options.test();
-    })
-  }, "тест")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Список техники")]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "nav-item profile cur-point rounded-circle d-none d-sm-block",
-    onClick: _cache[3] || (_cache[3] = function () {
+    onClick: _cache[2] || (_cache[2] = function () {
       return $options.popupMenuToggle && $options.popupMenuToggle.apply($options, arguments);
     }),
     tabindex: "0"
@@ -20700,48 +20749,48 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* TEXT */
   )]), _hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[4] || (_cache[4] = function ($event) {
+    onClick: _cache[3] || (_cache[3] = function ($event) {
       return $options.setWindow('feedBack');
     })
   }, "Обратная связь"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[5] || (_cache[5] = function ($event) {
+    onClick: _cache[4] || (_cache[4] = function ($event) {
       return $options.setPage('user');
     })
   }, "Настройки"), _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[6] || (_cache[6] = function () {
+    onClick: _cache[5] || (_cache[5] = function () {
       return $options.logout && $options.logout.apply($options, arguments);
     })
   }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    onClick: _cache[7] || (_cache[7] = function () {
+    onClick: _cache[6] || (_cache[6] = function () {
       return $options.popupMenuToggle && $options.popupMenuToggle.apply($options, arguments);
     })
   }, _hoisted_18), $options.popupMenu ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_19, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [_hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", _hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.profileInfo.firstname + ' ' + $options.profileInfo.lastname), 1
   /* TEXT */
   )]), _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[8] || (_cache[8] = function ($event) {
+    onClick: _cache[7] || (_cache[7] = function ($event) {
       return $options.setPage('statements');
     })
   }, "Список заявлений"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[9] || (_cache[9] = function ($event) {
+    onClick: _cache[8] || (_cache[8] = function ($event) {
       return $options.setPage('technical');
     })
   }, "Список техники"), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[10] || (_cache[10] = function ($event) {
+    onClick: _cache[9] || (_cache[9] = function ($event) {
       return $options.setWindow('feedBack');
     })
   }, "Обратная связь"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[11] || (_cache[11] = function ($event) {
+    onClick: _cache[10] || (_cache[10] = function ($event) {
       return $options.setPage('user');
     })
   }, "Настройки"), _hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[12] || (_cache[12] = function () {
+    onClick: _cache[11] || (_cache[11] = function () {
       return $options.logout && $options.logout.apply($options, arguments);
     })
   }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]);
@@ -21020,8 +21069,17 @@ var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_36 = [_hoisted_35];
+var _hoisted_37 = {
+  key: 1,
+  "class": "h1 d-flex justify-content-center",
+  style: {
+    "opacity": "40%"
+  }
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, _hoisted_6, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.items, function (item, index) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, _hoisted_6, $options.items.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, {
+    key: 0
+  }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.items, function (item, index) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("table", {
       "class": "table",
       style: {
@@ -21054,21 +21112,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [item.status === 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "btn btn-get",
       onClick: function onClick($event) {
-        return $options.showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', item.id);
+        return $options.showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', 405, 200, item.id, index);
       }
     }, _hoisted_32, 8
     /* PROPS */
     , _hoisted_30)])) : item.repairManId === $options.user.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "btn btn-get",
       onClick: function onClick($event) {
-        return $options.showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id);
+        return $options.showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id, index);
       }
     }, _hoisted_36, 8
     /* PROPS */
     , _hoisted_34)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])])])])]);
+  )) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_37, " Список пуст "))])])])])]);
 }
 
 /***/ }),
@@ -21337,11 +21395,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     ref: "firstname",
     "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-      return $options.profileInfo.newFirstname = $event;
+      return $options.newProfileInfo.firstname = $event;
     })
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.profileInfo.newFirstname]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.newProfileInfo.firstname]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [_hoisted_11, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "form-control form-control-lg outline-text",
     maxlength: "32",
     onFocus: _cache[2] || (_cache[2] = function () {
@@ -21349,11 +21407,11 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     ref: "lastname",
     "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
-      return $options.profileInfo.newLastname = $event;
+      return $options.newProfileInfo.lastname = $event;
     })
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.profileInfo.newLastname]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.newProfileInfo.lastname]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
     "class": "form-control form-control-lg outline-text",
     maxlength: "32",
     onFocus: _cache[4] || (_cache[4] = function () {
@@ -21361,17 +21419,17 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }),
     ref: "middlename",
     "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-      return $options.profileInfo.newMiddlename = $event;
+      return $options.newProfileInfo.middlename = $event;
     })
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
-  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.profileInfo.newMiddlename]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, $options.newProfileInfo.middlename]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "avatar-image cur-point",
     onClick: _cache[6] || (_cache[6] = function ($event) {
       return _ctx.$refs.inputFile.click();
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-    src: $options.profileInfo.newAvatar,
+    src: $options.newProfileInfo.avatar,
     alt: "Avatar",
     "class": "rounded-circle"
   }, null, 8
@@ -21416,7 +21474,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 544
   /* HYDRATE_EVENTS, NEED_PATCH */
   ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
-    src: $options.profileInfo.newAvatar,
+    src: $options.newProfileInfo.avatar,
     alt: "Avatar",
     "class": "rounded-circle"
   }, null, 8
@@ -21584,20 +21642,21 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     }
   }, _hoisted_6)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.window.description), 1
   /* TEXT */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+  ), _ctx.window.type === 'complete' ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("textarea", {
+    key: 0,
+    "class": "form-control form-control-lg outline-text custom-scroll",
+    style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
+      height: _ctx.window.height + 'px'
+    }),
     placeholder: "Описание",
     maxlength: "512",
     ref: "description",
     onFocus: _cache[1] || (_cache[1] = function ($event) {
       return $options.removeRed();
-    }),
-    "class": "form-control form-control-lg outline-text custom-scroll",
-    style: (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeStyle)({
-      height: _ctx.window.height + 'px'
     })
   }, null, 36
   /* STYLE, HYDRATE_EVENTS */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn yes-btn text-white",
     style: {
       "border": "none",
@@ -22231,6 +22290,37 @@ app.provide('api', function (method) {
     })["catch"](catchDefault ? catchDefaultFunction : catchFunction);
   });
 });
+app.provide('socket', function () {
+  var timeOut = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 3000;
+  var catchDefault = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+  var that = this;
+  return new Promise(function (resolve, reject) {
+    var conn;
+    var count = 0;
+
+    var stop = function stop() {
+      catchDefault ? error() : reject();
+    };
+
+    var error = function error() {
+      console.log('Ошибка, время ожидания превышено');
+    };
+
+    var check = function check() {
+      conn = that.$store.getters['socket/getConnect'];
+      setTimeout(function () {
+        if (timeOut > count) {
+          count += 100;
+          if (conn.readyState === 1) resolve('Успех');else check();
+        } else {
+          stop();
+        }
+      }, 100);
+    };
+
+    check();
+  });
+});
 app.use(_store__WEBPACK_IMPORTED_MODULE_2__["default"]);
 app.mount('#app');
 
@@ -22292,6 +22382,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var _auth__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./auth */ "./resources/js/store/modules/auth.js");
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
   state: {
@@ -22309,7 +22401,8 @@ __webpack_require__.r(__webpack_exports__);
       description: '',
       width: 0,
       height: 0,
-      id: null
+      id: null,
+      index: null
     }
   },
   actions: {},
@@ -22432,18 +22525,45 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   namespaced: true,
-  state: {// conn: new WebSocket('ws://localhost:8080')
+  state: {
+    conn: new WebSocket('ws://localhost:8080')
   },
   actions: {
     socket: function socket(ctx) {
       ctx.state.conn.onopen = function (e) {
         console.log('Connection established!');
-        ctx.dispatch('send');
       };
 
       ctx.state.conn.onmessage = function (e) {
         var data = JSON.parse(e.data);
         console.log(data);
+
+        if (data.message === 'accept statement') {
+          var statements = ctx.rootGetters['statements/getItems'];
+          statements.forEach(function (statement, index) {
+            if (statement.id === data.statementId) {
+              ctx.commit('statements/changeItemProperty', [index, 'repairMan', data.name], {
+                root: true
+              });
+              ctx.commit('statements/changeItemProperty', [index, 'repairManId', data.repairManId], {
+                root: true
+              });
+              ctx.commit('statements/changeItemProperty', [index, 'status', 2], {
+                root: true
+              });
+            }
+          });
+        } else if (data.message === 'complete statement') {
+          var _statements = ctx.rootGetters['statements/getItems'];
+
+          _statements.forEach(function (statement, index) {
+            if (statement.id === data.statementId) {
+              ctx.commit('statements/removeItem', index, {
+                root: true
+              });
+            }
+          });
+        }
       };
 
       ctx.state.conn.onclose = function (e) {
@@ -22454,23 +22574,23 @@ __webpack_require__.r(__webpack_exports__);
         console.log('connection error');
       };
     },
-    send: function send(ctx) {
-      // let data = {
-      //     id: 3,
-      //     name: 'Техника-99',
-      //     status: 1,
-      //     date: '24.04.22 18:09:17',
-      //     repairman: 'Отсутствует',
-      //     cabinet: '455',
-      //     description: 'wow',
-      //     button: '',
-      //     visibility: false
-      // }
-      ctx.state.conn.send('{"message": "new statement", "id": "3", "name": "Техника-99", "status": "1", "date": "24.04.22 18:09:17", "repairman": "Отсутствует", "cabinet":"399", "description":"wow"}'); // console.log('Отправлено: ' + data);
+    send: function send(ctx, data) {
+      ctx.state.conn.send(JSON.stringify(data));
+      console.log('success send');
+    },
+    leaveRoom: function leaveRoom(ctx) {
+      var data = {
+        message: 'leave room'
+      };
+      ctx.state.conn.send(JSON.stringify(data));
     }
   },
   mutations: {},
-  getters: {}
+  getters: {
+    getConnect: function getConnect(state) {
+      return state.conn;
+    }
+  }
 });
 
 /***/ }),
@@ -22529,6 +22649,9 @@ __webpack_require__.r(__webpack_exports__);
     // arr = [index, key, value]
     changeItemProperty: function changeItemProperty(state, arr) {
       state.items[arr[0]][arr[1]] = arr[2];
+    },
+    removeItem: function removeItem(state, index) {
+      state.items.splice(index, 1);
     }
   },
   getters: {
@@ -22780,16 +22903,19 @@ __webpack_require__.r(__webpack_exports__);
   state: {
     user: {
       id: '',
+      organization_id: '',
       firstname: '',
       lastname: '',
       middlename: '',
       mail: '',
       phoneNumber: '',
-      avatar: '',
-      newFirstname: '',
-      newLastname: '',
-      newMiddlename: '',
-      newAvatar: ''
+      avatar: ''
+    },
+    newUserData: {
+      firstname: '',
+      lastname: '',
+      middlename: '',
+      avatar: ''
     },
     selectedFile: ''
   },
@@ -22823,6 +22949,7 @@ __webpack_require__.r(__webpack_exports__);
   mutations: {
     setProfileInfo: function setProfileInfo(state, _ref2) {
       var id = _ref2.id,
+          organization_id = _ref2.organization_id,
           firstname = _ref2.firstname,
           lastname = _ref2.lastname,
           middlename = _ref2.middlename,
@@ -22830,31 +22957,32 @@ __webpack_require__.r(__webpack_exports__);
           phoneNumber = _ref2.phoneNumber,
           avatar = _ref2.avatar;
       state.user.id = id;
+      state.user.organization_id = organization_id;
       state.user.firstname = firstname;
       state.user.lastname = lastname;
       state.user.middlename = middlename != null ? middlename : '';
       state.user.mail = mail;
       state.user.phoneNumber = phoneNumber;
-      state.user.newFirstname = firstname;
-      state.user.newLastname = lastname;
-      state.user.newMiddlename = middlename != null ? middlename : '';
+      state.newUserData.firstname = firstname;
+      state.newUserData.lastname = lastname;
+      state.newUserData.middlename = middlename != null ? middlename : '';
 
       if (avatar === null) {
         state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
-        state.user.newAvatar = '/storage/uploads/avatars/defaultAvatar.jpg';
+        state.newUserData.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
       } else {
         state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
-        state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
+        state.newUserData.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
       }
     },
     setAvatar: function setAvatar(state, avatar) {
-      state.user.newAvatar = avatar;
+      state.newUserData.avatar = avatar;
     },
     cancelInfo: function cancelInfo(state) {
-      state.user.newFirstname = state.user.firstname;
-      state.user.newLastname = state.user.lastname;
-      state.user.newMiddlename = state.user.middlename;
-      state.user.newAvatar = state.user.avatar;
+      state.newUserData.firstname = state.user.firstname;
+      state.newUserData.lastname = state.user.lastname;
+      state.newUserData.middlename = state.user.middlename;
+      state.newUserData.avatar = state.user.avatar;
       state.selectedFile = '';
     },
     setSelectedFile: function setSelectedFile(state, selectedFile) {
@@ -22864,6 +22992,9 @@ __webpack_require__.r(__webpack_exports__);
   getters: {
     getProfileInfo: function getProfileInfo(state) {
       return state.user;
+    },
+    getNewProfileInfo: function getNewProfileInfo(state) {
+      return state.newUserData;
     },
     getSelectedFile: function getSelectedFile(state) {
       return state.selectedFile;

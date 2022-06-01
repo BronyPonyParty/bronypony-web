@@ -7,7 +7,7 @@
                     <div class="bg-white p-4" style="border-radius: 5px">
                         <h1>Список заявлений</h1>
                         <hr>
-                        <table class="table" style="table-layout: fixed; border: none" v-for="(item, index) in items" :key="item.id">
+                        <table class="table" style="table-layout: fixed; border: none" v-for="(item, index) in items" :key="item.id" v-if="items.length !== 0">
                             <tbody>
                                 <tr>
                                     <td class="wb default-td">{{ item.techName + sign + item.techNumber}}</td>
@@ -45,10 +45,10 @@
                                             </div>
                                             <div class="row pt-3">
                                                 <div class="col" style="text-align: right" v-if="item.status === 1">
-                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', item.id)"><strong>За работу</strong></button>
+                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', 405, 200, item.id, index)"><strong>За работу</strong></button>
                                                 </div>
                                                 <div class="col" style="text-align: right" v-else-if="item.repairManId === user.id">
-                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id)"><strong>Завершить</strong></button>
+                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id, index)"><strong>Завершить</strong></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -56,6 +56,9 @@
                                 </tr>
                             </tbody>
                         </table>
+                        <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
+                            Список пуст
+                        </div>
                     </div>
                 </div>
             </div>
@@ -92,8 +95,8 @@ export default {
             this.$store.commit('statements/setVisibility', index);
         },
 
-        showWindow(name, title, type, buttonText, description, width, height, id) {
-            this.setWindow({name, title, type, buttonText, description, width, height, id});
+        showWindow(name, title, type, buttonText, description, width, height, id, index) {
+            this.setWindow({name, title, type, buttonText, description, width, height, id, index});
         },
 
         getStatusText(status) {

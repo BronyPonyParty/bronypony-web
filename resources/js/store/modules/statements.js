@@ -37,6 +37,10 @@ export default {
         // arr = [index, key, value]
         changeItemProperty(state, arr) {
             state.items[arr[0]][arr[1]] = arr[2];
+        },
+
+        removeItem(state, index) {
+            state.items.splice(index, 1);
         }
     }
 

@@ -4,17 +4,20 @@ export default {
     state: {
         user: {
             id: '',
+            organization_id: '',
             firstname: '',
             lastname: '',
             middlename: '',
             mail: '',
             phoneNumber: '',
             avatar: '',
+        },
 
-            newFirstname: '',
-            newLastname: '',
-            newMiddlename: '',
-            newAvatar: '',
+        newUserData: {
+            firstname: '',
+            lastname: '',
+            middlename: '',
+            avatar: '',
         },
 
         selectedFile: ''
@@ -46,36 +49,37 @@ export default {
     },
 
     mutations: {
-        setProfileInfo(state, {id, firstname, lastname, middlename, mail, phoneNumber, avatar}) {
+        setProfileInfo(state, {id, organization_id, firstname, lastname, middlename, mail, phoneNumber, avatar}) {
             state.user.id = id;
+            state.user.organization_id = organization_id;
             state.user.firstname = firstname;
             state.user.lastname = lastname;
             state.user.middlename = middlename != null ? middlename : '';
             state.user.mail = mail;
             state.user.phoneNumber = phoneNumber;
 
-            state.user.newFirstname = firstname;
-            state.user.newLastname = lastname;
-            state.user.newMiddlename = middlename != null ? middlename : '';
+            state.newUserData.firstname = firstname;
+            state.newUserData.lastname = lastname;
+            state.newUserData.middlename = middlename != null ? middlename : '';
 
             if (avatar === null) {
                 state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
-                state.user.newAvatar = '/storage/uploads/avatars/defaultAvatar.jpg';
+                state.newUserData.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
             } else {
                 state.user.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
-                state.user.newAvatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
+                state.newUserData.avatar = '/storage/uploads/avatars/' + id + '/' + avatar + '.png';
             }
         },
 
         setAvatar(state, avatar) {
-            state.user.newAvatar = avatar;
+            state.newUserData.avatar = avatar;
         },
 
         cancelInfo(state) {
-            state.user.newFirstname = state.user.firstname;
-            state.user.newLastname = state.user.lastname;
-            state.user.newMiddlename = state.user.middlename;
-            state.user.newAvatar = state.user.avatar;
+            state.newUserData.firstname = state.user.firstname;
+            state.newUserData.lastname = state.user.lastname;
+            state.newUserData.middlename = state.user.middlename;
+            state.newUserData.avatar = state.user.avatar;
             state.selectedFile = ''
         },
 
@@ -87,6 +91,10 @@ export default {
     getters: {
         getProfileInfo(state) {
             return state.user;
+        },
+
+        getNewProfileInfo(state) {
+            return state.newUserData;
         },
 
         getSelectedFile(state) {

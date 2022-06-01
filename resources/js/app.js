@@ -102,5 +102,37 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
     });
 });
 
+app.provide('socket', function (timeOut = 3000, catchDefault = true) {
+    let that = this;
+
+    return new Promise((resolve, reject) => {
+        let conn;
+        let count = 0;
+
+        let stop = function () {
+            catchDefault ? error() : reject();
+        }
+
+        let error = function () {
+            console.log('Ошибка, время ожидания превышено');
+        }
+
+        let check = function () {
+            conn = that.$store.getters['socket/getConnect'];
+            setTimeout(() => {
+                if (timeOut > count) {
+                    count += 100;
+                    if (conn.readyState === 1) resolve('Успех');
+                    else check();
+                } else {
+                    stop();
+                }
+            }, 100)
+        }
+
+        check();
+    });
+});
+
 app.use(store);
 app.mount('#app');

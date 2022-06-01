@@ -37,13 +37,14 @@
 <script>
 export default {
     name: 'Login',
-    inject: ['api'],
+    inject: ['api', 'socket'],
 
     methods: {
         authorization() {
             this.api('login', {login: this.$refs.login.value, password: this.$refs.password.value}).then(data => {
                 this.$store.commit('user/setProfileInfo', {
                     id: data[1].id,
+                    organization_id: data[1].organization_id,
                     firstname: data[1].firstname,
                     lastname: data[1].lastname,
                     middlename: data[1].middlename,
@@ -54,7 +55,6 @@ export default {
 
                 this.$store.commit('app/setToken', data[0]);
                 this.$store.commit('app/setPage', 'statements');
-
 
                 this.api('statement/get').then(data => {
                     data.forEach(item => {
@@ -71,6 +71,15 @@ export default {
                             'status': item.status
                         });
                     });
+                });
+
+                this.socket().then(res => {
+                    let data = {
+                        message: 'join room',
+                        user: this.$store.getters['user/getProfileInfo']
+                    }
+
+                    this.$store.dispatch('socket/send', data); // Подключение к комнате соета
                 });
             });
 

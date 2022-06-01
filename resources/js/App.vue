@@ -27,7 +27,7 @@ import vHeader from './components/Header'
 import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
-    inject: ['api'],
+    inject: ['api', 'socket'],
 
     components: {
         vNoticeWindow,
@@ -42,11 +42,15 @@ export default {
     },
 
     mounted() {
-        if (this.$store.getters['app/getToken'].length !== 32) return;
+        if (this.$store.getters['app/getToken'].length !== 32) {
+            this.$store.commit('app/setPage', 'login');
+            return;
+        }
 
         this.api('user/getUserData').then(data => {
             this.$store.commit('user/setProfileInfo', {
                 id: data.id,
+                organization_id: data.organization_id,
                 firstname: data.firstname,
                 lastname: data.lastname,
                 middlename: data.middlename,
@@ -72,6 +76,15 @@ export default {
                         'status': item.status
                     });
                 });
+            });
+
+            this.socket().then(res => {
+                let data = {
+                    message: 'join room',
+                    user: this.$store.getters['user/getProfileInfo']
+                }
+
+                this.$store.dispatch('socket/send', data); // Подключение к комнате соета
             });
         })
     },
@@ -109,6 +122,8 @@ export default {
                 }
             }
         });
+
+        this.$store.dispatch('socket/socket'); // Подключение по сокету
     },
 }
 </script>

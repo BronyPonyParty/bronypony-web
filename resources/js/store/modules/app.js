@@ -1,3 +1,5 @@
+import auth from "./auth";
+
 export default {
     namespaced: true,
 
@@ -19,7 +21,8 @@ export default {
             description: '',
             width: 0,
             height: 0,
-            id: null
+            id: null,
+            index: null
         },
     },
 

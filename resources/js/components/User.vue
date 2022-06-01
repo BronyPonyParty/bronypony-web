@@ -21,20 +21,20 @@
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="profileInfo.newFirstname">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="newProfileInfo.firstname">
                             </div>
                             <div class="edit-group">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="profileInfo.newLastname">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="newProfileInfo.lastname">
                             </div>
                             <div class="edit-group">
                                 <strong>Отчество</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnMiddlename" ref="middlename" v-model="profileInfo.newMiddlename">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnMiddlename" ref="middlename" v-model="newProfileInfo.middlename">
                             </div>
                             <div class="edit-group d-sm-none">
                                 <strong>Изображение</strong>
                                 <div class="avatar-image cur-point" @click="$refs.inputFile.click()">
-                                    <img :src="profileInfo.newAvatar" alt="Avatar" class="rounded-circle">
+                                    <img :src="newProfileInfo.avatar" alt="Avatar" class="rounded-circle">
                                 </div>
                             </div>
                             <div class="edit-group buttons">
@@ -51,7 +51,7 @@
                             <strong>Изображение</strong>
                             <div class="avatar-image cur-point"  @click="$refs.inputFile.click()">
                                 <input type="file" accept=".jpg, .png, .jpeg" ref="inputFile" hidden @change="loadAvatar">
-                                <img :src="profileInfo.newAvatar" alt="Avatar" class="rounded-circle">
+                                <img :src="newProfileInfo.avatar" alt="Avatar" class="rounded-circle">
                             </div>
                         </div>
                     </div>
@@ -71,13 +71,18 @@ export default {
             return this.$store.getters['user/getProfileInfo'];
         },
 
+        newProfileInfo() {
+            return this.$store.getters['user/getNewProfileInfo'];
+        },
+
         equal() {
             let user = this.$store.getters['user/getProfileInfo'];
+            let newUser = this.$store.getters['user/getNewProfileInfo'];
 
-            return  user.firstname  === (user.newFirstname).trim()  &&
-                    user.lastname   === (user.newLastname).trim()   &&
-                    user.middlename === (user.newMiddlename).trim() &&
-                    user.avatar     === user.newAvatar;
+            return  user.firstname  === (newUser.firstname).trim()  &&
+                    user.lastname   === (newUser.lastname).trim()   &&
+                    user.middlename === (newUser.middlename).trim() &&
+                    user.avatar     === newUser.avatar;
         }
     },
 
@@ -106,14 +111,15 @@ export default {
             }
 
             const userData = this.$store.getters['user/getProfileInfo'];
+            const newUserData = this.$store.getters['user/getNewProfileInfo'];
             const avatar = this.$store.getters['user/getSelectedFile'];
 
 
             const formData = new FormData();
             formData.append('avatar', avatar);
-            formData.append('firstname', userData.newFirstname);
-            formData.append('lastname', userData.newLastname);
-            formData.append('middlename', userData.newMiddlename);
+            formData.append('firstname', newUserData.firstname);
+            formData.append('lastname', newUserData.lastname);
+            formData.append('middlename', newUserData.middlename);
 
 
             this.api('user/saveUserData', formData).then(data => {

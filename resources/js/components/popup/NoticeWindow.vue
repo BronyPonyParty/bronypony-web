@@ -17,7 +17,7 @@
                                 {{window.description}}
                             </div>
 
-                            <textarea placeholder="Описание" maxlength="512" ref="description" @focus="removeRed()" class="form-control form-control-lg outline-text custom-scroll" :style="{ height: window.height + 'px' }"></textarea>
+                            <textarea class="form-control form-control-lg outline-text custom-scroll" :style="{ height: window.height + 'px' }" placeholder="Описание" maxlength="512" ref="description" @focus="removeRed()" v-if="window.type === 'complete'"></textarea>
 
                             <div class="button" style="text-align: right">
                                 <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>{{ window.buttonText }}</strong></button>
@@ -34,10 +34,11 @@
 import {mapMutations, mapGetters} from 'vuex';
 export default {
     name: "popup",
-    inject: ['api'],
+    inject: ['api', 'socket'],
 
     computed: mapGetters ({
-        window: 'app/getWindow'
+        window: 'app/getWindow',
+        user: 'user/getProfileInfo'
     }),
 
     methods: {
@@ -52,17 +53,35 @@ export default {
         accept() {
             if (this.window.type === 'accept') {
                 this.api('statement/accept', {id: this.window.id}).then(data => {
-                    this.close();
+                    this.$store.commit('statements/changeItemProperty', [this.window.index, 'repairMan', this.user.firstname + ' ' + this.user.lastname]);
+                    this.$store.commit('statements/changeItemProperty', [this.window.index, 'repairManId', this.user.id]);
+                    this.$store.commit('statements/changeItemProperty', [this.window.index, 'status', 2]);
+
+                    this.socket().then(res => {
+                        let data = {
+                            message: 'accept statement',
+                            statementId: this.window.id,
+                        }
+                        this.$store.dispatch('socket/send', data);
+                        this.close();
+                    });
                 });
             } else if (this.window.type === 'complete') {
                 if (this.$refs.description.value.length > 512) {
                     this.$refs.description.classList.add('border-red');
                     return;
                 }
+                this.api('statement/accept', {id: this.window.id}).then(data => {
+                    this.$store.commit('statements/removeItem', this.window.index);
 
-                this.api('statement/complete', {id: this.window.id, description: this.$refs.description.value}).then(data => {
-                    console.log(data);
-                    this.close();
+                    this.socket().then(res => {
+                        let data = {
+                            message: 'complete statement',
+                            statementId: this.window.id,
+                        }
+                        this.$store.dispatch('socket/send', data);
+                        this.close();
+                    });
                 });
             }
         },
