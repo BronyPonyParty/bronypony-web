@@ -50,11 +50,6 @@ global.FILTERS = {
 
 global.sign = '#';
 
-// const app = new Vue({
-//     el: '#app',
-//     store
-// });
-
 const app = createApp(App);
 app.provide('api', function (method, data = {}, catchDefault = true) {
     let that = this;
@@ -90,6 +85,7 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
             }
 
             default: {
+                console.log(error.response.data.message);
                 console.log('Неизвестная ошибка');
             }
         }
@@ -102,37 +98,47 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
     });
 });
 
-app.provide('socket', function (timeOut = 3000, catchDefault = true) {
-    let that = this;
+const socket = {
+    conn: null,
 
-    return new Promise((resolve, reject) => {
-        let conn;
-        let count = 0;
+    handlers: new Map(),
 
-        let stop = function () {
-            catchDefault ? error() : reject();
-        }
+    connect() {
+        return new Promise((resolve, reject) => {
+            this.conn = new WebSocket('ws://localhost:8080');
 
-        let error = function () {
-            console.log('Ошибка, время ожидания превышено');
-        }
+            this.conn.onopen = function (e) {
+                console.log('Connection established!');
+                resolve();
+            };
 
-        let check = function () {
-            conn = that.$store.getters['socket/getConnect'];
-            setTimeout(() => {
-                if (timeOut > count) {
-                    count += 100;
-                    if (conn.readyState === 1) resolve('Успех');
-                    else check();
-                } else {
-                    stop();
-                }
-            }, 100)
-        }
+            this.conn.onclose = function (e) {
+                console.log('connection close');
+                reject();
+            };
 
-        check();
-    });
-});
+            this.conn.onerror = function (e) {
+                console.log('connection error');
+            };
+
+            this.conn.onmessage = (e) => {
+                let data = JSON.parse(e.data);
+                console.log('onMessage', data);
+                if (this.handlers.has(data.message)) this.handlers.get(data.message)(data);
+            };
+        });
+    },
+
+    send(data) {
+        this.conn.send(JSON.stringify(data));
+    },
+
+    on(name, handler) {
+        this.handlers.set(name, handler);
+    },
+};
+
+app.provide('socket', socket);
 
 app.use(store);
 app.mount('#app');

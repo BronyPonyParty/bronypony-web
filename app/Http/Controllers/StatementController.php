@@ -89,6 +89,8 @@ class StatementController extends Controller
         $user = AuthFacade::user();
         $report_id = $request->post('id');
 
+        // Запрос на взятие данных из таблицы reports, где берём только те поля в которых user_id из нашей организации.
+        // Также из таблицы reports берём только те поля, которые имею статус 1 и берём поле с переданным report_id
         $report = Report::whereHas('user', function ($query) use ($user) {
             $query->where('organization_id', $user->organization_id);
         })->select('id')->where('status', 1)->where('id', $report_id)->first();

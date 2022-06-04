@@ -6,7 +6,6 @@ import userModule from "./modules/user";
 import techInfoModule from "./modules/techInfo";
 import technicalModule from "./modules/technical";
 import statementsModule from "./modules/statements";
-import socketModule from "./modules/socket";
 
 export default createStore({
     namespaced: true,
@@ -18,7 +17,6 @@ export default createStore({
         user: userModule,
         techInfo: techInfoModule,
         technical: technicalModule,
-        statements: statementsModule,
-        socket: socketModule,
+        statements: statementsModule
     }
 });

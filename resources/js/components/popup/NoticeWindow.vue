@@ -52,36 +52,33 @@ export default {
 
         accept() {
             if (this.window.type === 'accept') {
-                this.api('statement/accept', {id: this.window.id}).then(data => {
+                this.api('statement/accept', {id: this.window.id}).then(() => {
                     this.$store.commit('statements/changeItemProperty', [this.window.index, 'repairMan', this.user.firstname + ' ' + this.user.lastname]);
                     this.$store.commit('statements/changeItemProperty', [this.window.index, 'repairManId', this.user.id]);
                     this.$store.commit('statements/changeItemProperty', [this.window.index, 'status', 2]);
 
-                    this.socket().then(res => {
-                        let data = {
-                            message: 'accept statement',
-                            statementId: this.window.id,
-                        }
-                        this.$store.dispatch('socket/send', data);
-                        this.close();
-                    });
+                    let data = {
+                        message: 'accept statement',
+                        statementId: this.window.id,
+                    }
+                    this.socket.send(data);
+                    this.close();
                 });
             } else if (this.window.type === 'complete') {
-                if (this.$refs.description.value.length > 512) {
+                if (this.$refs.description.value.length > 512) { // Небольшая валидация
                     this.$refs.description.classList.add('border-red');
                     return;
                 }
-                this.api('statement/accept', {id: this.window.id}).then(data => {
+
+                this.api('statement/complete', {id: this.window.id, description: this.$refs.description.value}).then(() => {
                     this.$store.commit('statements/removeItem', this.window.index);
 
-                    this.socket().then(res => {
-                        let data = {
-                            message: 'complete statement',
-                            statementId: this.window.id,
-                        }
-                        this.$store.dispatch('socket/send', data);
-                        this.close();
-                    });
+                    let data = {
+                        message: 'complete statement',
+                        statementId: this.window.id,
+                    }
+                    this.socket.send(data);
+                    this.close();
                 });
             }
         },

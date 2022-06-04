@@ -5,6 +5,8 @@ export default {
         descriptionShowed: true,
         travelHistoryShowed: false,
         repairHistoryShowed: false,
+
+        moveWindowShowed: false,
         title: 'Описание техники',
 
         techDescription: {
@@ -44,6 +46,14 @@ export default {
             state.travelHistoryShowed = false;
             state.descriptionShowed = false;
             state.title = 'История ремонтов техники';
+        },
+
+        toggleMoveWindow(state) {
+            state.moveWindowShowed ^= true;
+        },
+
+        closeMoveWindow(state) {
+            state.moveWindowShowed = false;
         },
 
 
@@ -133,6 +143,10 @@ export default {
 
         getTechRepairs(state) {
             return state.techRepairs;
-        }
+        },
+
+        getMoveWindowShowed(state) {
+            return state.moveWindowShowed;
+        },
     }
 }

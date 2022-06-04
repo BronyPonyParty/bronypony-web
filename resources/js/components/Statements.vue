@@ -70,7 +70,7 @@
 import {mapMutations} from 'vuex';
 export default {
     name: "Statements",
-    inject: ['api'],
+    inject: ['api', 'socket'],
 
     data: () => ({
         sign: global.sign
@@ -84,6 +84,34 @@ export default {
         user() {
             return this.$store.getters['user/getProfileInfo'];
         }
+    },
+
+    created() {
+        this.socket.on('accept statement', data => {
+            let statements = this.$store.getters['statements/getItems'];
+            for (let i = 0; i < statements.length; i++) {
+                let statement = statements[i];
+
+                if (statement.id === data.statementId) {
+                    this.$store.commit('statements/changeItemProperty', [i, 'repairMan', data.name]);
+                    this.$store.commit('statements/changeItemProperty', [i, 'repairManId', data.repairManId]);
+                    this.$store.commit('statements/changeItemProperty', [i, 'status', 2]);
+                    break;
+                }
+            }
+        });
+
+        this.socket.on('complete statement', data => {
+            let statements = this.$store.getters['statements/getItems'];
+            for (let i = 0; i < statements.length; i++) {
+                let statement = statements[i];
+
+                if (statement.id === data.statementId) {
+                    this.$store.commit('statements/removeItem', i);
+                    break;
+                }
+            }
+        });
     },
 
     methods: {

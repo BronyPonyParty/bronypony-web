@@ -13,11 +13,36 @@
                                 </button>
                                 <strong style="vertical-align: middle">{{title}}</strong>
                             </div>
-                            <button class="btn float-end close-btn" @click="close" style="border: none; box-shadow: inherit;">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="close-icon">
-                                    <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path>
-                                </svg>
-                            </button>
+
+                            <div class="position-relative">
+                                <button class="btn close-btn" :class="{ moveActive: getMoveWindowShowed }" @click="toggleMoveWindow" style="border: none; box-shadow: inherit" v-if="descriptionShowed">
+                                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                         viewBox="0 0 489.4 489.4"  xml:space="preserve" fill="white" width="20px" height="20px">
+                                        <path d="M452.154,307.02l-57.442-198.941l-202.664,58.524l57.432,198.941L452.154,307.02z M380.755,133.361l46.118,159.712
+                                            l-163.436,47.19L217.329,180.55L380.755,133.361z"/>
+                                        <path d="M478.215,342.087c-1.565-5.414-7.208-8.519-12.641-6.978L258.637,394.86c-9.463-13.895-24.561-23.63-42.006-25.949
+                                            L121.934,40.966C113.271,10.949,81.828-6.434,51.75,2.225C21.723,10.904,4.346,42.387,13.01,72.414
+                                            c1.575,5.418,7.228,8.518,12.64,6.979c5.414-1.566,8.544-7.223,6.979-12.641c-5.542-19.211,5.573-39.359,24.784-44.906
+                                            c19.25-5.543,39.358,5.577,44.901,24.783l93.311,323.14c-27.193,5.935-47.559,30.14-47.559,59.113
+                                            c0,33.424,27.095,60.519,60.519,60.519s60.519-27.095,60.519-60.519c0-5.261-0.674-10.364-1.935-15.23l204.067-58.923
+                                            C476.65,353.162,479.78,347.504,478.215,342.087z M208.585,469.581c-22.478,0-40.7-18.222-40.7-40.7
+                                            c0-22.478,18.222-40.7,40.7-40.7c22.478,0,40.7,18.222,40.7,40.7C249.285,451.359,231.063,469.581,208.585,469.581z"/>
+                                    </svg>
+                                </button>
+                                <div class="move-window" v-if="getMoveWindowShowed">
+                                    <span>Откуда</span>
+                                    <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
+                                    <span>Куда</span>
+                                    <input class="form-control outline-text">
+                                    <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" ><strong>Переместить</strong></button>
+                                </div>
+
+                                <button class="btn close-btn" @click="close" style="border: none; box-shadow: inherit;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="close-icon">
+                                        <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
 
                         <div class="card-body bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px;" v-if="descriptionShowed">
@@ -155,16 +180,22 @@ export default {
 
         getTechRepairs() {
             return this.$store.getters['techInfo/getTechRepairs'];
+        },
+
+        getMoveWindowShowed() {
+            return this.$store.getters['techInfo/getMoveWindowShowed'];
         }
     },
 
     methods: {
         showRepairHistory() {
             this.$store.commit('techInfo/showRepairHistory');
+            this.$store.commit('techInfo/closeMoveWindow');
         },
 
         showTravelHistory() {
             this.$store.commit('techInfo/showTravelHistory');
+            this.$store.commit('techInfo/closeMoveWindow');
         },
 
         showDescriptionTech() {
@@ -173,7 +204,12 @@ export default {
 
         close() {
             this.$store.commit('app/setWindow', {name: ''});
-            this.showDescriptionTech();
+            this.$store.commit('techInfo/closeMoveWindow');
+            this.showDescriptionTech(); // Чтобы при открытии не открылось последнее окно на котором закрыли
+        },
+
+        toggleMoveWindow() {
+            this.$store.commit('techInfo/toggleMoveWindow');
         },
 
         formatDate(date, time = true) {
@@ -317,5 +353,44 @@ export default {
 
     .btn-toggle:active {
         background-color: #243881;
+    }
+
+    .move-window {
+        position: absolute;
+        background-color: white;
+        width: 200px;
+        right: 15px;
+        top: 55px;
+        color: black;
+        left: auto;
+        border-radius: 6px;
+        //border: 1px red solid;
+        //box-shadow: 0 1px 5px #1c2128;
+    }
+
+    .move-button {
+        margin-top: 12px;
+        background-color: #2F8E6C;
+        height: 30px;
+        font-size: 13px;
+    }
+    .move-button:hover {
+        background-color: #2B7B5E;
+    }
+    .move-button:active {
+        background-color: #1C5542;
+    }
+
+    .moveActive {
+        background-color: #252D42;
+    }
+
+    .outline-text:focus {
+        border-color: #5374D1;
+        box-shadow: inherit;
+    }
+
+    .form-control {
+        height: 30px;
     }
 </style>

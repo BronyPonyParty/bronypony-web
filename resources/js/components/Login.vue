@@ -73,13 +73,15 @@ export default {
                     });
                 });
 
-                this.socket().then(res => {
-                    let data = {
+                // Производим подключение по сокету
+                this.socket.connect().then(() => {
+                    let userData = {
                         message: 'join room',
                         user: this.$store.getters['user/getProfileInfo']
                     }
-
-                    this.$store.dispatch('socket/send', data); // Подключение к комнате соета
+                    this.socket.send(userData);
+                }).catch(() => {
+                    console.log('connect error');
                 });
             });
 

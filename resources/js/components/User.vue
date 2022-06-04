@@ -64,7 +64,7 @@
 <script>
 export default {
     name: "User",
-    inject: ['api'],
+    inject: ['api', 'socket'],
 
     computed: {
         profileInfo() {
@@ -114,15 +114,22 @@ export default {
             const newUserData = this.$store.getters['user/getNewProfileInfo'];
             const avatar = this.$store.getters['user/getSelectedFile'];
 
-
             const formData = new FormData();
             formData.append('avatar', avatar);
             formData.append('firstname', newUserData.firstname);
             formData.append('lastname', newUserData.lastname);
             formData.append('middlename', newUserData.middlename);
 
-
             this.api('user/saveUserData', formData).then(data => {
+                if (userData.firstname !== newUserData.firstname || userData.lastname !== newUserData.lastname) {
+                    let localData = {
+                        message: 'change name',
+                        firstname: data.firstname,
+                        lastname: data.lastname,
+                    }
+                    this.socket.send(localData); // Отправка по сокету новых данных
+                }
+
                 this.$store.commit('user/setProfileInfo', {
                     id: data.id,
                     firstname: data.firstname,
@@ -132,6 +139,7 @@ export default {
                     phoneNumber: data.phone_number,
                     avatar: data.avatar,
                 });
+
             })
         },
 

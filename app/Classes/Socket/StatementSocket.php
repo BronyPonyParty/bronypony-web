@@ -70,6 +70,13 @@ class StatementSocket extends BaseSocket
                 $employee->send(json_encode($localData));
             }
         }
+
+        elseif ($data->message === 'change name') {
+            echo 'User: ' . $from->resourceId . ' change name from ' . $this->users[$from->resourceId]->firstname . ' ' . $this->users[$from->resourceId]->lastname . ' to '. $data->firstname . ' ' . $data->lastname . "\n";
+
+            $this->users[$from->resourceId]->firstname = $data->firstname;
+            $this->users[$from->resourceId]->lastname = $data->lastname;
+        }
 //        $orgId = $this->users[$from->resourceId]->organization_id;
 //        echo $this->rooms[$orgId];
 
