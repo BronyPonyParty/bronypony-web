@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MovingTechnic extends Model
 {
     use HasFactory;
+    public $timestamps = false;
 
     public function user() {
         return $this->hasOne(User::class, 'id', 'user_id');

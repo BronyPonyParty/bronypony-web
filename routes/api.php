@@ -37,6 +37,7 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::middleware('access.level:4')->group(function () {
         Route::post('technic/getList', [TechnicController::class, 'getList']);
         Route::post('technic/getInfo', [TechnicController::class, 'getInfo']);
+        Route::post('technic/move', [TechnicController::class, 'move']);
 
         Route::any('statement/get', [StatementController::class, 'get']);
         Route::post('statement/accept', [StatementController::class, 'accept']);

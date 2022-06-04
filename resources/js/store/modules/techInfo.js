@@ -113,7 +113,11 @@ export default {
             } else {
                 state.techRepairs[index].buttonText = 'Описание сотрудника';
             }
-        }
+        },
+
+        changeTechDescriptionProperty(state, arr) {
+            state.techDescription[arr[0]] = arr[1];
+        },
     },
 
     getters: {

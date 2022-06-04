@@ -20463,6 +20463,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "TechInfoWindow",
+  inject: ['api'],
   computed: {
     descriptionShowed: function descriptionShowed() {
       return this.$store.getters['techInfo/getDescriptionShowed'];
@@ -20541,6 +20542,37 @@ __webpack_require__.r(__webpack_exports__);
     },
     switchText: function switchText(index) {
       this.$store.commit('techInfo/toggleText', index);
+    },
+    moveTechnic: function moveTechnic() {
+      var _this = this;
+
+      var cabinet = this.$refs.cabinetInput.value;
+      var technicId = this.getTechDescription.id; // Некая валидация
+
+      if (cabinet.length === 0 || cabinet.length > 6) {
+        this.$refs.cabinetInput.classList.add('border-red');
+        return;
+      }
+
+      this.api('technic/move', {
+        cabinet: cabinet,
+        technicId: technicId
+      }).then(function (data) {
+        var authUser = _this.$store.getters['user/getProfileInfo'];
+
+        _this.$store.commit('techInfo/changeTechDescriptionProperty', ['cabinet', cabinet]);
+
+        _this.$store.commit('techInfo/setTechMovements', {
+          user: authUser.firstname + ' ' + authUser.lastname,
+          number: cabinet,
+          date: data
+        });
+
+        _this.$refs.cabinetInput.value = null;
+      });
+    },
+    removeRed: function removeRed() {
+      this.$refs.cabinetInput.classList.remove('border-red');
     }
   }
 });
@@ -21836,24 +21868,12 @@ var _hoisted_15 = /*#__PURE__*/_withScopeId(function () {
 });
 
 var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
-    "class": "form-control outline-text"
-  }, null, -1
+  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "Переместить", -1
   /* HOISTED */
   );
 });
 
-var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    "class": "btn move-button text-white",
-    style: {
-      "border": "none",
-      "box-shadow": "inherit"
-    }
-  }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, "Переместить")], -1
-  /* HOISTED */
-  );
-});
+var _hoisted_17 = [_hoisted_16];
 
 var _hoisted_18 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
@@ -22100,9 +22120,28 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     value: $options.getTechDescription.cabinet
   }, null, 8
   /* PROPS */
-  , _hoisted_14), _hoisted_15, _hoisted_16, _hoisted_17])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  , _hoisted_14), _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    "class": "form-control outline-text",
+    ref: "cabinetInput",
+    maxlength: "6",
+    oninput: "this.value = this.value.replace(/[^0-9]/g, '')",
+    onFocus: _cache[2] || (_cache[2] = function () {
+      return $options.removeRed && $options.removeRed.apply($options, arguments);
+    })
+  }, null, 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "btn move-button text-white",
+    style: {
+      "border": "none",
+      "box-shadow": "inherit"
+    },
+    onClick: _cache[3] || (_cache[3] = function () {
+      return $options.moveTechnic && $options.moveTechnic.apply($options, arguments);
+    })
+  }, _hoisted_17)])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn close-btn",
-    onClick: _cache[2] || (_cache[2] = function () {
+    onClick: _cache[4] || (_cache[4] = function () {
       return $options.close && $options.close.apply($options, arguments);
     }),
     style: {
@@ -22127,7 +22166,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "border": "none",
       "box-shadow": "inherit"
     },
-    onClick: _cache[3] || (_cache[3] = function () {
+    onClick: _cache[5] || (_cache[5] = function () {
       return $options.showRepairHistory && $options.showRepairHistory.apply($options, arguments);
     })
   }, _hoisted_36), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
@@ -22136,7 +22175,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       "border": "none",
       "box-shadow": "inherit"
     },
-    onClick: _cache[4] || (_cache[4] = function () {
+    onClick: _cache[6] || (_cache[6] = function () {
       return $options.showTravelHistory && $options.showTravelHistory.apply($options, arguments);
     })
   }, _hoisted_38)])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), $options.repairHistoryShowed ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_39, [$options.getTechRepairs.length !== 0 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_40, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($options.getTechRepairs, function (item, index) {
@@ -22849,6 +22888,9 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         state.techRepairs[index].buttonText = 'Описание сотрудника';
       }
+    },
+    changeTechDescriptionProperty: function changeTechDescriptionProperty(state, arr) {
+      state.techDescription[arr[0]] = arr[1];
     }
   },
   getters: {
@@ -23280,7 +23322,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "strong[data-v-d764f2bc] {\n  font-weight: 600;\n}\n.custom-scroll[data-v-d764f2bc] {\n  overflow-y: scroll;\n}\n.custom-scroll[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.item-tech[data-v-d764f2bc] {\n  margin-bottom: 5px;\n  display: flex;\n  gap: 10px;\n}\n.moving[data-v-d764f2bc] {\n  margin-left: 5px;\n  font-weight: 200;\n}\n.popup-layout[data-v-d764f2bc] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: normal;\n  display: flex;\n}\n.back-button[data-v-d764f2bc] {\n  fill: white;\n}\n.back-button[data-v-d764f2bc]:hover {\n  background-color: #353D62;\n}\n.back-button[data-v-d764f2bc]:active {\n  background-color: #252D42;\n}\n.head[data-v-d764f2bc] {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.techList[data-v-d764f2bc] {\n  border-radius: 5px;\n  max-height: 500px;\n  overflow-y: scroll;\n}\n.techList[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.techList .tech[data-v-d764f2bc] {\n  margin-bottom: 8px;\n}\n.techList .tech[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc] {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc]:hover {\n  background-color: #353F62;\n}\n.techList .item[data-v-d764f2bc]:active {\n  background-color: #262E45;\n}\n.buttons[data-v-d764f2bc] {\n  display: flex;\n  gap: 10px;\n  padding-top: 30px;\n}\n.btn-toggle[data-v-d764f2bc] {\n  background-color: #345DD1;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-toggle[data-v-d764f2bc]:hover {\n  background-color: #2E51B7;\n}\n.btn-toggle[data-v-d764f2bc]:active {\n  background-color: #243881;\n}\n.move-window[data-v-d764f2bc] {\n  position: absolute;\n  background-color: white;\n  width: 200px;\n  right: 15px;\n  top: 55px;\n  color: black;\n  left: auto;\n  border-radius: 6px;\n}\n.move-button[data-v-d764f2bc] {\n  margin-top: 12px;\n  background-color: #2F8E6C;\n  height: 30px;\n  font-size: 13px;\n}\n.move-button[data-v-d764f2bc]:hover {\n  background-color: #2B7B5E;\n}\n.move-button[data-v-d764f2bc]:active {\n  background-color: #1C5542;\n}\n.moveActive[data-v-d764f2bc] {\n  background-color: #252D42;\n}\n.outline-text[data-v-d764f2bc]:focus {\n  border-color: #5374D1;\n  box-shadow: inherit;\n}\n.form-control[data-v-d764f2bc] {\n  height: 30px;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "strong[data-v-d764f2bc] {\n  font-weight: 600;\n}\n.custom-scroll[data-v-d764f2bc] {\n  overflow-y: scroll;\n}\n.custom-scroll[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.item-tech[data-v-d764f2bc] {\n  margin-bottom: 5px;\n  display: flex;\n  gap: 10px;\n}\n.moving[data-v-d764f2bc] {\n  margin-left: 5px;\n  font-weight: 200;\n}\n.popup-layout[data-v-d764f2bc] {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: normal;\n  display: flex;\n}\n.back-button[data-v-d764f2bc] {\n  fill: white;\n}\n.back-button[data-v-d764f2bc]:hover {\n  background-color: #353D62;\n}\n.back-button[data-v-d764f2bc]:active {\n  background-color: #252D42;\n}\n.head[data-v-d764f2bc] {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.techList[data-v-d764f2bc] {\n  border-radius: 5px;\n  max-height: 500px;\n  overflow-y: scroll;\n}\n.techList[data-v-d764f2bc]::-webkit-scrollbar {\n  width: 0;\n}\n.techList .tech[data-v-d764f2bc] {\n  margin-bottom: 8px;\n}\n.techList .tech[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc] {\n  width: 100%;\n  background-color: #3C4870;\n  color: white;\n  cursor: pointer;\n  border-radius: 5px;\n  margin-bottom: 8px;\n}\n.techList .item[data-v-d764f2bc]:last-child {\n  margin-bottom: 0;\n}\n.techList .item[data-v-d764f2bc]:hover {\n  background-color: #353F62;\n}\n.techList .item[data-v-d764f2bc]:active {\n  background-color: #262E45;\n}\n.buttons[data-v-d764f2bc] {\n  display: flex;\n  gap: 10px;\n  padding-top: 30px;\n}\n.btn-toggle[data-v-d764f2bc] {\n  background-color: #345DD1;\n  border: none;\n  box-shadow: inherit;\n  color: white;\n}\n.btn-toggle[data-v-d764f2bc]:hover {\n  background-color: #2E51B7;\n}\n.btn-toggle[data-v-d764f2bc]:active {\n  background-color: #243881;\n}\n.move-window[data-v-d764f2bc] {\n  position: absolute;\n  background-color: white;\n  width: 200px;\n  right: 15px;\n  top: 55px;\n  color: black;\n  left: auto;\n  border-radius: 6px;\n}\n.move-button[data-v-d764f2bc] {\n  margin-top: 12px;\n  background-color: #2F8E6C;\n  height: 30px;\n  font-size: 13px;\n}\n.move-button[data-v-d764f2bc]:hover {\n  background-color: #2B7B5E;\n}\n.move-button[data-v-d764f2bc]:active {\n  background-color: #1C5542;\n}\n.moveActive[data-v-d764f2bc] {\n  background-color: #252D42;\n}\n.outline-text[data-v-d764f2bc]:focus {\n  border-color: #5374D1;\n  box-shadow: inherit;\n}\n.form-control[data-v-d764f2bc] {\n  height: 30px;\n}\n.border-red[data-v-d764f2bc] {\n  border-color: red;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

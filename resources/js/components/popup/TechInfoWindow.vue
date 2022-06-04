@@ -33,8 +33,8 @@
                                     <span>Откуда</span>
                                     <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
                                     <span>Куда</span>
-                                    <input class="form-control outline-text">
-                                    <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" ><strong>Переместить</strong></button>
+                                    <input class="form-control outline-text" ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @focus="removeRed">
+                                    <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" @click="moveTechnic"><strong>Переместить</strong></button>
                                 </div>
 
                                 <button class="btn close-btn" @click="close" style="border: none; box-shadow: inherit;">
@@ -152,6 +152,7 @@
 <script>
 export default {
     name: "TechInfoWindow",
+    inject: ['api'],
 
     computed: {
         descriptionShowed() {
@@ -240,6 +241,34 @@ export default {
 
         switchText(index) {
             this.$store.commit('techInfo/toggleText', index);
+        },
+
+        moveTechnic() {
+            let cabinet = this.$refs.cabinetInput.value;
+            let technicId = this.getTechDescription.id;
+
+            // Некая валидация
+            if (cabinet.length === 0 || cabinet.length > 6) {
+                this.$refs.cabinetInput.classList.add('border-red');
+                return;
+            }
+
+            this.api('technic/move', {cabinet, technicId}).then(data => {
+                let authUser = this.$store.getters['user/getProfileInfo'];
+
+                this.$store.commit('techInfo/changeTechDescriptionProperty', ['cabinet', cabinet]);
+                this.$store.commit('techInfo/setTechMovements', {
+                    user: authUser.firstname + ' ' + authUser.lastname,
+                    number: cabinet,
+                    date: data
+                });
+
+                this.$refs.cabinetInput.value = null;
+            });
+        },
+
+        removeRed() {
+            this.$refs.cabinetInput.classList.remove('border-red');
         }
     },
 }
@@ -364,8 +393,6 @@ export default {
         color: black;
         left: auto;
         border-radius: 6px;
-        //border: 1px red solid;
-        //box-shadow: 0 1px 5px #1c2128;
     }
 
     .move-button {
@@ -392,5 +419,9 @@ export default {
 
     .form-control {
         height: 30px;
+    }
+
+    .border-red {
+        border-color: red
     }
 </style>

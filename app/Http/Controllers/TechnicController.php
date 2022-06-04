@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MovingTechnic;
+use App\Models\Premise;
 use App\Models\Repair;
 use App\Models\Technic;
 use Illuminate\Http\Request;
@@ -100,5 +101,32 @@ class TechnicController extends Controller
         }
 
         return [$movingMass, $repairMass];
+    }
+
+    public function move(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'cabinet' => 'required|max:6',
+            'technicId' => 'required|int'
+        ]);
+
+        if ($validator->fails()) {
+            return abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
+        }
+
+        $user = AuthFacade::user();
+        $cabinet = $request->post('cabinet');
+        $technicId = $request->post('technicId');
+
+        $premise = Premise::select('id')->where('number', $cabinet)->where('organization_id', $user->organization_id)->first();
+        if (empty($premise)) abort(400, json_encode('Данного кабинета не существует'));
+
+        $movingTechnic = new MovingTechnic();
+        $movingTechnic->user_id = $user->id;
+        $movingTechnic->technic_id = $technicId;
+        $movingTechnic->premise_id = $premise->id;
+        $movingTechnic->date = time();
+        $movingTechnic->save();
+
+        return time();
     }
 }
