@@ -11,6 +11,7 @@ export default {
             mail: '',
             phoneNumber: '',
             avatar: '',
+            status: ''
         },
 
         newUserData: {
@@ -49,7 +50,7 @@ export default {
     },
 
     mutations: {
-        setProfileInfo(state, {id, organization_id, firstname, lastname, middlename, mail, phoneNumber, avatar}) {
+        setProfileInfo(state, {id, organization_id, firstname, lastname, middlename, mail, phoneNumber, avatar, status}) {
             state.user.id = id;
             state.user.organization_id = organization_id;
             state.user.firstname = firstname;
@@ -57,6 +58,7 @@ export default {
             state.user.middlename = middlename != null ? middlename : '';
             state.user.mail = mail;
             state.user.phoneNumber = phoneNumber;
+            state.user.status = status;
 
             state.newUserData.firstname = firstname;
             state.newUserData.lastname = lastname;

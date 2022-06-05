@@ -7,6 +7,7 @@ export default {
         repairHistoryShowed: false,
 
         moveWindowShowed: false,
+        editDescriptionShowed: false,
         title: 'Описание техники',
 
         techDescription: {
@@ -50,6 +51,14 @@ export default {
 
         toggleMoveWindow(state) {
             state.moveWindowShowed ^= true;
+        },
+
+        toggleEdit(state) {
+            state.editDescriptionShowed ^= true;
+        },
+
+        exitEdit(state) {
+            state.editDescriptionShowed = false;
         },
 
         closeMoveWindow(state) {
@@ -152,5 +161,9 @@ export default {
         getMoveWindowShowed(state) {
             return state.moveWindowShowed;
         },
+
+        getEditDescriptionShowed(state) {
+            return state.editDescriptionShowed;
+        }
     }
 }

@@ -51,6 +51,7 @@ export default {
                     mail: data[1].mail,
                     phoneNumber: data[1].phone_number,
                     avatar: data[1].avatar,
+                    status: data[1].status
                 });
 
                 this.$store.commit('app/setToken', data[0]);

@@ -15,8 +15,15 @@
                             </div>
 
                             <div class="position-relative">
-                                <button class="btn close-btn" :class="{ moveActive: getMoveWindowShowed }" @click="toggleMoveWindow" style="border: none; box-shadow: inherit" v-if="descriptionShowed">
-                                    <svg id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                <button class="btn header-btn" :class="{ active: getEditDescriptionShowed }" @click="editMode" style="border: none; box-shadow: inherit" v-if="descriptionShowed && getUserInfo.status >= 8"><svg width="20px" height="20px" viewBox="0 0 54 62" xmlns="http://www.w3.org/2000/svg">
+                                        <g fill="white">
+                                            <path d="M15.9,52.8 L0.8,52.8 L0.8,37.6 L38,0 L53.1,15.3 L15.9,52.8 Z M3.8,49.8 L14.6,49.8 L48.8,15.3 L37.9,4.3 L3.7,38.9 L3.7,49.8 L3.8,49.8 Z"></path>
+                                            <rect id="Rectangle-path" transform="translate(37.044340, 16.387490) rotate(45.251189) translate(-37.044340, -16.387490) " x="26.3943398" y="14.88749" width="21.3000004" height="3.00000006"></rect>
+                                            <rect id="Rectangle-path" transform="translate(11.744140, 41.379530) rotate(45.251189) translate(-11.744140, -41.379530) " x="1.09413979" y="39.87953" width="21.3000004" height="3.00000006"></rect>
+                                        </g>
+                                    </svg></button>
+
+                                <button class="btn header-btn" :class="{ active: getMoveWindowShowed }" @click="toggleMoveWindow" style="border: none; box-shadow: inherit" v-if="descriptionShowed"><svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                                          viewBox="0 0 489.4 489.4"  xml:space="preserve" fill="white" width="20px" height="20px">
                                         <path d="M452.154,307.02l-57.442-198.941l-202.664,58.524l57.432,198.941L452.154,307.02z M380.755,133.361l46.118,159.712
                                             l-163.436,47.19L217.329,180.55L380.755,133.361z"/>
@@ -27,8 +34,7 @@
                                             c0,33.424,27.095,60.519,60.519,60.519s60.519-27.095,60.519-60.519c0-5.261-0.674-10.364-1.935-15.23l204.067-58.923
                                             C476.65,353.162,479.78,347.504,478.215,342.087z M208.585,469.581c-22.478,0-40.7-18.222-40.7-40.7
                                             c0-22.478,18.222-40.7,40.7-40.7c22.478,0,40.7,18.222,40.7,40.7C249.285,451.359,231.063,469.581,208.585,469.581z"/>
-                                    </svg>
-                                </button>
+                                    </svg></button>
                                 <div class="move-window" v-if="getMoveWindowShowed">
                                     <span>Откуда</span>
                                     <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
@@ -37,7 +43,7 @@
                                     <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" @click="moveTechnic"><strong>Переместить</strong></button>
                                 </div>
 
-                                <button class="btn close-btn" @click="close" style="border: none; box-shadow: inherit;">
+                                <button class="btn header-btn" @click="close" style="border: none; box-shadow: inherit;">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" class="close-icon">
                                         <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z"></path>
                                     </svg>
@@ -45,39 +51,41 @@
                             </div>
                         </div>
 
-                        <div class="card-body bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px;" v-if="descriptionShowed">
-                            <div class="item-tech">
-                                <span>Техника</span>
-                                <strong>{{ getTechDescription.name}}</strong>
-                            </div>
-                            <div class="item-tech">
-                                <span>Кабинет</span>
-                                <strong>{{ getTechDescription.cabinet }}</strong>
-                            </div>
-                            <div class="item-tech">
-                                <span>Состояние</span>
-                                <strong>{{ getStatusText(getTechDescription.status) }}</strong>
-                            </div>
-                            <div class="item-tech">
-                                <span>Поставщик</span>
-                                <strong>{{ getTechDescription.provider }}</strong>
-                            </div>
-                            <div class="item-tech">
-                                <span>Дата покупки</span>
-                                <strong>{{ formatDate(getTechDescription.date, false) }}</strong>
+                        <div class="card-body p-0 bg-white text-black custom-scroll" style="border-radius: 0 0 5px 5px; max-height: 600px;" v-if="descriptionShowed">
+                            <div style="padding: 1rem 1rem 0 1rem;">
+                                <div class="item-tech">
+                                    <span>Техника</span>
+                                    <strong>{{ getTechDescription.name}}</strong>
+                                </div>
+                                <div class="item-tech">
+                                    <span>Кабинет</span>
+                                    <strong>{{ getTechDescription.cabinet }}</strong>
+                                </div>
+                                <div class="item-tech">
+                                    <span>Состояние</span>
+                                    <strong>{{ getStatusText(getTechDescription.status) }}</strong>
+                                </div>
+                                <div class="item-tech">
+                                    <span>Поставщик</span>
+                                    <strong>{{ getTechDescription.provider }}</strong>
+                                </div>
+                                <div class="item-tech">
+                                    <span>Дата покупки</span>
+                                    <strong>{{ formatDate(getTechDescription.date, false) }}</strong>
+                                </div>
                             </div>
 
                             <div style="margin-top: 15px">
-                                <div v-if="getTechDescription.description.length !== 0">
+                                <div class="item-description" style="word-wrap: break-word" ref="description" @focus="$event.target.classList.remove('outline-red')" :class="{edit: getEditDescriptionShowed}" :contenteditable="!!getEditDescriptionShowed" v-show="getTechDescription.description || getEditDescriptionShowed">
                                     {{ getTechDescription.description }}
                                 </div>
-                                <div class="h4" style="opacity: 40%" v-else>
+                                <div class="h4 item-description" style="opacity: 40%" v-show="!(getTechDescription.description || getEditDescriptionShowed)">
                                     Описание отсутствует
                                 </div>
                             </div>
-                            <div class="buttons">
-                                <button class="btn cancel-btn text-white" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
-                                <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="showTravelHistory"><strong>История перемещений</strong></button>
+                            <div class="buttons p-3">
+                                <button class="btn cancel-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
+                                <button class="btn yes-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showTravelHistory"><strong>История перемещений</strong></button>
                             </div>
                         </div>
 
@@ -185,6 +193,14 @@ export default {
 
         getMoveWindowShowed() {
             return this.$store.getters['techInfo/getMoveWindowShowed'];
+        },
+
+        getEditDescriptionShowed() {
+            return this.$store.getters['techInfo/getEditDescriptionShowed'];
+        },
+
+        getUserInfo() {
+            return this.$store.getters['user/getProfileInfo'];
         }
     },
 
@@ -204,6 +220,7 @@ export default {
         },
 
         close() {
+            this.$store.commit('techInfo/exitEdit'); // Закрыть режим редактирования
             this.$store.commit('app/setWindow', {name: ''});
             this.$store.commit('techInfo/closeMoveWindow');
             this.showDescriptionTech(); // Чтобы при открытии не открылось последнее окно на котором закрыли
@@ -211,6 +228,35 @@ export default {
 
         toggleMoveWindow() {
             this.$store.commit('techInfo/toggleMoveWindow');
+        },
+
+        editMode() {
+            let elementDescription = this.$refs.description;
+            let oldDescription = this.getTechDescription.description;
+            let descriptionText = elementDescription.textContent.trim();
+
+            if (descriptionText.length > 1024) {
+                elementDescription.classList.add('outline-red');
+                return;
+            }
+
+            if (this.getTechDescription.description === null) this.getTechDescription.description = '';
+
+            // Отправляю запрос при закрытии режима редактирования
+            if (this.getEditDescriptionShowed) {
+                if (descriptionText !== this.getTechDescription.description) {
+                    this.$store.commit('techInfo/changeTechDescriptionProperty', ['description', descriptionText]);
+                    this.api('technic/changeDescription', {description: descriptionText, technicId: this.getTechDescription.id}, false).then(() => {
+                        console.log('success');
+                    }).catch(error => {
+                        // Возвращаем старый текст если произошла ошибка
+                        this.$store.commit('techInfo/changeTechDescriptionProperty', ['description', oldDescription]);
+                        console.log(JSON.parse(error.response.data.message));
+                    });
+                }
+            }
+
+            this.$store.commit('techInfo/toggleEdit');
         },
 
         formatDate(date, time = true) {
@@ -238,6 +284,7 @@ export default {
         toggleDescription(index) {
             this.$store.commit('techInfo/toggleVisibility', index);
         },
+
 
         switchText(index) {
             this.$store.commit('techInfo/toggleText', index);
@@ -401,20 +448,55 @@ export default {
         height: 30px;
         font-size: 13px;
     }
+
     .move-button:hover {
         background-color: #2B7B5E;
     }
+
     .move-button:active {
         background-color: #1C5542;
     }
 
-    .moveActive {
+    .item-description {
+        border: 1px solid transparent;
+        padding: 4px 4px;
+        margin: 0 11px;
+    }
+
+    .edit {
+        outline: none;
+        border-radius: 2px;
+        border: 1px solid #CED4DA;
+        //padding: 4px;
+        background-color: #F8FAFC;
+    }
+
+    .edit:hover {
+
+    }
+
+    .edit:focus {
+        border-color: #5374D1;
+    }
+
+    .header-btn {
+        background-color: #3C4870;
+    }
+
+    .header-btn:hover {
+        background-color: #353D62;
+    }
+
+    .header-btn:active {
+        background-color: #252D42;
+    }
+
+    .active {
         background-color: #252D42;
     }
 
     .outline-text:focus {
         border-color: #5374D1;
-        box-shadow: inherit;
     }
 
     .form-control {
@@ -424,4 +506,9 @@ export default {
     .border-red {
         border-color: red
     }
+
+    .outline-red {
+        border-color: #FF3838;
+    }
+
 </style>

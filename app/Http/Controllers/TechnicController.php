@@ -110,7 +110,7 @@ class TechnicController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
+            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
         }
 
         $user = AuthFacade::user();
@@ -128,5 +128,27 @@ class TechnicController extends Controller
         $movingTechnic->save();
 
         return time();
+    }
+
+    public function changeDescription(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'description' => 'max:1024',
+            'technicId' => 'required|int'
+        ]);
+
+        if ($validator->fails()) {
+            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
+        }
+
+        $user = AuthFacade::user();
+        $description = $request->post('description');
+        $technicId = $request->post('technicId');
+
+        if ($user->status < 8) abort(403, 'Недостаточно прав');
+
+        $technic = Technic::where('id', $technicId)->where('organization_id', $user->organization_id)->update(['description' => $description]);
+        if ($technic == 0) abort(400, json_encode('Данной техники не существует в вашей орагнизации'));
+
+        return 'OK';
     }
 }

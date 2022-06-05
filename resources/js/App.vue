@@ -57,6 +57,7 @@ export default {
                 mail: data.mail,
                 phoneNumber: data.phone_number,
                 avatar: data.avatar,
+                status: data.status
             });
 
             if (this.$store.getters['app/getPage'] === 'login') this.$store.commit('app/setPage', 'statements');
