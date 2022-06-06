@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacades;
 use Illuminate\Support\Facades\Validator;
@@ -63,5 +64,21 @@ class UserController extends Controller
         $user->save();
 
         return $user;
+    }
+
+    public function getAllData() {
+        $user = AuthFacades::user();
+
+        $rows = [
+            'id',
+            'firstname',
+            'lastname',
+            'phone_number',
+            'mail',
+            'avatar',
+            'status'
+        ];
+
+        return User::select($rows)->where('organization_id', $user->organization_id)->get();
     }
 }

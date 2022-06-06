@@ -467,7 +467,6 @@ export default {
         outline: none;
         border-radius: 2px;
         border: 1px solid #CED4DA;
-        //padding: 4px;
         background-color: #F8FAFC;
     }
 

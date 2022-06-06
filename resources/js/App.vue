@@ -4,6 +4,7 @@
         <v-tech-info-window v-if="window.name === 'techInfoWindow'"></v-tech-info-window>
         <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
 <!--        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>-->
+        <v-user-info-window v-if="window.name === 'userInfoWindow'"></v-user-info-window>
 
         <v-header v-if="page !== 'login'"></v-header>
 
@@ -11,6 +12,7 @@
         <v-user v-if="page === 'user'"></v-user>
         <v-statements v-if="page === 'statements'"></v-statements>
         <v-technical v-if="page === 'technical'"></v-technical>
+        <v-user-list v-if="page === 'userList'"></v-user-list>
     </div>
 </template>
 
@@ -24,6 +26,8 @@ import vUser from './components/User'
 import vStatements from './components/Statements'
 import vTechnical from './components/Technical'
 import vHeader from './components/Header'
+import vUserList from './components/UserList'
+import vUserInfoWindow from './components/popup/UserInfoWindow'
 import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
@@ -39,6 +43,8 @@ export default {
         vStatements,
         vTechnical,
         vHeader,
+        vUserList,
+        vUserInfoWindow
     },
 
     mounted() {
@@ -78,6 +84,22 @@ export default {
                     });
                 });
             });
+
+            this.api('user/getAllData').then(data => {
+                data.forEach(item => {
+                    if (item.id !== this.$store.getters['user/getProfileInfo'].id) {
+                        this.$store.commit('userList/pushUser', {
+                            id: item.id,
+                            firstname: item.firstname,
+                            lastname: item.lastname,
+                            phoneNumber: item.phone_number,
+                            mail: item.mail,
+                            avatar: item.avatar,
+                            status: item.status
+                        })
+                    }
+                })
+            })
 
             // Производим подключение по сокету
             this.socket.connect().then(() => {

@@ -126,17 +126,21 @@ class StatementController extends Controller
         // Делаем запрос в таблицу repairs и выполняем подзапрос где по условию достём только ту запись
         // которую нужно завершить, и дополнительным условием проверяем её статус, дабы избежать повторного сохранения,
         // также по условию авторизованный пользователь должен быть ремонтником
-        $repair = Repair::whereHas('report', function ($query) use ($report_id) {
-            $query->where('id', $report_id)->where('status', 2);
-        })->with('report')->where('repairman_id', $user->id)->first();
+        $repair = Repair::whereHas('report', $filter = function ($query) use ($report_id) {
+            $query->with('technic:id,status')->where('id', $report_id)->where('status', 2);
+        })->with(['report' => $filter])->where('repairman_id', $user->id)->first();
 
         if (empty($repair)) abort(400, json_encode('Данного заявления не существует'));
 
         $repair->description = $description;
+        $repair->save();
+
         $repair->report->status = 4;
         $repair->report->complete_date = time();
         $repair->report->save();
-        $repair->save();
+
+        $repair->report->technic->status = 1;
+        $repair->report->technic->save();
 
         return 'OK';
     }

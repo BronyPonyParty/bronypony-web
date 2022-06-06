@@ -130,6 +130,8 @@ class TechnicController extends Controller
         return time();
     }
 
+
+    //access level 8
     public function changeDescription(Request $request) {
         $validator = Validator::make($request->all(), [
             'description' => 'max:1024',
@@ -143,8 +145,6 @@ class TechnicController extends Controller
         $user = AuthFacade::user();
         $description = $request->post('description');
         $technicId = $request->post('technicId');
-
-        if ($user->status < 8) abort(403, 'Недостаточно прав');
 
         $technic = Technic::where('id', $technicId)->where('organization_id', $user->organization_id)->update(['description' => $description]);
         if ($technic == 0) abort(400, json_encode('Данной техники не существует в вашей орагнизации'));

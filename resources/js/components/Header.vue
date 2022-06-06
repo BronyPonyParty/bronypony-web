@@ -10,8 +10,9 @@
             </a>
 
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
-                <label class="cur-point" @click="setPage('statements')">Список заявлений</label>
-                <label class="cur-point" @click="setPage('technical')">Список техники</label>
+                <label class="cur-point" @click="setPage('statements')">Заявления</label>
+                <label class="cur-point" @click="setPage('technical')">Техника</label>
+                <label class="cur-point" v-if="profileInfo.status > 4" @click="setPage('userList')">Сотрудники</label>
             </div>
 
             <div class="d-flex justify-content-center align-items-center position-relative" id="user-cap-profile">

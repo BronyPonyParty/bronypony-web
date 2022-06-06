@@ -38,17 +38,26 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
         Route::post('technic/getList', [TechnicController::class, 'getList']);
         Route::post('technic/getInfo', [TechnicController::class, 'getInfo']);
         Route::post('technic/move', [TechnicController::class, 'move']);
-        Route::post('technic/changeDescription', [TechnicController::class, 'changeDescription']);
 
         Route::any('statement/get', [StatementController::class, 'get']);
         Route::post('statement/accept', [StatementController::class, 'accept']);
         Route::post('statement/complete', [StatementController::class, 'complete']);
+    });
+
+    Route::middleware('access.level:8')->group(function () {
+        Route::post('technic/changeDescription', [TechnicController::class, 'changeDescription']);
+        Route::post('user/getAllData', [UserController::class, 'getAllData']);
     });
 });
 
 Route::get('test', function () {
     DB::enableQueryLog();
 
+//    $repair = Repair::whereHas('report', $filter = function ($query) {
+//        $query->with('technic:id,status')->where('id', 2)->where('status', 2);
+//    })->with(['report' => $filter])->where('repairman_id', 1)->first();
+//    dd($repair);
 
+//    dd($repair->report->technic);
     dd(DB::getQueryLog());
 });

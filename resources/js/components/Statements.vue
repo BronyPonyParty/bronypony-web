@@ -34,7 +34,7 @@
                                                 <strong class="col-7 col-md-9 col-lg-9 col-xl-10">{{ item.cabinet }}</strong>
                                             </div>
                                             <div class="row" v-if="item.status === 2">
-                                                <div class="col-5 col-md-3 col-lg-3 col-xl-2">Выполняется</div>
+                                                <div class="col-5 col-md-3 col-lg-3 col-xl-2">Выполняет</div>
                                                 <strong class="col-7 col-md-9 col-lg-9 col-xl-10">{{ item.repairMan }}</strong>
                                             </div>
 
