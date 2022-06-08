@@ -20,7 +20,7 @@
                             <textarea class="form-control form-control-lg outline-text custom-scroll" :style="{ height: window.height + 'px' }" placeholder="Описание" maxlength="512" ref="description" @focus="removeRed()" v-if="window.type === 'complete'"></textarea>
 
                             <div class="button" style="text-align: right">
-                                <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="accept"><strong>{{ window.buttonText }}</strong></button>
+                                <button class="btn text-white" :class="window.buttonStyle" style="border: none; box-shadow: inherit;" @click="accept"><strong>{{ window.buttonText }}</strong></button>
                             </div>
                         </div>
                     </div>
@@ -47,10 +47,21 @@ export default {
         }),
 
         close() {
+            if (this.window.type === 'deleteUser') {
+                this.setWindow({name: 'userInfoWindow'});
+                return;
+            }
+
+            else if (this.window.type === 'deleteTechnic') {
+                this.setWindow({name: 'technicInfoWindow'});
+                return;
+            }
+
             this.setWindow({name: ''});
         },
 
         accept() {
+            // Взять заявление
             if (this.window.type === 'accept') {
                 this.api('statement/accept', {id: this.window.id}).then(() => {
                     this.$store.commit('statements/changeItemProperty', [this.window.index, 'repairMan', this.user.firstname + ' ' + this.user.lastname]);
@@ -64,6 +75,8 @@ export default {
                     this.socket.send(data);
                     this.close();
                 });
+
+                // Завершить заявление
             } else if (this.window.type === 'complete') {
                 if (this.$refs.description.value.length > 512) { // Небольшая валидация
                     this.$refs.description.classList.add('border-red');
@@ -79,6 +92,16 @@ export default {
                     }
                     this.socket.send(data);
                     this.close();
+                });
+
+                // Удалить пользователя
+            } else if (this.window.type === 'deleteUser') {
+                let userId = this.window.id;
+
+                this.api('user/delete', {userId}).then(() => {
+                    this.setWindow({name: ''});
+
+                    this.$store.commit('userList/deleteUser', userId);
                 });
             }
         },
@@ -144,23 +167,23 @@ export default {
         padding-top: 16px;
     }
 
-    .cancel-btn {
+    .red-btn {
         background-color: #E64825;
     }
-    .cancel-btn:hover {
+    .red-btn:hover {
         background-color: #C93E1F;
     }
-    .cancel-btn:active {
+    .red-btn-btn:active {
         background-color: #8E2716;
     }
 
-    .yes-btn {
+    .green-btn {
         background-color: #2F8E6C;
     }
-    .yes-btn:hover {
+    .green-btn:hover {
         background-color: #287D5E;
     }
-    .yes-btn:active {
+    .green-btn:active {
         background-color: #185641;
     }
 

@@ -96,10 +96,10 @@ export default {
                             mail: item.mail,
                             avatar: item.avatar,
                             status: item.status
-                        })
+                        });
                     }
-                })
-            })
+                });
+            });
 
             // Производим подключение по сокету
             this.socket.connect().then(() => {

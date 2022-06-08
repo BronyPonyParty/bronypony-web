@@ -17,14 +17,15 @@ export default {
     },
 
     mutations: {
-        setUser(state, {id, firstname, lastname, mail, phoneNumber, avatar}) {
+        setUser(state, {id, firstname, lastname, mail, phoneNumber, avatar, status}) {
             state.user = {
                 id,
                 firstname,
                 lastname,
                 mail,
                 phoneNumber: phoneNumber || 'Не указан',
-                avatar
+                avatar,
+                status
             }
         }
     },

@@ -26,6 +26,17 @@ export default {
                 status
 
             });
+        },
+
+        deleteUser(state, id) {
+            for (let i = 0; i < state.users.length; i++) {
+                if (state.users[i].id === id) {
+                    state.users.splice(i, 1);
+                    break;
+                }
+            }
+
+            console.log('Пользователь успешно удалён');
         }
     },
 

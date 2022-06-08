@@ -47,17 +47,19 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::middleware('access.level:8')->group(function () {
         Route::post('technic/changeDescription', [TechnicController::class, 'changeDescription']);
         Route::post('user/getAllData', [UserController::class, 'getAllData']);
+        Route::post('user/getInterval', [UserController::class, 'getInterval']);
+        Route::post('user/delete', [UserController::class, 'delete']);
     });
 });
 
 Route::get('test', function () {
     DB::enableQueryLog();
 
-//    $repair = Repair::whereHas('report', $filter = function ($query) {
-//        $query->with('technic:id,status')->where('id', 2)->where('status', 2);
-//    })->with(['report' => $filter])->where('repairman_id', 1)->first();
-//    dd($repair);
-
-//    dd($repair->report->technic);
+    $count = Repair::where('repairman_id', 2)->whereHas('report', function ($query) {
+        $query->whereHas('user', function ($query)  {
+            $query->select('id')->where('organization_id', 1);
+        })->select('id')->where('status', 4)->whereBetween('complete_date', [1654732800, 1655251200]);
+    })->count('id');
+//    dd($count);
     dd(DB::getQueryLog());
 });

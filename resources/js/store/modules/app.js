@@ -16,6 +16,7 @@ export default {
             title: '',
             type: '',
             buttonText: '',
+            buttonStyle: '',
             description: '',
             width: 0,
             height: 0,

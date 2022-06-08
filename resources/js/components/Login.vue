@@ -74,6 +74,22 @@ export default {
                     });
                 });
 
+                this.api('user/getAllData').then(data => {
+                    data.forEach(item => {
+                        if (item.id !== this.$store.getters['user/getProfileInfo'].id) {
+                            this.$store.commit('userList/pushUser', {
+                                id: item.id,
+                                firstname: item.firstname,
+                                lastname: item.lastname,
+                                phoneNumber: item.phone_number,
+                                mail: item.mail,
+                                avatar: item.avatar,
+                                status: item.status
+                            });
+                        }
+                    });
+                });
+
                 // Производим подключение по сокету
                 this.socket.connect().then(() => {
                     let userData = {

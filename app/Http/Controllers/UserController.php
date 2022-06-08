@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Repair;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacades;
@@ -66,6 +67,7 @@ class UserController extends Controller
         return $user;
     }
 
+    // access level 8
     public function getAllData() {
         $user = AuthFacades::user();
 
@@ -79,6 +81,48 @@ class UserController extends Controller
             'status'
         ];
 
-        return User::select($rows)->where('organization_id', $user->organization_id)->get();
+        return User::select($rows)->where('organization_id', $user->organization_id)->where('status', '>=', 2)->get();
+    }
+
+    public function getInterval(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'startDate' => 'required|integer',
+            'endDate' => 'required|integer',
+            'userId' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Все поля должны быть заполнены'));
+
+        $startDate = $request->post('startDate');
+        $endDate = $request->post('endDate');
+        $userid = $request->post('userId');
+        $authUser = AuthFacades::user();
+
+        // Возвращаем количество выполненных заявления за указанный интервал,
+        // также проверяем, id организации, чтобы случайно не достать пользователя из другой организации
+        return Repair::where('repairman_id', $userid)
+            ->whereHas('report', function ($query) use ($startDate, $endDate, $authUser) {
+                $query->whereHas('user', function ($query) use ($authUser) {
+                    $query->select('id')->where('organization_id', $authUser->organization_id);
+                })->select('id')->where('status', 4)->whereBetween('complete_date', [$startDate, $endDate]);
+            })->count('id');
+    }
+
+    public function delete(Request $request) {
+        $validator = Validator::make($request->all(), [
+           'userId' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Данного пользователя не существует'));
+
+        $deleteUserId = $request->post('userId');
+        $authUser = AuthFacades::user();
+
+        $user = User::where('id', $deleteUserId)->where('organization_id', $authUser->organization_id)
+            ->whereIn('status', [2, 4])->update(['status' => 1]);
+
+        if ($user === 0) abort(400, json_encode('Данного пользователя не существует, либо он уже удалён'));
+
+        return 'OK';
     }
 }

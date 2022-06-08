@@ -31,10 +31,6 @@ export default {
         searchLine() {
             return this.$store.getters['userList/getSearchLine'];
         },
-
-        user() {
-            return this.$store.getters['user/getProfileInfo'];
-        }
     },
 
     methods: {
@@ -49,7 +45,8 @@ export default {
                 lastname: user.lastname,
                 mail: user.mail,
                 phoneNumber: user.phoneNumber,
-                avatar: user.avatar
+                avatar: user.avatar,
+                status: user.status
             });
 
             this.$store.commit('app/setWindow', {name: 'userInfoWindow'});

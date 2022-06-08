@@ -45,10 +45,30 @@
                                             </div>
                                             <div class="row pt-3">
                                                 <div class="col" style="text-align: right" v-if="item.status === 1">
-                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', 405, 200, item.id, index)"><strong>За работу</strong></button>
+                                                    <button class="btn btn-get" @click="showWindow
+                                                    ('noticeWindow',
+                                                    'Внимание',
+                                                    'accept',
+                                                    'Взять',
+                                                    'green-btn',
+                                                    'Вы уверены, что хотите взять данное заявление?',
+                                                    405,
+                                                    200,
+                                                    item.id,
+                                                    index)"><strong>За работу</strong></button>
                                                 </div>
                                                 <div class="col" style="text-align: right" v-else-if="item.repairManId === user.id">
-                                                    <button class="btn btn-get" @click="showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id, index)"><strong>Завершить</strong></button>
+                                                    <button class="btn btn-get" @click="showWindow
+                                                    ('noticeWindow',
+                                                    'Завершить работу над заявлением',
+                                                    'complete',
+                                                    'Завершить',
+                                                    'green-btn',
+                                                    'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.',
+                                                    550,
+                                                    200,
+                                                    item.id,
+                                                    index)"><strong>Завершить</strong></button>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,8 +143,8 @@ export default {
             this.$store.commit('statements/setVisibility', index);
         },
 
-        showWindow(name, title, type, buttonText, description, width, height, id, index) {
-            this.setWindow({name, title, type, buttonText, description, width, height, id, index});
+        showWindow(name, title, type, buttonText, buttonStyle, description, width, height, id, index) {
+            this.setWindow({name, title, type, buttonText, buttonStyle, description, width, height, id, index});
         },
 
         getStatusText(status) {

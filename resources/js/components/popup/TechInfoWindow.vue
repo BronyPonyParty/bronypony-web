@@ -84,8 +84,8 @@
                                 </div>
                             </div>
                             <div class="buttons p-3">
-                                <button class="btn cancel-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
-                                <button class="btn yes-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showTravelHistory"><strong>История перемещений</strong></button>
+                                <button class="btn red-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showRepairHistory"><strong>История ремонтов</strong></button>
+                                <button class="btn green-btn text-white" :disabled="getEditDescriptionShowed" style="border: none; box-shadow: inherit;" @click="showTravelHistory"><strong>История перемещений</strong></button>
                             </div>
                         </div>
 

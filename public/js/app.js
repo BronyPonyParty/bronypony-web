@@ -19988,6 +19988,22 @@ __webpack_require__.r(__webpack_exports__);
               'status': item.status
             });
           });
+        });
+
+        _this.api('user/getAllData').then(function (data) {
+          data.forEach(function (item) {
+            if (item.id !== _this.$store.getters['user/getProfileInfo'].id) {
+              _this.$store.commit('userList/pushUser', {
+                id: item.id,
+                firstname: item.firstname,
+                lastname: item.lastname,
+                phoneNumber: item.phone_number,
+                mail: item.mail,
+                avatar: item.avatar,
+                status: item.status
+              });
+            }
+          });
         }); // Производим подключение по сокету
 
 
@@ -20083,12 +20099,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     toggleDropdown: function toggleDropdown(index) {
       this.$store.commit('statements/setVisibility', index);
     },
-    showWindow: function showWindow(name, title, type, buttonText, description, width, height, id, index) {
+    showWindow: function showWindow(name, title, type, buttonText, buttonStyle, description, width, height, id, index) {
       this.setWindow({
         name: name,
         title: title,
         type: type,
         buttonText: buttonText,
+        buttonStyle: buttonStyle,
         description: description,
         width: width,
         height: height,
@@ -20372,9 +20389,6 @@ __webpack_require__.r(__webpack_exports__);
     },
     searchLine: function searchLine() {
       return this.$store.getters['userList/getSearchLine'];
-    },
-    user: function user() {
-      return this.$store.getters['user/getProfileInfo'];
     }
   },
   methods: {
@@ -20388,7 +20402,8 @@ __webpack_require__.r(__webpack_exports__);
         lastname: user.lastname,
         mail: user.mail,
         phoneNumber: user.phoneNumber,
-        avatar: user.avatar
+        avatar: user.avatar,
+        status: user.status
       });
       this.$store.commit('app/setWindow', {
         name: 'userInfoWindow'
@@ -20463,6 +20478,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     setWindow: 'app/setWindow'
   })), {}, {
     close: function close() {
+      if (this.window.type === 'deleteUser') {
+        this.setWindow({
+          name: 'userInfoWindow'
+        });
+        return;
+      } else if (this.window.type === 'deleteTechnic') {
+        this.setWindow({
+          name: 'technicInfoWindow'
+        });
+        return;
+      }
+
       this.setWindow({
         name: ''
       });
@@ -20470,6 +20497,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     accept: function accept() {
       var _this = this;
 
+      // Взять заявление
       if (this.window.type === 'accept') {
         this.api('statement/accept', {
           id: this.window.id
@@ -20488,7 +20516,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this.socket.send(data);
 
           _this.close();
-        });
+        }); // Завершить заявление
       } else if (this.window.type === 'complete') {
         if (this.$refs.description.value.length > 512) {
           // Небольшая валидация
@@ -20510,6 +20538,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           _this.socket.send(data);
 
           _this.close();
+        }); // Удалить пользователя
+      } else if (this.window.type === 'deleteUser') {
+        var userId = this.window.id;
+        this.api('user/delete', {
+          userId: userId
+        }).then(function () {
+          _this.setWindow({
+            name: ''
+          });
+
+          _this.$store.commit('userList/deleteUser', userId);
         });
       }
     },
@@ -20716,7 +20755,37 @@ __webpack_require__.r(__webpack_exports__);
         name: ''
       });
     },
-    sendInterval: function sendInterval() {}
+    sendInterval: function sendInterval() {
+      var startDate = this.$refs.startInterval.valueAsNumber / 1000 || ''; // Перевод в секунды
+
+      var endDate = this.$refs.endInterval.valueAsNumber / 1000 || ''; // Перевод в секунды
+
+      if (startDate === '' || endDate === '') {
+        console.log('Обе даты должны быть указаны');
+        return;
+      }
+
+      var userId = this.$store.getters['userInfo/getUserInfo'].id;
+      this.api('user/getInterval', {
+        userId: userId,
+        startDate: startDate,
+        endDate: endDate
+      }).then(function (data) {
+        console.log('Количество выполненных заказов = ', data);
+      });
+    },
+    deleteUser: function deleteUser() {
+      this.$store.commit('app/setWindow', {
+        name: 'noticeWindow',
+        type: 'deleteUser',
+        id: this.$store.getters['userInfo/getUserInfo'].id,
+        title: 'Удаление сотрудника',
+        description: 'Удаление сотрудника необратимый процесс, удалить данного пользователя?',
+        buttonText: 'Удалить',
+        buttonStyle: 'red-btn',
+        width: 600
+      });
+    }
   }
 });
 
@@ -21017,24 +21086,30 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[8] || (_cache[8] = function ($event) {
       return $options.setPage('statements');
     })
-  }, "Список заявлений"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Заявления"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
     onClick: _cache[9] || (_cache[9] = function ($event) {
       return $options.setPage('technical');
     })
-  }, "Список техники"), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  }, "Техника"), $options.profileInfo.status > 4 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", {
+    key: 0,
     "class": "item-dropdown cur-point clip",
     onClick: _cache[10] || (_cache[10] = function ($event) {
+      return $options.setPage('userList');
+    })
+  }, "Сотрудники")) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+    "class": "item-dropdown cur-point clip",
+    onClick: _cache[11] || (_cache[11] = function ($event) {
       return $options.setWindow('feedBack');
     })
   }, "Обратная связь"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[11] || (_cache[11] = function ($event) {
+    onClick: _cache[12] || (_cache[12] = function ($event) {
       return $options.setPage('user');
     })
   }, "Настройки"), _hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "item-dropdown cur-point clip",
-    onClick: _cache[12] || (_cache[12] = function () {
+    onClick: _cache[13] || (_cache[13] = function () {
       return $options.logout && $options.logout.apply($options, arguments);
     })
   }, "Выход")])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])]);
@@ -21356,14 +21431,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [item.status === 1 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_29, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "btn btn-get",
       onClick: function onClick($event) {
-        return $options.showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'Вы уверены, что хотите взять данное заявление?', 405, 200, item.id, index);
+        return $options.showWindow('noticeWindow', 'Внимание', 'accept', 'Взять', 'green-btn', 'Вы уверены, что хотите взять данное заявление?', 405, 200, item.id, index);
       }
     }, _hoisted_32, 8
     /* PROPS */
     , _hoisted_30)])) : item.repairManId === $options.user.id ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
       "class": "btn btn-get",
       onClick: function onClick($event) {
-        return $options.showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id, index);
+        return $options.showWindow('noticeWindow', 'Завершить работу над заявлением', 'complete', 'Завершить', 'green-btn', 'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.', 550, 200, item.id, index);
       }
     }, _hoisted_36, 8
     /* PROPS */
@@ -21983,7 +22058,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 36
   /* STYLE, HYDRATE_EVENTS */
   )) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    "class": "btn yes-btn text-white",
+    "class": (0,vue__WEBPACK_IMPORTED_MODULE_0__.normalizeClass)(["btn text-white", _ctx.window.buttonStyle]),
     style: {
       "border": "none",
       "box-shadow": "inherit"
@@ -21993,7 +22068,9 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     })
   }, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(_ctx.window.buttonText), 1
   /* TEXT */
-  )])])])])])])], 4
+  )], 2
+  /* CLASS */
+  )])])])])])], 4
   /* STYLE */
   )]);
 }
@@ -22435,7 +22512,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   , _hoisted_35), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, $options.getTechDescription.description || $options.getEditDescriptionShowed]]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_36, " Описание отсутствует ", 512
   /* NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vShow, !($options.getTechDescription.description || $options.getEditDescriptionShowed)]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_37, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    "class": "btn cancel-btn text-white",
+    "class": "btn red-btn text-white",
     disabled: $options.getEditDescriptionShowed,
     style: {
       "border": "none",
@@ -22447,7 +22524,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, _hoisted_40, 8
   /* PROPS */
   , _hoisted_38), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
-    "class": "btn yes-btn text-white",
+    "class": "btn green-btn text-white",
     disabled: $options.getEditDescriptionShowed,
     style: {
       "border": "none",
@@ -22541,7 +22618,7 @@ var _hoisted_4 = {
   "class": "col"
 };
 var _hoisted_5 = {
-  "class": "card-body text-white d-flex notification",
+  "class": "card-body text-white d-flex notification justify-content-between",
   style: {
     "border-radius": "5px 5px 0 0"
   }
@@ -22553,7 +22630,11 @@ var _hoisted_6 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_7 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createStaticVNode)("<svg viewBox=\"0 0 24 24\" width=\"18\" height=\"18\" fill=\"white\" xmlns=\"http://www.w3.org/2000/svg\" data-v-07df6f17><g data-name=\"4. Trash\" id=\"_4._Trash\" data-v-07df6f17><path d=\"M18,4H17V3a3,3,0,0,0-3-3H10A3,3,0,0,0,7,3V4H6A3,3,0,0,0,3,7V9a1,1,0,0,0,1,1h.069l.8,11.214A3.012,3.012,0,0,0,7.862,24h8.276a3.012,3.012,0,0,0,2.992-2.786L19.931,10H20a1,1,0,0,0,1-1V7A3,3,0,0,0,18,4ZM9,3a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V4H9ZM5,7A1,1,0,0,1,6,6H18a1,1,0,0,1,1,1V8H5ZM17.136,21.071a1,1,0,0,1-1,.929H7.862a1,1,0,0,1-1-.929L6.074,10H17.926Z\" data-v-07df6f17></path><path d=\"M10,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,10,20Z\" data-v-07df6f17></path><path d=\"M14,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,14,20Z\" data-v-07df6f17></path></g></svg>", 1);
+
+var _hoisted_8 = [_hoisted_7];
+
+var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("svg", {
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 16 16",
@@ -22565,32 +22646,32 @@ var _hoisted_7 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_8 = [_hoisted_7];
-var _hoisted_9 = {
+var _hoisted_10 = [_hoisted_9];
+var _hoisted_11 = {
   "class": "card-body p-0 bg-white text-black custom-scroll info-list w-100",
   style: {
     "border-radius": "0 0 5px 5px",
     "max-height": "600px"
   }
 };
-var _hoisted_10 = {
+var _hoisted_12 = {
   style: {
     "padding": "1rem 1rem 0 1rem"
   }
 };
-var _hoisted_11 = {
+var _hoisted_13 = {
   "class": "justify-content-between py-2 d-flex"
 };
-var _hoisted_12 = {
+var _hoisted_14 = {
   style: {
     "flex": "1"
   }
 };
-var _hoisted_13 = {
+var _hoisted_15 = {
   "class": "row"
 };
 
-var _hoisted_14 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_16 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "col-4 text-secondary"
   }, "Фамилия", -1
@@ -22598,14 +22679,14 @@ var _hoisted_14 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_15 = {
+var _hoisted_17 = {
   "class": "col-8 fw-600"
 };
-var _hoisted_16 = {
+var _hoisted_18 = {
   "class": "row"
 };
 
-var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_19 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "col-4 text-secondary"
   }, "Имя", -1
@@ -22613,14 +22694,14 @@ var _hoisted_17 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_18 = {
+var _hoisted_20 = {
   "class": "col-8 fw-600"
 };
-var _hoisted_19 = {
+var _hoisted_21 = {
   "class": "row"
 };
 
-var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_22 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "col-4 text-secondary"
   }, "Почта", -1
@@ -22628,14 +22709,14 @@ var _hoisted_20 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_21 = {
+var _hoisted_23 = {
   "class": "col-8 fw-600"
 };
-var _hoisted_22 = {
+var _hoisted_24 = {
   "class": "row"
 };
 
-var _hoisted_23 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_25 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "col-4 text-secondary"
   }, "Номер телефона", -1
@@ -22643,18 +22724,18 @@ var _hoisted_23 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_24 = {
+var _hoisted_26 = {
   "class": "col-8 fw-600"
 };
-var _hoisted_25 = {
+var _hoisted_27 = {
   "class": "d-none d-sm-block"
 };
-var _hoisted_26 = {
+var _hoisted_28 = {
   "class": "avatar-image"
 };
-var _hoisted_27 = ["src"];
+var _hoisted_29 = ["src"];
 
-var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("hr", {
     style: {
       "margin": "16px 0 16px 0"
@@ -22664,11 +22745,12 @@ var _hoisted_28 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_29 = {
+var _hoisted_31 = {
+  key: 0,
   "class": "pt-2"
 };
 
-var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_32 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("strong", {
     style: {
       "margin-bottom": "10px"
@@ -22678,7 +22760,7 @@ var _hoisted_30 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
+var _hoisted_33 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
     "class": "note",
     style: {
@@ -22690,73 +22772,74 @@ var _hoisted_31 = /*#__PURE__*/_withScopeId(function () {
   );
 });
 
-var _hoisted_32 = {
+var _hoisted_34 = {
   style: {
     "display": "flex",
     "gap": "8px",
     "padding": "8px 0"
   }
 };
-var _hoisted_33 = {
+var _hoisted_35 = {
   type: "date",
   ref: "startInterval"
 };
-var _hoisted_34 = {
-  type: "date",
-  ref: "endInterval"
-};
-
-var _hoisted_35 = /*#__PURE__*/_withScopeId(function () {
-  return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-    "class": "d-flex align-items-center"
-  }, "Количество: 36", -1
-  /* HOISTED */
-  );
-});
-
-var _hoisted_36 = {
+var _hoisted_36 = ["max"];
+var _hoisted_37 = {
   style: {
     "padding": "0 0 16px 0"
   }
 };
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn header-btn",
     onClick: _cache[0] || (_cache[0] = function () {
+      return $options.deleteUser && $options.deleteUser.apply($options, arguments);
+    }),
+    style: {
+      "border": "none",
+      "box-shadow": "inherit"
+    }
+  }, _hoisted_8), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+    "class": "btn header-btn",
+    onClick: _cache[1] || (_cache[1] = function () {
       return $options.close && $options.close.apply($options, arguments);
     }),
     style: {
       "border": "none",
       "box-shadow": "inherit"
     }
-  }, _hoisted_8)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                <div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Фамилия</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.firstname }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Имя</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.lastname }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Почта</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.mail }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Номер телефона</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.phoneNumber }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user d-sm-none d-inline\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>Изображение</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <div class=\"avatar-image\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                            <img :src=\"userInfo.avatar\" alt=\"Avatar\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [_hoisted_14, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.firstname), 1
+  }, _hoisted_10)])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_13, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                <div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Фамилия</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.firstname }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Имя</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.lastname }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Почта</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.mail }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <span>Номер телефона</span>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>{{ userInfo.phoneNumber }}</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    <div class=\"item-user d-sm-none d-inline\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <strong>Изображение</strong>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        <div class=\"avatar-image\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                            <img :src=\"userInfo.avatar\" alt=\"Avatar\">"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                        </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                    </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("                                </div>"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_15, [_hoisted_16, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.firstname), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.lastname), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_18, [_hoisted_19, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.lastname), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_19, [_hoisted_20, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.mail), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [_hoisted_22, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.mail), 1
   /* TEXT */
-  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.phoneNumber), 1
+  )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [_hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)($options.userInfo.phoneNumber), 1
   /* TEXT */
-  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_25, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
+  )])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_27, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("img", {
     src: $options.userInfo.avatar,
     alt: "Avatar",
     "class": "rounded-circle"
   }, null, 8
   /* PROPS */
-  , _hoisted_27)])])]), _hoisted_28, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_29, [_hoisted_30, _hoisted_31, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_32, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", _hoisted_33, null, 512
+  , _hoisted_29)])])]), _hoisted_30, $options.userInfo.status >= 4 ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_31, [_hoisted_32, _hoisted_33, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", _hoisted_35, null, 512
   /* NEED_PATCH */
-  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", _hoisted_34, null, 512
-  /* NEED_PATCH */
-  ), _hoisted_35]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_36, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
+  ), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+    type: "date",
+    ref: "endInterval",
+    max: new Date()
+  }, null, 8
+  /* PROPS */
+  , _hoisted_36)]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_37, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
     "class": "btn interval-button",
     style: {
       "border": "none",
       "box-shadow": "inherit"
     },
-    onClick: _cache[1] || (_cache[1] = function () {
+    onClick: _cache[2] || (_cache[2] = function () {
       return $options.sendInterval && $options.sendInterval.apply($options, arguments);
     })
-  }, "Интервал")])])])])])])])]);
+  }, "Интервал")])])) : (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)("v-if", true)])])])])])]);
 }
 
 /***/ }),
@@ -23116,6 +23199,7 @@ __webpack_require__.r(__webpack_exports__);
       title: '',
       type: '',
       buttonText: '',
+      buttonStyle: '',
       description: '',
       width: 0,
       height: 0,
@@ -23696,14 +23780,16 @@ __webpack_require__.r(__webpack_exports__);
           lastname = _ref.lastname,
           mail = _ref.mail,
           phoneNumber = _ref.phoneNumber,
-          avatar = _ref.avatar;
+          avatar = _ref.avatar,
+          status = _ref.status;
       state.user = {
         id: id,
         firstname: firstname,
         lastname: lastname,
         mail: mail,
         phoneNumber: phoneNumber || 'Не указан',
-        avatar: avatar
+        avatar: avatar,
+        status: status
       };
     }
   },
@@ -23755,6 +23841,16 @@ __webpack_require__.r(__webpack_exports__);
         avatar: !avatar ? '/storage/uploads/avatars/defaultAvatar.jpg' : '/storage/uploads/avatars/' + id + '/' + avatar + '.png',
         status: status
       });
+    },
+    deleteUser: function deleteUser(state, id) {
+      for (var i = 0; i < state.users.length; i++) {
+        if (state.users[i].id === id) {
+          state.users.splice(i, 1);
+          break;
+        }
+      }
+
+      console.log('Пользователь успешно удалён');
     }
   },
   getters: {
@@ -23988,7 +24084,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "strong {\n  font-weight: 600;\n}\n.close-icon {\n  border-radius: 0.25rem;\n  border: 0;\n  padding: 0.25em 0.25em;\n  width: 1.3em;\n  height: 1.3em;\n  fill: white;\n}\n.custom-scroll {\n  overflow-y: scroll;\n}\n.custom-scroll::-webkit-scrollbar {\n  width: 0;\n}\n.popup-layout {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: center;\n  display: flex;\n}\n.notification {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.close-btn {\n  background-color: #3C4870;\n}\n.close-btn:hover {\n  background-color: #353D62;\n}\n.close-btn:active {\n  background-color: #252D42;\n}\n.button {\n  padding-top: 16px;\n}\n.cancel-btn {\n  background-color: #E64825;\n}\n.cancel-btn:hover {\n  background-color: #C93E1F;\n}\n.cancel-btn:active {\n  background-color: #8E2716;\n}\n.yes-btn {\n  background-color: #2F8E6C;\n}\n.yes-btn:hover {\n  background-color: #287D5E;\n}\n.yes-btn:active {\n  background-color: #185641;\n}\n.border-red {\n  border-color: red;\n}", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "strong {\n  font-weight: 600;\n}\n.close-icon {\n  border-radius: 0.25rem;\n  border: 0;\n  padding: 0.25em 0.25em;\n  width: 1.3em;\n  height: 1.3em;\n  fill: white;\n}\n.custom-scroll {\n  overflow-y: scroll;\n}\n.custom-scroll::-webkit-scrollbar {\n  width: 0;\n}\n.popup-layout {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  z-index: 10000;\n  justify-content: center;\n  align-items: center;\n  display: flex;\n}\n.notification {\n  background-color: #3C4870;\n  align-items: center;\n  justify-content: space-between;\n}\n.close-btn {\n  background-color: #3C4870;\n}\n.close-btn:hover {\n  background-color: #353D62;\n}\n.close-btn:active {\n  background-color: #252D42;\n}\n.button {\n  padding-top: 16px;\n}\n.red-btn {\n  background-color: #E64825;\n}\n.red-btn:hover {\n  background-color: #C93E1F;\n}\n.red-btn-btn:active {\n  background-color: #8E2716;\n}\n.green-btn {\n  background-color: #2F8E6C;\n}\n.green-btn:hover {\n  background-color: #287D5E;\n}\n.green-btn:active {\n  background-color: #185641;\n}\n.border-red {\n  border-color: red;\n}", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
