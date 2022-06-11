@@ -43,9 +43,8 @@ window.axios = axios
  */
 
 global.FILTERS = {
-    get WORKED()   { return 1 << 0; },
+    get WORKED()   { return 1 << 2; },
     get FAULTY()   { return 1 << 1; },
-    get DISPOSED() { return 1 << 2; },
 };
 
 global.sign = '#';

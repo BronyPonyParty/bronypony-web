@@ -7,7 +7,6 @@ export default {
             organization_id: '',
             firstname: '',
             lastname: '',
-            middlename: '',
             mail: '',
             phoneNumber: '',
             avatar: '',
@@ -17,7 +16,6 @@ export default {
         newUserData: {
             firstname: '',
             lastname: '',
-            middlename: '',
             avatar: '',
         },
 
@@ -50,19 +48,17 @@ export default {
     },
 
     mutations: {
-        setProfileInfo(state, {id, organization_id, firstname, lastname, middlename, mail, phoneNumber, avatar, status}) {
+        setProfileInfo(state, {id, organization_id, firstname, lastname, mail, phoneNumber, avatar, status}) {
             state.user.id = id;
             state.user.organization_id = organization_id;
             state.user.firstname = firstname;
             state.user.lastname = lastname;
-            state.user.middlename = middlename != null ? middlename : '';
             state.user.mail = mail;
             state.user.phoneNumber = phoneNumber;
             state.user.status = status;
 
             state.newUserData.firstname = firstname;
             state.newUserData.lastname = lastname;
-            state.newUserData.middlename = middlename != null ? middlename : '';
 
             if (avatar === null) {
                 state.user.avatar = '/storage/uploads/avatars/defaultAvatar.jpg';
@@ -80,7 +76,6 @@ export default {
         cancelInfo(state) {
             state.newUserData.firstname = state.user.firstname;
             state.newUserData.lastname = state.user.lastname;
-            state.newUserData.middlename = state.user.middlename;
             state.newUserData.avatar = state.user.avatar;
             state.selectedFile = ''
         },

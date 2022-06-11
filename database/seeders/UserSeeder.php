@@ -17,7 +17,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Путинцев',
             'firstname' => 'Александр',
-            'middlename' => 'Александрович',
             'login' => 'paa',
             'password' => md5('123456'),
             'phone_number' => '79631974379',
@@ -29,7 +28,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Шамшин',
             'firstname' => 'Даниил',
-            'middlename' => 'Евгеньевич',
             'login' => 'sde',
             'password' => md5('123456'),
             'phone_number' => null,
@@ -41,7 +39,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Попов',
             'firstname' => 'Михаил',
-            'middlename' => null,
             'login' => 'pma',
             'password' => md5('123456'),
             'phone_number' => null,
@@ -53,7 +50,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Киреев',
             'firstname' => 'Олег',
-            'middlename' => 'Вячеславович',
             'login' => 'kov',
             'password' => md5('123456'),
             'phone_number' => null,
@@ -65,7 +61,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Шмидт',
             'firstname' => 'Лукерья',
-            'middlename' => 'Ермаковна',
             'login' => 'sle',
             'password' => md5('123456'),
             'phone_number' => '79078984772',
@@ -77,7 +72,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Поднебесная',
             'firstname' => 'Степанида',
-            'middlename' => 'Кирилловна',
             'login' => 'psk',
             'password' => md5('123456'),
             'phone_number' => '79122103454',
@@ -89,7 +83,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Филлипов',
             'firstname' => 'Демьян',
-            'middlename' => 'Дмитриевич',
             'login' => 'fdd',
             'password' => md5('123456'),
             'phone_number' => '79599378529',
@@ -101,7 +94,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Преснякова',
             'firstname' => 'Алевтина',
-            'middlename' => 'Сергеевна',
             'login' => 'pas',
             'password' => md5('123456'),
             'phone_number' => '79550408198',
@@ -113,7 +105,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Чехов',
             'firstname' => 'Карл',
-            'middlename' => 'Константинович',
             'login' => 'ckk',
             'password' => md5('123456'),
             'phone_number' => '79253985730',
@@ -125,7 +116,6 @@ class UserSeeder extends Seeder
         $data[] = [
             'lastname' => 'Стацевич',
             'firstname' => 'Виктория',
-            'middlename' => 'Максимовна',
             'login' => 'svm',
             'password' => md5('123456'),
             'phone_number' => '79085327084',

@@ -24,7 +24,6 @@ export default {
                 mail,
                 avatar: !avatar ? '/storage/uploads/avatars/defaultAvatar.jpg' : '/storage/uploads/avatars/' + id + '/' + avatar + '.png',
                 status
-
             });
         },
 

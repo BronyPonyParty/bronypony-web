@@ -46,9 +46,12 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
 
     Route::middleware('access.level:8')->group(function () {
         Route::post('technic/changeDescription', [TechnicController::class, 'changeDescription']);
+        Route::post('technic/add', [TechnicController::class, 'add']);
+
         Route::post('user/getAllData', [UserController::class, 'getAllData']);
         Route::post('user/getInterval', [UserController::class, 'getInterval']);
         Route::post('user/delete', [UserController::class, 'delete']);
+        Route::post('user/add', [UserController::class, 'add']);
     });
 });
 

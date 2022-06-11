@@ -5,21 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Repair;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth as AuthFacades;
+use Illuminate\Support\Facades\Auth as AuthFacade;
 use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
     public function getUserData() {
-        return AuthFacades::user();
+        return AuthFacade::user();
     }
 
     public function saveUserData(Request $request) {
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|max:32',
-            'lastname' =>'required|max:32',
-            'middlename' => 'max:32'
+            'lastname' =>'required|max:32'
         ], [
             'firstname.required' => 'Поле с именем не может быть пустым',
             'lastname.required' => 'Поле с фамилией не может быть пустым',
@@ -30,12 +29,11 @@ class UserController extends Controller
             abort(400, $validator->getMessageBag());
         }
 
-        $user = AuthFacades::user();
+        $user = AuthFacade::user();
         $avatar = $request->file('avatar');
         $hashAvatar = '';
         $firstname = $request->post('firstname');
         $lastname = $request->post('lastname');
-        $middlename = $request->post('middlename');
 
         if (!empty($avatar)) $hashAvatar = hash_file('md5', $avatar);
 
@@ -60,7 +58,6 @@ class UserController extends Controller
 
         if ($user->firstname !== $firstname) $user->firstname = $firstname;
         if ($user->lastname !== $lastname) $user->lastname = $lastname;
-        if ($user->middlename !== $middlename) $user->middlename = $middlename;
 
         $user->save();
 
@@ -69,7 +66,7 @@ class UserController extends Controller
 
     // access level 8
     public function getAllData() {
-        $user = AuthFacades::user();
+        $user = AuthFacade::user();
 
         $rows = [
             'id',
@@ -96,7 +93,7 @@ class UserController extends Controller
         $startDate = $request->post('startDate');
         $endDate = $request->post('endDate');
         $userid = $request->post('userId');
-        $authUser = AuthFacades::user();
+        $authUser = AuthFacade::user();
 
         // Возвращаем количество выполненных заявления за указанный интервал,
         // также проверяем, id организации, чтобы случайно не достать пользователя из другой организации
@@ -116,7 +113,7 @@ class UserController extends Controller
         if ($validator->fails()) abort(400, json_encode('Данного пользователя не существует'));
 
         $deleteUserId = $request->post('userId');
-        $authUser = AuthFacades::user();
+        $authUser = AuthFacade::user();
 
         $user = User::where('id', $deleteUserId)->where('organization_id', $authUser->organization_id)
             ->whereIn('status', [2, 4])->update(['status' => 1]);
@@ -124,5 +121,59 @@ class UserController extends Controller
         if ($user === 0) abort(400, json_encode('Данного пользователя не существует, либо он уже удалён'));
 
         return 'OK';
+    }
+
+    public function add(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'firstname' => 'required:max:32',
+            'lastname' => 'required|max:32',
+            'login' => 'required|max:64',
+            'password' => 'required|max:128',
+            'post' => 'required|integer|max:4'
+        ],
+            [
+                'firstname.required' => 'Фамилия должна быть заполнена',
+                'firstname.max' => 'Длина фамилии не должна превышать 32 символов',
+
+                'lastname.required' => 'Имя должно быть заполнено',
+                'lastname.max' => 'Длина имени не должна превышать 32 символов',
+
+                'login.required' => 'Логин должнен быть заполнен',
+                'login.max' => 'Длина логина не должна превышать 64 символов',
+
+                'password.required' => 'Пароль должнен быть заполнен',
+                'password.max' => 'Длина пароля не должна превышать 128 символов',
+
+                'post.required' => 'Должность должна быть указана',
+                'post.max' => 'Присвоить данную должность невозможно',
+                'post.integer' => 'Должность принимает только цифры'
+            ]
+        );
+
+        if ($validator->fails()) {
+            abort(400, json_encode($validator->getMessageBag()));
+        }
+
+        $authUser = AuthFacade::user();
+
+        $firstname = $request->post('firstname');
+        $lastname = $request->post('lastname');
+        $login = $request->post('login');
+        $password = $request->post('password');
+        $status = $request->post('post');
+
+        $unique = User::where('login', $login)->first();
+        if (!empty($unique)) abort(400, json_encode('Данный логин уже используется'));
+
+        $user = new User();
+        $user->firstname = $firstname;
+        $user->lastname = $lastname;
+        $user->login = $login;
+        $user->password = md5($password);
+        $user->organization_id = $authUser->organization_id;
+        $user->status = $status;
+        $user->save();
+
+        return $user->id;
     }
 }

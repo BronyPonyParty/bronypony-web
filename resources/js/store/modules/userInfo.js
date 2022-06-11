@@ -22,7 +22,7 @@ export default {
                 id,
                 firstname,
                 lastname,
-                mail,
+                mail: mail || 'Не указан',
                 phoneNumber: phoneNumber || 'Не указан',
                 avatar,
                 status

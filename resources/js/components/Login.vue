@@ -47,7 +47,6 @@ export default {
                     organization_id: data[1].organization_id,
                     firstname: data[1].firstname,
                     lastname: data[1].lastname,
-                    middlename: data[1].middlename,
                     mail: data[1].mail,
                     phoneNumber: data[1].phone_number,
                     avatar: data[1].avatar,

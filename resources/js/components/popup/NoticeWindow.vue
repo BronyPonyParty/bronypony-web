@@ -13,11 +13,17 @@
                             </button>
                         </div>
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            <div style="padding-bottom: 10px; font-size: 16px;">
+                            <div style="font-size: 16px;">
                                 {{window.description}}
                             </div>
 
-                            <textarea class="form-control form-control-lg outline-text custom-scroll" :style="{ height: window.height + 'px' }" placeholder="Описание" maxlength="512" ref="description" @focus="removeRed()" v-if="window.type === 'complete'"></textarea>
+                            <textarea class="form-control form-control-lg outline-text custom-scroll"
+                                      :style="{ height: window.height + 'px' }"
+                                      placeholder="Описание"
+                                      maxlength="512"
+                                      ref="description"
+                                      @focus="$refs.description.classList.remove('border-red')"
+                                      v-if="window.type === 'complete'"></textarea>
 
                             <div class="button" style="text-align: right">
                                 <button class="btn text-white" :class="window.buttonStyle" style="border: none; box-shadow: inherit;" @click="accept"><strong>{{ window.buttonText }}</strong></button>
@@ -105,10 +111,6 @@ export default {
                 });
             }
         },
-
-        removeRed() {
-            this.$refs.description.classList.remove('border-red');
-        }
     }
 }
 </script>

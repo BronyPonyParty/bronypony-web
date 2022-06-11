@@ -10,10 +10,6 @@ class Technic extends Model
     use HasFactory;
     public $timestamps = false;
 
-    public function provider() {
-        return $this->hasOne(Provider::class, 'id', 'provider_id');
-    }
-
     public function movingTechnic() {
         return $this->hasOne(MovingTechnic::class, 'id', 'technic_id');
     }

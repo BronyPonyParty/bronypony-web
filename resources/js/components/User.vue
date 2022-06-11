@@ -21,15 +21,11 @@
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="newProfileInfo.firstname">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="newProfileInfo.lastname">
                             </div>
                             <div class="edit-group">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="newProfileInfo.lastname">
-                            </div>
-                            <div class="edit-group">
-                                <strong>Отчество</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnMiddlename" ref="middlename" v-model="newProfileInfo.middlename">
+                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="newProfileInfo.firstname">
                             </div>
                             <div class="edit-group d-sm-none">
                                 <strong>Изображение</strong>
@@ -81,7 +77,6 @@ export default {
 
             return  user.firstname  === (newUser.firstname).trim()  &&
                     user.lastname   === (newUser.lastname).trim()   &&
-                    user.middlename === (newUser.middlename).trim() &&
                     user.avatar     === newUser.avatar;
         }
     },
@@ -97,16 +92,13 @@ export default {
         saveUserData() {
             const firstname = this.$refs.firstname.value;
             const lastname = this.$refs.lastname.value;
-            const middlename = this.$refs.middlename.value;
 
             if (firstname.trim() === '' ||
                 firstname.trim().length > 32 ||
                 lastname.trim() === '' ||
-                lastname.trim().length > 32 ||
-                middlename.trim().length > 32) {
+                lastname.trim().length > 32) {
                 if (firstname.trim() === '' || firstname.trim().length > 32) this.$refs.firstname.classList.add('border-red');
                 if (lastname.trim() === '' || lastname.trim().length > 32) this.$refs.lastname.classList.add('border-red');
-                if (middlename.trim().length > 32) this.$refs.middlename.classList.add('border-red');
                 return;
             }
 
@@ -118,7 +110,6 @@ export default {
             formData.append('avatar', avatar);
             formData.append('firstname', newUserData.firstname);
             formData.append('lastname', newUserData.lastname);
-            formData.append('middlename', newUserData.middlename);
 
             this.api('user/saveUserData', formData).then(data => {
                 if (userData.firstname !== newUserData.firstname || userData.lastname !== newUserData.lastname) {
@@ -134,7 +125,6 @@ export default {
                     id: data.id,
                     firstname: data.firstname,
                     lastname: data.lastname,
-                    middlename: data.middlename,
                     mail: data.mail,
                     phoneNumber: data.phone_number,
                     avatar: data.avatar,
@@ -151,14 +141,9 @@ export default {
             this.$refs.lastname.classList.remove('border-red');
         },
 
-        removeRedOnMiddlename() {
-            this.$refs.middlename.classList.remove('border-red');
-        },
-
         cancelInfo() {
             this.removeRedOnFirstname();
             this.removeRedOnLastname();
-            this.removeRedOnMiddlename();
             this.$refs.inputFile.value = ''; // Исправляем баг с неизменяемой аватаркой
             this.$store.commit('user/cancelInfo');
         }

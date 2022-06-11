@@ -22,12 +22,9 @@ class CreateTechnicsTable extends Migration
 
             $table->unsignedInteger('cabinet')->nullable();
 
-            $table->unsignedInteger('date_purchase');
+            $table->unsignedInteger('date_added');
 
             $table->string('description', 1024)->nullable();
-
-            $table->unsignedInteger('provider_id');
-            $table->foreign('provider_id')->references('id')->on('providers');
 
             $table->unsignedInteger('organization_id');
             $table->foreign('organization_id')->references('id')->on('organizations');

@@ -139,7 +139,7 @@ class StatementController extends Controller
         $repair->report->complete_date = time();
         $repair->report->save();
 
-        $repair->report->technic->status = 1;
+        $repair->report->technic->status = 4;
         $repair->report->technic->save();
 
         return 'OK';

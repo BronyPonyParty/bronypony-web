@@ -30,7 +30,7 @@
                         <strong class="clip">{{ profileInfo.firstname + ' ' + profileInfo.lastname }}</strong>
                     </div>
                     <hr>
-                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBack')">Обратная связь</div>
+                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBackWindow')">Обратная связь</div>
                     <div class="item-dropdown cur-point clip" @click="setPage('user')">Настройки</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="logout">Выход</div>
@@ -54,7 +54,7 @@
                     <div class="item-dropdown cur-point clip" @click="setPage('technical')">Техника</div>
                     <div class="item-dropdown cur-point clip" v-if="profileInfo.status > 4" @click="setPage('userList')">Сотрудники</div>
                     <hr>
-                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBack')">Обратная связь</div>
+                    <div class="item-dropdown cur-point clip" @click="setWindow('feedBackWindow')">Обратная связь</div>
                     <div class="item-dropdown cur-point clip" @click="setPage('user')">Настройки</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="logout">Выход</div>

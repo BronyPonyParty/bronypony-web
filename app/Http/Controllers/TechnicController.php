@@ -16,9 +16,9 @@ class TechnicController extends Controller
         $user = AuthFacade::user();
 
         // Запрос на взятие техники с условием, что техника находится в организации из которой пользователь подал запрос
-        $technics = Technic::with('provider:id,name')
-            ->select(['id','name','number','cabinet','date_purchase','description','provider_id','status'])
-            ->where('organization_id', $user->organization_id)->get();
+        // и также с условием, что техника не удалена
+        $technics = Technic::select(['id','name','number','cabinet','date_added','description','status'])
+            ->where('organization_id', $user->organization_id)->where('status', '!=', 1)->get();
 
         $mass = [];
         foreach ($technics as $technic) {
@@ -27,9 +27,8 @@ class TechnicController extends Controller
                 'name' => $technic->name,
                 'number' => $technic->number,
                 'cabinet' => $technic->cabinet,
-                'date' => $technic->date_purchase,
+                'date' => $technic->date_added,
                 'description' => $technic->description,
-                'provider' => $technic->provider->name,
                 'status' => $technic->status
             ];
         }
@@ -150,5 +149,48 @@ class TechnicController extends Controller
         if ($technic == 0) abort(400, json_encode('Данной техники не существует в вашей орагнизации'));
 
         return 'OK';
+    }
+
+    public function add(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required:max:64',
+            'number' => 'required|max:10',
+            'description' => 'max:1024',
+        ],
+            [
+                'name.required' => 'Название должно быть заполнена',
+                'name.max' => 'Длина названия не должна превышать 64 символа',
+
+                'number.required' => 'Номер должнен быть заполнен',
+                'number.max' => 'Длина номера не должна превышать 10 символов',
+
+                'description.max' => 'Длина описания не должна превышать 1024 символов',
+            ]
+        );
+
+        if ($validator->fails()) {
+            abort(400, json_encode($validator->getMessageBag()));
+        }
+
+        $authUser = AuthFacade::user();
+        $name = $request->post('name');
+        $number = $request->post('number');
+        $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
+
+        if (!ctype_digit($number)) abort(400, json_encode('Номер должен содержать только цифры'));
+
+        $unique = Technic::where('number', $number)->where('status', '!=', 1)->first();
+        if (!empty($unique)) abort(400, json_encode('Данный номер уже используется'));
+
+        $technic = new Technic();
+        $technic->name = $name;
+        $technic->number = $number;
+        $technic->date_added = time();
+        $technic->description = $description;
+        $technic->organization_id = $authUser->organization_id;
+        $technic->status = 4;
+        $technic->save();
+
+        return $technic->id;
     }
 }

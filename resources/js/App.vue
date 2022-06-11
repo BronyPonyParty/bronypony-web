@@ -2,9 +2,11 @@
     <div>
         <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
         <v-tech-info-window v-if="window.name === 'techInfoWindow'"></v-tech-info-window>
-        <v-feed-back-window v-if="window.name === 'feedBack'"></v-feed-back-window>
+        <v-feed-back-window v-if="window.name === 'feedBackWindow'"></v-feed-back-window>
 <!--        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>-->
         <v-user-info-window v-if="window.name === 'userInfoWindow'"></v-user-info-window>
+        <v-add-user-window v-if="window.name === 'addUserWindow'"></v-add-user-window>
+        <v-add-technic-window v-if="window.name === 'addTechWindow'"></v-add-technic-window>
 
         <v-header v-if="page !== 'login'"></v-header>
 
@@ -28,6 +30,8 @@ import vTechnical from './components/Technical'
 import vHeader from './components/Header'
 import vUserList from './components/UserList'
 import vUserInfoWindow from './components/popup/UserInfoWindow'
+import vAddUserWindow from './components/popup/addUserWindow'
+import vAddTechnicWindow from './components/popup/addTechWindow'
 import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
@@ -44,7 +48,9 @@ export default {
         vTechnical,
         vHeader,
         vUserList,
-        vUserInfoWindow
+        vUserInfoWindow,
+        vAddUserWindow,
+        vAddTechnicWindow,
     },
 
     mounted() {
@@ -59,7 +65,6 @@ export default {
                 organization_id: data.organization_id,
                 firstname: data.firstname,
                 lastname: data.lastname,
-                middlename: data.middlename,
                 mail: data.mail,
                 phoneNumber: data.phone_number,
                 avatar: data.avatar,

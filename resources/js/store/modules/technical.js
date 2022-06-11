@@ -12,7 +12,7 @@ export default {
     },
 
     mutations: {
-        setItems(state, {id, name, number, cabinet, date, description, provider, status}) {
+        pushItem(state, {id, name, number, cabinet, date, description, status}) {
             state.items.push({
                 id,
                 name,
@@ -20,7 +20,6 @@ export default {
                 cabinet: cabinet || 'Неизвестно',
                 date,
                 description,
-                provider,
                 status
             })
         },

@@ -66,16 +66,12 @@
                                     <strong>{{ getStatusText(getTechDescription.status) }}</strong>
                                 </div>
                                 <div class="item-tech">
-                                    <span>Поставщик</span>
-                                    <strong>{{ getTechDescription.provider }}</strong>
-                                </div>
-                                <div class="item-tech">
-                                    <span>Дата покупки</span>
+                                    <span>Дата добавления</span>
                                     <strong>{{ formatDate(getTechDescription.date, false) }}</strong>
                                 </div>
                             </div>
 
-                            <div style="margin-top: 15px">
+                            <div style="margin-top: 20px">
                                 <div class="item-description" style="word-wrap: break-word" ref="description" @focus="$event.target.classList.remove('outline-red')" :class="{edit: getEditDescriptionShowed}" :contenteditable="!!getEditDescriptionShowed" v-show="getTechDescription.description || getEditDescriptionShowed">
                                     {{ getTechDescription.description }}
                                 </div>

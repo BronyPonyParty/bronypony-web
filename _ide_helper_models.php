@@ -88,28 +88,6 @@ namespace App\Models{
 
 namespace App\Models{
 /**
- * App\Models\Provider
- *
- * @property int $id
- * @property string $name
- * @property string $phone_number
- * @property string $address
- * @property int $status
- * @method static \Database\Factories\ProviderFactory factory(...$parameters)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Provider newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Provider query()
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereAddress($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereName($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider wherePhoneNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Provider whereStatus($value)
- */
-	class Provider extends \Eloquent {}
-}
-
-namespace App\Models{
-/**
  * App\Models\Repair
  *
  * @property int $id
@@ -187,25 +165,22 @@ namespace App\Models{
  * @property string $name
  * @property int $number
  * @property int|null $cabinet
- * @property int $date_purchase
+ * @property int $date_added
  * @property string|null $description
- * @property int $provider_id
  * @property int $organization_id
  * @property int $status
  * @property-read \App\Models\MovingTechnic|null $movingTechnic
- * @property-read \App\Models\Provider|null $provider
  * @method static \Database\Factories\TechnicFactory factory(...$parameters)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic query()
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereCabinet($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDatePurchase($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDateAdded($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereNumber($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereOrganizationId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Technic whereProviderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Technic whereStatus($value)
  */
 	class Technic extends \Eloquent {}
@@ -216,13 +191,12 @@ namespace App\Models{
  * App\Models\User
  *
  * @property int $id
- * @property string $lastname
  * @property string $firstname
- * @property string|null $middlename
+ * @property string $lastname
  * @property string $login
  * @property string $password
  * @property string|null $phone_number
- * @property string $mail
+ * @property string|null $mail
  * @property string|null $avatar
  * @property int $organization_id
  * @property int $status
@@ -240,7 +214,6 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLastname($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereLogin($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereMail($value)
- * @method static \Illuminate\Database\Eloquent\Builder|User whereMiddlename($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoneNumber($value)

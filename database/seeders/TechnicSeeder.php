@@ -22,11 +22,10 @@ class TechnicSeeder extends Seeder
             $data[] = [
                 'name' => rand(0, 10) <= 6 ? 'Компьютер' : 'Принтер',
                 'number' => $faker->unique()->buildingNumber(),
-                'date_purchase' => $faker->unixTime(),
+                'date_added' => $faker->unixTime(),
                 'description' => $faker->realTextBetween(200, 1000),
-                'provider_id' => rand(1, 2),
                 'organization_id' => 1,
-                'status' => rand(0, 10) <= 8 ? 1 : 2
+                'status' => rand(0, 10) <= 8 ? 4 : 2
             ];
         }
 
@@ -34,11 +33,10 @@ class TechnicSeeder extends Seeder
             $data[] = [
                 'name' => rand(0, 10) <= 6 ? 'Компьютер' : 'Принтер',
                 'number' => $faker->unique()->buildingNumber(),
-                'date_purchase' => $faker->unixTime(),
+                'date_added' => $faker->unixTime(),
                 'description' => $faker->realTextBetween(200, 1000),
-                'provider_id' => rand(1, 2),
                 'organization_id' => 2,
-                'status' => rand(0, 10) <= 8 ? 1 : 2
+                'status' => rand(0, 10) <= 8 ? 4 : 2
             ];
         }
 
