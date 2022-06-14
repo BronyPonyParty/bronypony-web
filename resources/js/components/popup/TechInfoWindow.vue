@@ -15,6 +15,9 @@
                             </div>
 
                             <div class="position-relative">
+                                <button class="btn header-btn" @click="deleteTech" style="border: none; box-shadow: inherit;">
+                                    <svg viewBox="0 0 24 24" width="18" height="18" fill="white" xmlns="http://www.w3.org/2000/svg"><g data-name="4. Trash" id="_4._Trash"><path d="M18,4H17V3a3,3,0,0,0-3-3H10A3,3,0,0,0,7,3V4H6A3,3,0,0,0,3,7V9a1,1,0,0,0,1,1h.069l.8,11.214A3.012,3.012,0,0,0,7.862,24h8.276a3.012,3.012,0,0,0,2.992-2.786L19.931,10H20a1,1,0,0,0,1-1V7A3,3,0,0,0,18,4ZM9,3a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V4H9ZM5,7A1,1,0,0,1,6,6H18a1,1,0,0,1,1,1V8H5ZM17.136,21.071a1,1,0,0,1-1,.929H7.862a1,1,0,0,1-1-.929L6.074,10H17.926Z"/><path d="M10,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,10,20Z"/><path d="M14,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,14,20Z"/></g></svg>
+                                </button>
                                 <button class="btn header-btn" :class="{ active: getEditDescriptionShowed }" @click="editMode" style="border: none; box-shadow: inherit" v-if="descriptionShowed && getUserInfo.status >= 8"><svg width="20px" height="20px" viewBox="0 0 54 62" xmlns="http://www.w3.org/2000/svg">
                                         <g fill="white">
                                             <path d="M15.9,52.8 L0.8,52.8 L0.8,37.6 L38,0 L53.1,15.3 L15.9,52.8 Z M3.8,49.8 L14.6,49.8 L48.8,15.3 L37.9,4.3 L3.7,38.9 L3.7,49.8 L3.8,49.8 Z"></path>
@@ -71,7 +74,7 @@
                                 </div>
                             </div>
 
-                            <div style="margin-top: 20px">
+                            <div style="margin-top: 30px">
                                 <div class="item-description" style="word-wrap: break-word" ref="description" @focus="$event.target.classList.remove('outline-red')" :class="{edit: getEditDescriptionShowed}" :contenteditable="!!getEditDescriptionShowed" v-show="getTechDescription.description || getEditDescriptionShowed">
                                     {{ getTechDescription.description }}
                                 </div>
@@ -265,14 +268,11 @@ export default {
 
         getStatusText(status) {
             switch (status) {
-                case 1: {
-                    return 'Исправна';
-                }
                 case 2: {
                     return 'Неисправна';
                 }
                 case 4: {
-                    return 'Утилизирована';
+                    return 'Исправна';
                 }
             }
         },
@@ -312,6 +312,19 @@ export default {
 
         removeRed() {
             this.$refs.cabinetInput.classList.remove('border-red');
+        },
+
+        deleteTech() {
+            this.$store.commit('app/setWindow', {
+                name: 'noticeWindow',
+                type: 'deleteTech',
+                id: this.getTechDescription.id,
+                title: 'Удаление техники',
+                description: 'Удаление техники необратимый процесс, удалить данную технику?',
+                buttonText: 'Удалить',
+                buttonStyle: 'red-btn',
+                width: 600,
+            });
         }
     },
 }

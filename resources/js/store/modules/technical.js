@@ -34,6 +34,17 @@ export default {
 
         setSearchLine(state, text) {
             state.searchLine = text;
+        },
+
+        deleteTech(state, id) {
+            for (let i = 0; i < state.items.length; i++) {
+                if (state.items[i].id === id) {
+                    state.items.splice(i, 1);
+                    break;
+                }
+            }
+
+            console.log('Техника успешно удалена');
         }
     },
 

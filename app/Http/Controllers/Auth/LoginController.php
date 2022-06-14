@@ -28,9 +28,16 @@ class LoginController extends Controller
         $login = $request->post('login');
         $password = $request->post('password');
 
-        $user = User::whereLogin($login)->wherePassword(md5($password))->where('status', '!=', 1)->first();
-
+        $user = User::whereLogin($login)->where('status', '!=', 1)->first();
         if (empty($user)) abort(400, json_encode('Неверные данные входа'));
+
+        $hash = md5($password.$user->salt);
+        for ($i = 0; $i < 64000; $i++) {
+            $hash = md5($hash);
+        }
+
+        if ($user->password !== $hash) abort(400, json_encode('Неверные данные входа'));
+
 
         //Если данные оказались верны
         $token = '';

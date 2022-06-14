@@ -174,10 +174,11 @@ class TechnicController extends Controller
 
         $authUser = AuthFacade::user();
         $name = $request->post('name');
-        $number = $request->post('number');
+        $number = trim($request->post('number'));
         $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
 
-        if (!ctype_digit($number)) abort(400, json_encode('Номер должен содержать только цифры'));
+        if (!ctype_digit($number)) abort(400, json_encode('Номер должен содержать только целые числа'));
+        if ($number[0] == 0) abort(400, json_encode('Номер не может начинаться с 0'));
 
         $unique = Technic::where('number', $number)->where('status', '!=', 1)->first();
         if (!empty($unique)) abort(400, json_encode('Данный номер уже используется'));
@@ -192,5 +193,23 @@ class TechnicController extends Controller
         $technic->save();
 
         return $technic->id;
+    }
+
+    public function delete(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'techId' => 'required|integer'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Данной техники не существует'));
+
+        $deleteTechId = $request->post('techId');
+        $authUser = AuthFacade::user();
+
+        $tech = Technic::where('id', $deleteTechId)->where('organization_id', $authUser->organization_id)
+            ->where('status', '!=', 1)->update(['status' => 1]);
+
+        if ($tech === 0) abort(400, json_encode('Данной техники не существует, либо она уже удалёна'));
+
+        return 'OK';
     }
 }

@@ -16,7 +16,7 @@ class StatementServer extends Command
      *
      * @var string
      */
-    protected $signature = 'statement_server:serve';
+    protected $signature = 'socket:serve';
 
     /**
      * The console command description.

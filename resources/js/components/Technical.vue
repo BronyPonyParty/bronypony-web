@@ -89,7 +89,6 @@ export default {
                 cabinet: item.cabinet,
                 date: item.date,
                 description: item.description,
-                provider: item.provider,
                 status: item.status,
             });
 

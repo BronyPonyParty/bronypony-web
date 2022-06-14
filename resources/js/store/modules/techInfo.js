@@ -15,7 +15,6 @@ export default {
             name: '',
             cabinet: null,
             status: '',
-            provider: '',
             description: ''
         },
 
@@ -73,7 +72,6 @@ export default {
                 cabinet,
                 date,
                 description,
-                provider,
                 status,
             };
         },

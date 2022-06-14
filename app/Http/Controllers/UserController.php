@@ -11,14 +11,16 @@ use Intervention\Image\Facades\Image;
 
 class UserController extends Controller
 {
-    public function getUserData() {
+    public function getUserData()
+    {
         return AuthFacade::user();
     }
 
-    public function saveUserData(Request $request) {
+    public function saveUserData(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'firstname' => 'required|max:32',
-            'lastname' =>'required|max:32'
+            'lastname' => 'required|max:32'
         ], [
             'firstname.required' => 'Поле с именем не может быть пустым',
             'lastname.required' => 'Поле с фамилией не может быть пустым',
@@ -61,11 +63,12 @@ class UserController extends Controller
 
         $user->save();
 
-        return $user;
+        return 'OK';
     }
 
     // access level 8
-    public function getAllData() {
+    public function getAllData()
+    {
         $user = AuthFacade::user();
 
         $rows = [
@@ -81,7 +84,8 @@ class UserController extends Controller
         return User::select($rows)->where('organization_id', $user->organization_id)->where('status', '>=', 2)->get();
     }
 
-    public function getInterval(Request $request) {
+    public function getInterval(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'startDate' => 'required|integer',
             'endDate' => 'required|integer',
@@ -105,9 +109,10 @@ class UserController extends Controller
             })->count('id');
     }
 
-    public function delete(Request $request) {
+    public function delete(Request $request)
+    {
         $validator = Validator::make($request->all(), [
-           'userId' => 'required|integer'
+            'userId' => 'required|integer'
         ]);
 
         if ($validator->fails()) abort(400, json_encode('Данного пользователя не существует'));
@@ -123,7 +128,8 @@ class UserController extends Controller
         return 'OK';
     }
 
-    public function add(Request $request) {
+    public function add(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'firstname' => 'required:max:32',
             'lastname' => 'required|max:32',
@@ -175,5 +181,96 @@ class UserController extends Controller
         $user->save();
 
         return $user->id;
+    }
+
+    public function changeMail(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'mail' => 'required',
+            'password' => 'required'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Неверные данные'));
+
+        $mail = $request->post('mail');
+        $password = $request->post('password');
+        $authUser = AuthFacade::user();
+        $reg = '/^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+
+        $hash = md5($password.$authUser->salt);
+        for ($i = 0; $i < 64000; $i++) {
+            $hash = md5($hash);
+        }
+
+        if ($hash !== $authUser->password) abort(400, json_encode('Неверный пароль'));
+        if (!preg_match($reg, $mail)) abort(400, json_encode('Почта не соответствует формату'));
+        if ($authUser->mail === $mail) abort(400, json_encode('Вы уже используете данную почту'));
+
+        User::where('id', $authUser->id)->update(['mail' => $mail]);
+
+        return 'OK';
+    }
+
+    public function changePassword(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'newPassword' => 'required',
+            'oldPassword' => 'required',
+            'verPassword' => 'required'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Не все данные присутствуют'));
+
+        $newPassword = $request->post('newPassword');
+        $oldPassword = $request->post('oldPassword');
+        $verPassword = $request->post('verPassword');
+        $authUser = AuthFacade::user();
+
+        $hash = md5($oldPassword.$authUser->salt);
+        for ($i = 0; $i < 64000; $i++) {
+            $hash = md5($hash);
+        }
+
+        if ($authUser->password !== $hash) abort(400, json_encode('Неверный пароль'));
+        if ($newPassword !== $verPassword) abort(400, json_encode('Пароли не совпадают'));
+        if ($oldPassword === $newPassword) abort(400, json_encode('Старый пароль совпадает с новым'));
+
+        $salt = base64_encode(random_bytes(12));
+        $hash = md5($newPassword.$salt);
+        for ($i = 0; $i < 64000; $i++) {
+            $hash = md5($hash);
+        }
+
+        User::where('id', $authUser->id)->update(['password' => $hash, 'salt' => $salt]);
+
+        return 'OK';
+    }
+
+    public function changePhone(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'password' => 'required|max:128',
+            'phone' => 'required|digits_between:6,16'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Неверные данные'));
+
+        $phone = $request->post('phone');
+        $password = $request->post('password');
+        $authUser = AuthFacade::user();
+
+
+        $hash = md5($password.$authUser->salt);
+        for ($i = 0; $i < 64000; $i++) {
+            $hash = md5($hash);
+        }
+
+        if ($authUser->password !== $hash) abort(400, json_encode('Неверный пароль'));
+        if ($phone === $authUser->phone_number) abort(400, json_encode('У вас такой же номер телефона'));
+
+        // Проверка на занятость данного номера
+        $phoneUsed = User::where('phone_number', $phone)->first();
+        if (!empty($phoneUsed)) abort(400, json_encode('Данный номер телефона уже кем-то занят'));
+
+        User::where('id', $authUser->id)->update(['phone_number' => $phone]);
+
+        return 'OK';
     }
 }

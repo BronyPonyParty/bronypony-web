@@ -23,7 +23,6 @@ class Auth
         if (empty($token)) abort(401, 'Не авторизован');
 
         $session = Session::whereToken($token)->whereRemoved(false)->first();
-
         if (empty($session)) abort(401, 'Не авторизован');
 
         if ($session->term < time()) {
@@ -32,7 +31,9 @@ class Auth
             abort(401, 'Не авторизован');
         }
 
-        $user = User::whereId($session->user_id)->first();
+        $user = User::whereId($session->user_id)->where('status', '!=', 1)->first();
+        if (empty($user)) abort(401, 'Не авторизован');
+
         AuthFacades::login($user);
         return $next($request);
     }

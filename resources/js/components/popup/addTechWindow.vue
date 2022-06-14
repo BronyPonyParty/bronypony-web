@@ -80,12 +80,15 @@ export default {
                 number.classList.add('border-red');
                 errorMass.push('Поле с номером должно быть заполнено');
             }
+            if (number.value.trim()[0] === '0') {
+                number.classList.add('border-red');
+                errorMass.push('Номер не может начинаться с 0');
+            }
 
             if (errorMass.length > 0) {
                 console.log(errorMass);
                 return;
             }
-
 
             this.api('technic/add', {name: name.value.trim(), number: number.value.trim(), description: description.value.trim()}).then(data => {
                 this.$store.commit('technical/pushItem', {

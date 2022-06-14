@@ -33,6 +33,9 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
 
     Route::post('user/getUserData', [UserController::class, 'getUserData']);
     Route::post('user/saveUserData', [UserController::class, 'saveUserData']);
+    Route::post('user/changeMail', [UserController::class, 'changeMail']);
+    Route::post('user/changePhone', [UserController::class, 'changePhone']);
+    Route::post('user/changePassword', [UserController::class, 'changePassword']);
 
     Route::middleware('access.level:4')->group(function () {
         Route::post('technic/getList', [TechnicController::class, 'getList']);
@@ -46,6 +49,7 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
 
     Route::middleware('access.level:8')->group(function () {
         Route::post('technic/changeDescription', [TechnicController::class, 'changeDescription']);
+        Route::post('technic/delete', [TechnicController::class, 'delete']);
         Route::post('technic/add', [TechnicController::class, 'add']);
 
         Route::post('user/getAllData', [UserController::class, 'getAllData']);

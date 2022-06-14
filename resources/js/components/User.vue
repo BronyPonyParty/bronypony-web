@@ -4,20 +4,20 @@
             <div class="row py-2 gap-3 align-items-start">
                 <div class="col-12 col-lg-3 white-block " style="padding-left: 0; padding-right: 0;">
                     <div class="settings d-block">
-                        <label class="setting clip">
+                        <label class="setting clip" @click="setTab(1, 'Общие настройки')" :class="{ select: selectedTab === 1 }">
                             <span>Общие настройки</span>
                         </label>
-                        <label class="setting clip">
+                        <label class="setting clip" @click="setTab(2, 'Безопасность')" :class="{ select: selectedTab === 2 }">
                             <span>Безопасность</span>
                         </label>
                     </div>
                 </div>
 
                 <div class="col-12 col-lg white-block p-3">
-                    <div class="h2">Общие настройки</div>
+                    <div class="h2">{{ title }}</div>
                     <hr>
 
-                    <div class="edit-list w-100 justify-content-between d-flex">
+                    <div class="edit-list w-100 justify-content-between d-flex" v-if="selectedTab === 1">
                         <div>
                             <div class="edit-group">
                                 <strong>Фамилия</strong>
@@ -51,6 +51,38 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="edit-list w-100 justify-content-between d-flex" v-if="selectedTab === 2">
+                        <div>
+                            <div class="edit-group">
+                                <strong>Почта</strong>
+                                <div class="d-flex">
+                                    <input class="form-control form-control-lg outline-text" disabled maxlength="64" ref="mail" :value="profileInfo.mail">
+                                    <div class="svg" @click="editSecurity('mail')">
+                                        <svg class="cur-point" height="46px" viewBox="0 0 64 64" width="46px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="27.167" x2="27.167" y1="13.489" y2="17.67"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="29.258" x2="25.076" y1="15.579" y2="15.579"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="36.081" x2="36.081" y1="43.856" y2="48.038"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="38.172" x2="33.99" y1="45.947" y2="45.947"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="23.944" x2="23.944" y1="21.208" y2="23.542"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="25.111" x2="22.778" y1="22.375" y2="22.375"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="40.785" x2="40.785" y1="37.862" y2="40.195"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="41.952" x2="39.619" y1="39.028" y2="39.028"/><rect fill="none" height="37.512" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 32.2562 -12.6363)" width="10.682" x="26.041" y="13.862"/><polygon fill="none" points="    18.086,45.914 21.854,49.681 16.707,51.06 11.561,52.439 12.94,47.293 14.319,42.146   " stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><rect fill="none" height="5.28" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 25.9895 -27.7655)" width="10.682" x="41.17" y="14.85"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="edit-group">
+                                <strong>Номер телефона</strong>
+                                <div class="d-flex">
+                                    <input class="form-control form-control-lg outline-text" disabled maxlength="16" ref="phone" :value="profileInfo.phoneNumber">
+                                    <div class="svg" @click="editSecurity('phoneNumber')">
+                                        <svg class="cur-point" height="46px" viewBox="0 0 64 64" width="46px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="27.167" x2="27.167" y1="13.489" y2="17.67"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="29.258" x2="25.076" y1="15.579" y2="15.579"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="36.081" x2="36.081" y1="43.856" y2="48.038"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="38.172" x2="33.99" y1="45.947" y2="45.947"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="23.944" x2="23.944" y1="21.208" y2="23.542"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="25.111" x2="22.778" y1="22.375" y2="22.375"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="40.785" x2="40.785" y1="37.862" y2="40.195"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="41.952" x2="39.619" y1="39.028" y2="39.028"/><rect fill="none" height="37.512" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 32.2562 -12.6363)" width="10.682" x="26.041" y="13.862"/><polygon fill="none" points="    18.086,45.914 21.854,49.681 16.707,51.06 11.561,52.439 12.94,47.293 14.319,42.146   " stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><rect fill="none" height="5.28" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 25.9895 -27.7655)" width="10.682" x="41.17" y="14.85"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="edit-group">
+                                <strong>Пароль</strong>
+                                <div class="d-flex">
+                                    <input class="form-control form-control-lg outline-text" type="password" maxlength="128" disabled ref="password" value="********">
+                                    <div class="svg" @click="editSecurity('password')">
+                                        <svg class="cur-point" height="46px" viewBox="0 0 64 64" width="46px" xml:space="preserve" xmlns="http://www.w3.org/2000/svg"><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="27.167" x2="27.167" y1="13.489" y2="17.67"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="29.258" x2="25.076" y1="15.579" y2="15.579"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="36.081" x2="36.081" y1="43.856" y2="48.038"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" x1="38.172" x2="33.99" y1="45.947" y2="45.947"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="23.944" x2="23.944" y1="21.208" y2="23.542"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="25.111" x2="22.778" y1="22.375" y2="22.375"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="40.785" x2="40.785" y1="37.862" y2="40.195"/><line fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" x1="41.952" x2="39.619" y1="39.028" y2="39.028"/><rect fill="none" height="37.512" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 32.2562 -12.6363)" width="10.682" x="26.041" y="13.862"/><polygon fill="none" points="    18.086,45.914 21.854,49.681 16.707,51.06 11.561,52.439 12.94,47.293 14.319,42.146   " stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/><rect fill="none" height="5.28" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2" transform="matrix(0.7071 0.7071 -0.7071 0.7071 25.9895 -27.7655)" width="10.682" x="41.17" y="14.85"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -78,6 +110,14 @@ export default {
             return  user.firstname  === (newUser.firstname).trim()  &&
                     user.lastname   === (newUser.lastname).trim()   &&
                     user.avatar     === newUser.avatar;
+        },
+
+        selectedTab() {
+            return this.$store.getters['user/getTab'];
+        },
+
+        title() {
+            return this.$store.getters['user/getTitle'];
         }
     },
 
@@ -111,25 +151,19 @@ export default {
             formData.append('firstname', newUserData.firstname);
             formData.append('lastname', newUserData.lastname);
 
-            this.api('user/saveUserData', formData).then(data => {
+            this.api('user/saveUserData', formData).then(() => {
                 if (userData.firstname !== newUserData.firstname || userData.lastname !== newUserData.lastname) {
                     let localData = {
                         message: 'change name',
-                        firstname: data.firstname,
-                        lastname: data.lastname,
+                        firstname: newUserData.firstname,
+                        lastname: newUserData.lastname,
                     }
                     this.socket.send(localData); // Отправка по сокету новых данных
                 }
 
-                this.$store.commit('user/setProfileInfo', {
-                    id: data.id,
-                    firstname: data.firstname,
-                    lastname: data.lastname,
-                    mail: data.mail,
-                    phoneNumber: data.phone_number,
-                    avatar: data.avatar,
-                });
-
+                this.$store.commit('user/changeItemProperty', ['firstname', newUserData.firstname])
+                this.$store.commit('user/changeItemProperty', ['lastname', newUserData.lastname])
+                this.$store.commit('user/changeItemProperty', ['avatar', newUserData.avatar])
             })
         },
 
@@ -146,6 +180,28 @@ export default {
             this.removeRedOnLastname();
             this.$refs.inputFile.value = ''; // Исправляем баг с неизменяемой аватаркой
             this.$store.commit('user/cancelInfo');
+        },
+
+        setTab(value, title) {
+            this.$store.commit('user/setTab', value);
+            this.$store.commit('user/setTitle', title)
+        },
+
+        editSecurity(security) {
+            console.log(security);
+            let title;
+            if (security === 'mail') {
+                title = 'Измените почту';
+            } else if (security === 'phoneNumber') {
+                title = 'Измените номер телефона';
+            } else {
+                title = 'Измените пароль';
+            }
+            this.$store.commit('app/setWindow', {
+                name: 'passwordWindow',
+                type: security,
+                title
+            });
         }
     }
 }
@@ -250,5 +306,25 @@ export default {
 
     .border-red {
         border-color: red
+    }
+
+    .select {
+        background-color: gainsboro;
+    }
+
+    .svg {
+        svg {
+            stroke: #C8C9CA;
+        }
+    }
+    .svg:hover {
+        svg {
+            stroke: #297E5F;
+        }
+    }
+    .svg:active {
+        svg {
+            stroke: #1C5542;
+        }
     }
 </style>

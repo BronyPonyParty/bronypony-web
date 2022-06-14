@@ -195,6 +195,7 @@ namespace App\Models{
  * @property string $lastname
  * @property string $login
  * @property string $password
+ * @property string $salt
  * @property string|null $phone_number
  * @property string|null $mail
  * @property string|null $avatar
@@ -217,6 +218,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder|User whereOrganizationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePassword($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoneNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereSalt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereStatus($value)
  */
 	class User extends \Eloquent {}

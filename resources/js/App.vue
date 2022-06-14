@@ -3,7 +3,7 @@
         <v-notice-window v-if="window.name === 'noticeWindow'"></v-notice-window>
         <v-tech-info-window v-if="window.name === 'techInfoWindow'"></v-tech-info-window>
         <v-feed-back-window v-if="window.name === 'feedBackWindow'"></v-feed-back-window>
-<!--        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>-->
+        <v-password-window v-if="window.name === 'passwordWindow'"></v-password-window>
         <v-user-info-window v-if="window.name === 'userInfoWindow'"></v-user-info-window>
         <v-add-user-window v-if="window.name === 'addUserWindow'"></v-add-user-window>
         <v-add-technic-window v-if="window.name === 'addTechWindow'"></v-add-technic-window>

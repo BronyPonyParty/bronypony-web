@@ -58,8 +58,8 @@ export default {
                 return;
             }
 
-            else if (this.window.type === 'deleteTechnic') {
-                this.setWindow({name: 'technicInfoWindow'});
+            else if (this.window.type === 'deleteTech') {
+                this.setWindow({name: 'techInfoWindow'});
                 return;
             }
 
@@ -108,6 +108,15 @@ export default {
                     this.setWindow({name: ''});
 
                     this.$store.commit('userList/deleteUser', userId);
+                });
+
+                // Удаление техники
+            } else if (this.window.type === 'deleteTech') {
+                let techId = this.window.id;
+
+                this.api('technic/delete', {techId}).then(() => {
+                    this.setWindow({name: ''});
+                    this.$store.commit('technical/deleteTech', techId);
                 });
             }
         },

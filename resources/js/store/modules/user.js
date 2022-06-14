@@ -19,6 +19,9 @@ export default {
             avatar: '',
         },
 
+        tab: 1,
+        title: 'Общие настройки',
+
         selectedFile: ''
     },
 
@@ -82,6 +85,19 @@ export default {
 
         setSelectedFile(state, selectedFile) {
             state.selectedFile = selectedFile;
+        },
+
+        // arr = [key, value]
+        changeItemProperty(state, arr) {
+            state.user[arr[0]] = arr[1];
+        },
+
+        setTab(state, tab) {
+            state.tab = tab;
+        },
+
+        setTitle(state, title) {
+            state.title = title;
         }
     },
 
@@ -96,6 +112,14 @@ export default {
 
         getSelectedFile(state) {
             return state.selectedFile;
+        },
+
+        getTab(state) {
+            return state.tab;
+        },
+
+        getTitle(state) {
+            return state.title;
         }
     }
 }
