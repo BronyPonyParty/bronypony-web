@@ -13,7 +13,11 @@
                             </button>
                         </div>
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            <input class="form-control mb-3 form-control-lg outline-text"
+                            <div class="pb-1" style="font-size: 12px;" v-if="window.description !== ''">
+                                {{ window.description }}
+                            </div>
+
+                            <input class="form-control mb-3 child form-control-lg outline-text"
                                    type="email"
                                    placeholder="Введите новую почту"
                                    ref="mail"
@@ -50,7 +54,7 @@
                                    @focus="$refs.newPassword.classList.remove('border-red')"
                                    v-if="window.type === 'password'">
 
-                            <input class="form-control mb-3 form-control-lg outline-text"
+                            <input class="form-control  form-control-lg outline-text"
                                    type="password"
                                    placeholder="Подтвердите новый пароль"
                                    ref="verNewPassword"
@@ -69,7 +73,10 @@
                                    v-if="window.type !== 'password'">
 
                             <div class="button" style="text-align: right">
-                                <button class="btn yes-btn text-white" style="border: none; box-shadow: inherit;" @click="getAccess"><strong>Изменить</strong></button>
+                                <button class="btn text-white"
+                                        :class="window.buttonStyle"
+                                        style="border: none; box-shadow: inherit;"
+                                        @click="getAccess"><strong>{{ window.buttonText }}</strong></button>
                             </div>
                         </div>
                     </div>
@@ -194,13 +201,31 @@ export default {
                     })
                     break;
                 }
+
+                case 'session': {
+                    let sessionId = this.window.id;
+                    let password = this.$refs.password;
+
+                    if (password.value.trim().length === 0) {
+                        console.log('Поле с паролем не может быть пустым');
+                        password.classList.add('border-red');
+                        return;
+                    }
+
+                    this.api('user/dropSession', {sessionId, password: password.value}).then(() => {
+                        this.$store.commit('user/deleteSession', sessionId);
+                        if (this.$store.getters['app/getToken'] === this.window.token) this.$store.dispatch('auth/logout');
+                        this.$store.commit('app/setWindow', {name: ''});
+                    })
+                    break;
+                }
             }
         }
     }
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 strong {
     font-weight: 600;
 }
@@ -263,5 +288,15 @@ strong {
 
 .border-red {
     border-color: red
+}
+
+.red-btn {
+    background-color: #E64825;
+}
+.red-btn:hover {
+    background-color: #C93E1F;
+}
+.red-btn-btn:active {
+    background-color: #8E2716;
 }
 </style>

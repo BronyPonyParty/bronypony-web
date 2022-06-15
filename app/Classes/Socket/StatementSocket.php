@@ -37,7 +37,26 @@ class StatementSocket extends BaseSocket
         }
 
         elseif ($data->message === 'new statement') {
+            $orgId = $this->users[$from->resourceId]->organization_id;
+            $user = $this->users[$from->resourceId];
+            $employees = $this->rooms[$orgId];
+            $localData = array(
+                'message' => $data->message,
+                'statementId' => $data->reportId,
+                'techId' => $data->techId,
+                'techName' => $data->techName,
+                'techNumber' => $data->techNumber,
+                'date' => $data->date,
+                'user' => $user->firstname . ' ' . $user->lastname,
+                'description' => $data->description,
+                'cabinet' => $data->cabinet,
+                'status' => 1
+            );
 
+            foreach ($employees as $employee) {
+                if ($employee->resourceId == $from->resourceId) continue;
+                $employee->send(json_encode($localData));
+            }
         }
 
         elseif ($data->message === 'accept statement') {
@@ -60,14 +79,24 @@ class StatementSocket extends BaseSocket
         elseif ($data->message === 'complete statement') {
             $orgId = $this->users[$from->resourceId]->organization_id;
             $employees = $this->rooms[$orgId];
-            $localData = array(
+            $forEmployee = array(
                 'message' => $data->message,
-                'statementId' => $data->statementId
+                'statementId' => $data->statementId,
+            );
+
+            $forRepairman = array(
+                'message' => $data->message,
+                'statementId' => $data->statementId,
+                'techId' => $data->techId
             );
 
             foreach ($employees as $employee) {
                 if ($employee->resourceId == $from->resourceId) continue;
-                $employee->send(json_encode($localData));
+                if ($this->users[$employee->resourceId]->status >= 4) {
+                    $employee->send(json_encode($forRepairman));
+                } else {
+                    $employee->send(json_encode($forEmployee));
+                }
             }
         }
 
@@ -77,14 +106,6 @@ class StatementSocket extends BaseSocket
             $this->users[$from->resourceId]->firstname = $data->firstname;
             $this->users[$from->resourceId]->lastname = $data->lastname;
         }
-//        $orgId = $this->users[$from->resourceId]->organization_id;
-//        echo $this->rooms[$orgId];
-
-//        $from->send(json_encode($this->users));
-
-//        foreach ($this->clients as $client) {
-//            $client->send($msg);
-//        }
     }
 
     public function onClose(ConnectionInterface $conn) {

@@ -180,7 +180,7 @@ class TechnicController extends Controller
         if (!ctype_digit($number)) abort(400, json_encode('Номер должен содержать только целые числа'));
         if ($number[0] == 0) abort(400, json_encode('Номер не может начинаться с 0'));
 
-        $unique = Technic::where('number', $number)->where('status', '!=', 1)->first();
+        $unique = Technic::where('organization_id', $authUser->organization_id)->where('number', $number)->where('status', '!=', 1)->first();
         if (!empty($unique)) abort(400, json_encode('Данный номер уже используется'));
 
         $technic = new Technic();

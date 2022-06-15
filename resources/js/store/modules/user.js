@@ -13,6 +13,8 @@ export default {
             status: ''
         },
 
+        sessions: [],
+
         newUserData: {
             firstname: '',
             lastname: '',
@@ -98,7 +100,26 @@ export default {
 
         setTitle(state, title) {
             state.title = title;
+        },
+
+        pushSession(state, {id, token, term, ip}) {
+            state.sessions.push({
+                id,
+                token,
+                term,
+                ip
+            })
+        },
+
+        deleteSession(state, id) {
+            for (let i = 0; i < state.sessions.length; i++) {
+                if (state.sessions[i].id === id) {
+                    state.sessions.splice(i, 1);
+                    break;
+                }
+            }
         }
+
     },
 
     getters: {
@@ -120,6 +141,10 @@ export default {
 
         getTitle(state) {
             return state.title;
+        },
+
+        getSessions(state) {
+            return state.sessions;
         }
     }
 }

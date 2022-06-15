@@ -5,7 +5,12 @@
             <div class="row justify-content-center">
                 <div class="col-12 col-md-9 col-lg-8 col-xl-7">
                     <div class="bg-white p-4" style="border-radius: 5px">
-                        <h1>Список заявлений</h1>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h1>Список заявлений</h1>
+                            <div class="add-statement-button" @click="showAddStatementWindow" v-if="user.status === 2">
+                                <svg viewBox="0 0 32 32" width="32" height="32" fill="black" xmlns="http://www.w3.org/2000/svg"><line stroke-width="2" shape-rendering="crispEdges" stroke="white" class="cls-1" x1="16" x2="16" y1="7" y2="25"/><line stroke-width="2" shape-rendering="crispEdges" stroke="white" class="cls-1" x1="7" x2="25" y1="16" y2="16"/></svg>
+                            </div>
+                        </div>
                         <hr>
                         <table class="table" style="table-layout: fixed; border: none" v-for="(item, index) in items" :key="item.id" v-if="items.length !== 0">
                             <tbody>
@@ -39,36 +44,45 @@
                                             </div>
 
                                             <div class="row pt-3">
-                                                <div class="col">
+                                                <div class="col" v-if="item.description">
                                                     {{ item.description }}
+                                                </div>
+                                                <div class="h1 d-flex justify-content-center" style="opacity: 40%" v-else>
+                                                    Описание отсутствует
                                                 </div>
                                             </div>
                                             <div class="row pt-3">
-                                                <div class="col" style="text-align: right" v-if="item.status === 1">
-                                                    <button class="btn btn-get" @click="showWindow
-                                                    ('noticeWindow',
-                                                    'Внимание',
-                                                    'accept',
-                                                    'Взять',
-                                                    'green-btn',
-                                                    'Вы уверены, что хотите взять данное заявление?',
-                                                    405,
-                                                    200,
-                                                    item.id,
-                                                    index)"><strong>За работу</strong></button>
+                                                <div class="col" style="text-align: right" v-if="item.status === 1 && user.status > 2">
+                                                    <button class="btn btn-get"
+                                                            @click="showWindow
+                                                            ('noticeWindow',
+                                                            'Внимание',
+                                                            'accept',
+                                                            'Взять',
+                                                            'green-btn',
+                                                            'Вы уверены, что хотите взять данное заявление?',
+                                                            405,
+                                                            200,
+                                                            item.id,
+                                                            index)">
+                                                        <strong>За работу</strong>
+                                                    </button>
                                                 </div>
-                                                <div class="col" style="text-align: right" v-else-if="item.repairManId === user.id">
-                                                    <button class="btn btn-get" @click="showWindow
-                                                    ('noticeWindow',
-                                                    'Завершить работу над заявлением',
-                                                    'complete',
-                                                    'Завершить',
-                                                    'green-btn',
-                                                    'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.',
-                                                    550,
-                                                    200,
-                                                    item.id,
-                                                    index)"><strong>Завершить</strong></button>
+                                                <div class="col" style="text-align: right" v-else-if="item.repairManId === user.id && user.status > 2">
+                                                    <button class="btn btn-get"
+                                                            @click="showWindow
+                                                            ('noticeWindow',
+                                                            'Завершить работу над заявлением',
+                                                            'complete',
+                                                            'Завершить',
+                                                            'green-btn',
+                                                            'Перед завершением просим вас описать процесс ремонта техники, в чём была причина поломки и как вы её исправили.',
+                                                            550,
+                                                            200,
+                                                            item.id,
+                                                            index)">
+                                                        <strong>Завершить</strong>
+                                                    </button>
                                                 </div>
                                             </div>
                                         </div>
@@ -106,34 +120,6 @@ export default {
         }
     },
 
-    created() {
-        this.socket.on('accept statement', data => {
-            let statements = this.$store.getters['statements/getItems'];
-            for (let i = 0; i < statements.length; i++) {
-                let statement = statements[i];
-
-                if (statement.id === data.statementId) {
-                    this.$store.commit('statements/changeItemProperty', [i, 'repairMan', data.name]);
-                    this.$store.commit('statements/changeItemProperty', [i, 'repairManId', data.repairManId]);
-                    this.$store.commit('statements/changeItemProperty', [i, 'status', 2]);
-                    break;
-                }
-            }
-        });
-
-        this.socket.on('complete statement', data => {
-            let statements = this.$store.getters['statements/getItems'];
-            for (let i = 0; i < statements.length; i++) {
-                let statement = statements[i];
-
-                if (statement.id === data.statementId) {
-                    this.$store.commit('statements/removeItem', i);
-                    break;
-                }
-            }
-        });
-    },
-
     methods: {
         ...mapMutations({
             setWindow: 'app/setWindow',
@@ -165,6 +151,10 @@ export default {
             if (time) return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours() + ":" + (date.getMinutes().toString().length < 2 ? '0' + (date.getMinutes()) : date.getMinutes());
             return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2);
         },
+
+        showAddStatementWindow() {
+            this.$store.commit('app/setWindow', {name: 'addStatementWindow'});
+        }
     }
 
 }
@@ -235,4 +225,23 @@ export default {
         background-color: #232A44;
     }
 
+    .add-statement-button {
+        background-color: #2F8E6C;
+        border-radius: 0.25rem;
+        width: 40px;
+        height: 40px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .add-statement-button:hover {
+        background-color: #2B7B5E;
+    }
+
+    .add-statement-button:active {
+        background-color: #1C5542;
+    }
 </style>

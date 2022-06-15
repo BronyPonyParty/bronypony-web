@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Crypt;
 use App\Models\Repair;
+use App\Models\Session;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
@@ -135,7 +137,7 @@ class UserController extends Controller
             'lastname' => 'required|max:32',
             'login' => 'required|max:64',
             'password' => 'required|max:128',
-            'post' => 'required|integer|max:4'
+            'post' => 'required|integer|min:2|max:4'
         ],
             [
                 'firstname.required' => 'Фамилия должна быть заполнена',
@@ -152,30 +154,34 @@ class UserController extends Controller
 
                 'post.required' => 'Должность должна быть указана',
                 'post.max' => 'Присвоить данную должность невозможно',
+                'post.min' => 'Присвоить данную должность невозможно',
                 'post.integer' => 'Должность принимает только цифры'
             ]
         );
 
-        if ($validator->fails()) {
-            abort(400, json_encode($validator->getMessageBag()));
-        }
+        if ($validator->fails()) abort(400, json_encode($validator->getMessageBag()));
 
         $authUser = AuthFacade::user();
-
         $firstname = $request->post('firstname');
         $lastname = $request->post('lastname');
         $login = $request->post('login');
         $password = $request->post('password');
         $status = $request->post('post');
+        $validPosts = [2, 4];
+
+        if (!in_array($status, $validPosts)) abort(400, json_encode('Данной должности не существует'));
 
         $unique = User::where('login', $login)->first();
         if (!empty($unique)) abort(400, json_encode('Данный логин уже используется'));
+
+        list($hash, $salt) = Crypt::hash($password);
 
         $user = new User();
         $user->firstname = $firstname;
         $user->lastname = $lastname;
         $user->login = $login;
-        $user->password = md5($password);
+        $user->password = $hash;
+        $user->salt = $salt;
         $user->organization_id = $authUser->organization_id;
         $user->status = $status;
         $user->save();
@@ -196,12 +202,7 @@ class UserController extends Controller
         $authUser = AuthFacade::user();
         $reg = '/^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
 
-        $hash = md5($password.$authUser->salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
-
-        if ($hash !== $authUser->password) abort(400, json_encode('Неверный пароль'));
+        if ( !Crypt::verify($password, $authUser->salt, $authUser->password) ) abort(400, json_encode('Неверный пароль'));
         if (!preg_match($reg, $mail)) abort(400, json_encode('Почта не соответствует формату'));
         if ($authUser->mail === $mail) abort(400, json_encode('Вы уже используете данную почту'));
 
@@ -224,20 +225,11 @@ class UserController extends Controller
         $verPassword = $request->post('verPassword');
         $authUser = AuthFacade::user();
 
-        $hash = md5($oldPassword.$authUser->salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
-
-        if ($authUser->password !== $hash) abort(400, json_encode('Неверный пароль'));
+        if ( !Crypt::verify($oldPassword, $authUser->salt, $authUser->password) ) abort(400, json_encode('Неверный пароль'));
         if ($newPassword !== $verPassword) abort(400, json_encode('Пароли не совпадают'));
         if ($oldPassword === $newPassword) abort(400, json_encode('Старый пароль совпадает с новым'));
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($newPassword.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($newPassword);
 
         User::where('id', $authUser->id)->update(['password' => $hash, 'salt' => $salt]);
 
@@ -256,13 +248,7 @@ class UserController extends Controller
         $password = $request->post('password');
         $authUser = AuthFacade::user();
 
-
-        $hash = md5($password.$authUser->salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
-
-        if ($authUser->password !== $hash) abort(400, json_encode('Неверный пароль'));
+        if ( !Crypt::verify($password, $authUser->salt, $authUser->password) ) abort(400, json_encode('Неверный пароль'));
         if ($phone === $authUser->phone_number) abort(400, json_encode('У вас такой же номер телефона'));
 
         // Проверка на занятость данного номера
@@ -270,6 +256,36 @@ class UserController extends Controller
         if (!empty($phoneUsed)) abort(400, json_encode('Данный номер телефона уже кем-то занят'));
 
         User::where('id', $authUser->id)->update(['phone_number' => $phone]);
+
+        return 'OK';
+    }
+
+    public function getSessions() {
+        $authUser = AuthFacade::user();
+
+        $rows = ['id', 'user_id', 'token', 'term', 'ip'];
+
+        return Session::select($rows)->where('user_id', $authUser->id)->where('term', '>', time())->where('removed', 0)->get();
+    }
+
+    public function dropSession(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'sessionId' => 'required|integer',
+            'password' => 'required|max:128'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Неверные данные'));
+
+        $authUser = AuthFacade::user();
+        $sessionId = $request->post('sessionId');
+        $password = $request->post('password');
+
+        if ( !Crypt::verify($password, $authUser->salt, $authUser->password) ) abort(400, json_encode('Неверный пароль'));
+
+        $data = Session::where('user_id', $authUser->id)->where('id', $sessionId)->where('removed', 0)
+            ->update(['removed' => 1]);
+
+        if ($data === 0) abort(400, json_encode('Данной сессии не существует'));
 
         return 'OK';
     }

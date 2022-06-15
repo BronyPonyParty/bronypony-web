@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Repair;
 use App\Models\Report;
+use App\Models\Technic;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth as AuthFacade;
@@ -142,6 +143,43 @@ class StatementController extends Controller
         $repair->report->technic->status = 4;
         $repair->report->technic->save();
 
-        return 'OK';
+        return $repair->report->technic_id;
+    }
+
+    public function add(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'number' => 'required|integer',
+            'description' => 'max:512'
+        ]);
+
+        if ($validator->fails()) abort(400, json_encode('Неверные данные'));
+
+        $number = $request->post('number');
+        $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
+        $authUser = AuthFacade::user();
+
+        $technic = Technic::select(['id', 'name', 'cabinet', 'status'])->where('organization_id', $authUser->organization_id)->where('number', $number)->first();
+        if (empty($technic)) abort(400, json_encode('Данной техники не существует в вашей организации'));
+        if ($technic->status == 2) abort(400, json_encode('Данная техника уже ожидает ремонта'));
+
+        $report = new Report();
+        $report->technic_id = $technic->id;
+        $report->user_id = $authUser->id;
+        if (!empty($description)) $report->description = $description;
+        $report->create_date = time();
+        $report->status = 1;
+        $report->save();
+
+        $technic->status = 2;
+        $technic->save();
+
+        $mass = [
+            'reportId' => $report->id,
+            'techId' => $technic->id,
+            'name' => $technic->name,
+            'cabinet' => $technic->cabinet
+        ];
+
+        return $mass;
     }
 }

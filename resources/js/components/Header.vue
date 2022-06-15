@@ -11,7 +11,7 @@
 
             <div class="d-none d-sm-block nav-bar" style="flex-grow: 1">
                 <label class="cur-point" @click="setPage('statements')">Заявления</label>
-                <label class="cur-point" @click="setPage('technical')">Техника</label>
+                <label class="cur-point" v-if="profileInfo.status >= 4" @click="setPage('technical')">Техника</label>
                 <label class="cur-point" v-if="profileInfo.status > 4" @click="setPage('userList')">Сотрудники</label>
             </div>
 
@@ -51,7 +51,7 @@
                     </div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="setPage('statements')">Заявления</div>
-                    <div class="item-dropdown cur-point clip" @click="setPage('technical')">Техника</div>
+                    <div class="item-dropdown cur-point clip" v-if="profileInfo.status >= 4" @click="setPage('technical')">Техника</div>
                     <div class="item-dropdown cur-point clip" v-if="profileInfo.status > 4" @click="setPage('userList')">Сотрудники</div>
                     <hr>
                     <div class="item-dropdown cur-point clip" @click="setWindow('feedBackWindow')">Обратная связь</div>

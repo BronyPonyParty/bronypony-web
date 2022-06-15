@@ -7,6 +7,7 @@
         <v-user-info-window v-if="window.name === 'userInfoWindow'"></v-user-info-window>
         <v-add-user-window v-if="window.name === 'addUserWindow'"></v-add-user-window>
         <v-add-technic-window v-if="window.name === 'addTechWindow'"></v-add-technic-window>
+        <v-add-statement-window v-if="window.name === 'addStatementWindow'"></v-add-statement-window>
 
         <v-header v-if="page !== 'login'"></v-header>
 
@@ -32,6 +33,7 @@ import vUserList from './components/UserList'
 import vUserInfoWindow from './components/popup/UserInfoWindow'
 import vAddUserWindow from './components/popup/addUserWindow'
 import vAddTechnicWindow from './components/popup/addTechWindow'
+import vAddStatementWindow from './components/popup/AddStatementWindow'
 import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
@@ -51,6 +53,7 @@ export default {
         vUserInfoWindow,
         vAddUserWindow,
         vAddTechnicWindow,
+        vAddStatementWindow,
     },
 
     mounted() {
@@ -90,21 +93,23 @@ export default {
                 });
             });
 
-            this.api('user/getAllData').then(data => {
-                data.forEach(item => {
-                    if (item.id !== this.$store.getters['user/getProfileInfo'].id) {
-                        this.$store.commit('userList/pushUser', {
-                            id: item.id,
-                            firstname: item.firstname,
-                            lastname: item.lastname,
-                            phoneNumber: item.phone_number,
-                            mail: item.mail,
-                            avatar: item.avatar,
-                            status: item.status
-                        });
-                    }
+            if (this.$store.getters['user/getProfileInfo'].status > 4) {
+                this.api('user/getAllData').then(data => {
+                    data.forEach(item => {
+                        if (item.id !== this.$store.getters['user/getProfileInfo'].id) {
+                            this.$store.commit('userList/pushUser', {
+                                id: item.id,
+                                firstname: item.firstname,
+                                lastname: item.lastname,
+                                phoneNumber: item.phone_number,
+                                mail: item.mail,
+                                avatar: item.avatar,
+                                status: item.status
+                            });
+                        }
+                    });
                 });
-            });
+            }
 
             // Производим подключение по сокету
             this.socket.connect().then(() => {
@@ -150,6 +155,57 @@ export default {
                 if (this.$store.getters['header/popupMenu']) {
                     this.$store.dispatch('header/popupMenuToggle');
                 }
+            }
+        });
+
+        // Для сокета
+        this.socket.on('accept statement', data => {
+            let statements = this.$store.getters['statements/getItems'];
+            for (let i = 0; i < statements.length; i++) {
+                let statement = statements[i];
+
+                if (statement.id === data.statementId) {
+                    this.$store.commit('statements/changeItemProperty', [i, 'repairMan', data.name]);
+                    this.$store.commit('statements/changeItemProperty', [i, 'repairManId', data.repairManId]);
+                    this.$store.commit('statements/changeItemProperty', [i, 'status', 2]);
+                    break;
+                }
+            }
+        });
+
+        this.socket.on('complete statement', data => {
+            let statements = this.$store.getters['statements/getItems'];
+            for (let i = 0; i < statements.length; i++) {
+                let statement = statements[i];
+
+                if (statement.id === data.statementId) {
+                    this.$store.commit('statements/removeItem', i);
+                    break;
+                }
+            }
+            if (this.$store.getters['user/getProfileInfo'].status < 4) return;
+            // После успешного ремонта динамически изменить состояние техники на "Исправна"
+            if (this.$store.getters['technical/getItems'].length !== 0) {
+                this.$store.commit('technical/changeTechDescriptionProperty', { id: data.techId, arg: ['status', 4] })
+            }
+        });
+
+        this.socket.on('new statement', data => {
+            this.$store.commit('statements/pushItem', {
+                id: data.statementId,
+                techName: data.techName,
+                techNumber: data.techNumber,
+                date: data.date,
+                user: data.user,
+                description: data.description,
+                repairMan: null,
+                repairManId: null,
+                cabinet: data.cabinet || 'Неизвестно',
+                status: data.status,
+            });
+            // После нового заявления динамически изменить состояние техники на "Неисправна"
+            if (this.$store.getters['technical/getItems'].length !== 0) {
+                this.$store.commit('technical/changeTechDescriptionProperty', { id: data.techId, arg: ['status', 2] })
             }
         });
     },

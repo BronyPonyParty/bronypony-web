@@ -43,9 +43,16 @@ export default {
                     break;
                 }
             }
+        },
 
-            console.log('Техника успешно удалена');
-        }
+        changeTechDescriptionProperty(state, {id, arg}) {
+            for (let i = 0; i < state.items.length; i++) {
+                if (state.items[i].id === id) {
+                    state.items[i][arg[0]] = arg[1];
+                    break;
+                }
+            }
+        },
     },
 
     getters: {

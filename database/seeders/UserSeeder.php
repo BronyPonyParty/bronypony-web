@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\Crypt;
 
 class UserSeeder extends Seeder
 {
@@ -16,11 +17,8 @@ class UserSeeder extends Seeder
     public function run()
     {
         $password = '123456';
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+//        Crypt::verify($password, $salt, $hash);
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Путинцев',
@@ -34,11 +32,7 @@ class UserSeeder extends Seeder
             'status' => 8
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Шамшин',
@@ -52,11 +46,7 @@ class UserSeeder extends Seeder
             'status' => 4
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Попов',
@@ -70,11 +60,7 @@ class UserSeeder extends Seeder
             'status' => 8
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Киреев',
@@ -88,11 +74,7 @@ class UserSeeder extends Seeder
             'status' => 1
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Шмидт',
@@ -106,11 +88,7 @@ class UserSeeder extends Seeder
             'status' => 2
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Поднебесная',
@@ -124,11 +102,7 @@ class UserSeeder extends Seeder
             'status' => 4
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Филлипов',
@@ -142,11 +116,7 @@ class UserSeeder extends Seeder
             'status' => 4
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Преснякова',
@@ -160,11 +130,7 @@ class UserSeeder extends Seeder
             'status' => 4
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Чехов',
@@ -178,11 +144,7 @@ class UserSeeder extends Seeder
             'status' => 4
         ];
 
-        $salt = base64_encode(random_bytes(12));
-        $hash = md5($password.$salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
+        list($hash, $salt) = Crypt::hash($password);
 
         $data[] = [
             'lastname' => 'Стацевич',

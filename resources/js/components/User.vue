@@ -83,6 +83,21 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="bloc-sessions" v-if="selectedTab === 2">
+                        <div class="h2">Сессии</div>
+                        <hr>
+
+                        <div class="sessions">
+                            <div class="session justify-content-between p-3 d-flex" v-for="session in sessions" :key="session.id" @click="removeSession(session.id, session.token)">
+                                <div>
+                                    <strong>{{ session.ip }}</strong>
+                                    <span style="padding-left: 10px" v-if="this.$store.getters['app/getToken'] === session.token">Ваша текующая сессия</span>
+                                </div>
+                                <span>{{ formatDate(session.term, false) }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -93,6 +108,21 @@
 export default {
     name: "User",
     inject: ['api', 'socket'],
+
+    mounted() {
+        if (this.$store.getters['user/getSessions'].length > 0) return;
+
+        this.api('user/sessions').then(data => {
+            data.forEach(session => {
+                this.$store.commit('user/pushSession', {
+                    id: session.id,
+                    token: session.token,
+                    term: session.term,
+                    ip: session.ip
+                })
+            })
+        })
+    },
 
     computed: {
         profileInfo() {
@@ -118,6 +148,10 @@ export default {
 
         title() {
             return this.$store.getters['user/getTitle'];
+        },
+
+        sessions() {
+            return this.$store.getters['user/getSessions'];
         }
     },
 
@@ -188,7 +222,6 @@ export default {
         },
 
         editSecurity(security) {
-            console.log(security);
             let title;
             if (security === 'mail') {
                 title = 'Измените почту';
@@ -200,7 +233,30 @@ export default {
             this.$store.commit('app/setWindow', {
                 name: 'passwordWindow',
                 type: security,
-                title
+                title,
+                buttonText: 'Изменить',
+                buttonStyle: 'yes-btn',
+            });
+        },
+
+        formatDate(date, time = true) {
+            if (typeof date !== "number") return 'Неизвестно';
+            date = new Date(date * 1000);
+
+            if (time) return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth()+1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2) + " " + date.getHours() + ":" + (date.getMinutes().toString().length < 2 ? '0' + (date.getMinutes()) : date.getMinutes());
+            return (date.getDate().toString().length < 2 ? '0' + date.getDate() : date.getDate()) + "." + ((date.getMonth() + 1).toString().length < 2 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1)) + "." + date.getFullYear().toString().substr(2,2);
+        },
+
+        removeSession(sessionId, token) {
+            this.$store.commit('app/setWindow', {
+                name: 'passwordWindow',
+                type: 'session',
+                title: 'Подтвердите свои действия',
+                description: 'Нажав на кнопку вы завершите данный сеанс',
+                token: token,
+                id: sessionId,
+                buttonText: 'Завершить',
+                buttonStyle: 'red-btn',
             });
         }
     }
@@ -325,6 +381,33 @@ export default {
     .svg:active {
         svg {
             stroke: #1C5542;
+        }
+    }
+
+    .bloc-sessions {
+        margin-top: 17px;
+
+        .sessions {
+            .session {
+                width: 100%;
+                background-color: #3C4870;
+                color: white;
+                cursor: pointer;
+                border-radius: 5px;
+                margin-bottom: 8px;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+
+            .session:hover {
+                background-color: #353F62;
+            }
+
+            .session:active {
+                background-color: #262E45;
+            }
         }
     }
 </style>

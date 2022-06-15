@@ -89,14 +89,20 @@ export default {
                     return;
                 }
 
-                this.api('statement/complete', {id: this.window.id, description: this.$refs.description.value}).then(() => {
+                this.api('statement/complete', {id: this.window.id, description: this.$refs.description.value}).then(data => {
                     this.$store.commit('statements/removeItem', this.window.index);
 
-                    let data = {
+                    // После успешного ремонта динамически изменить состояние техники на "Исправна"
+                    if (this.$store.getters['technical/getItems'].length !== 0) {
+                        this.$store.commit('technical/changeTechDescriptionProperty', { id: data, arg: ['status', 4] })
+                    }
+
+                    let localData = {
                         message: 'complete statement',
                         statementId: this.window.id,
+                        techId: data,
                     }
-                    this.socket.send(data);
+                    this.socket.send(localData);
                     this.close();
                 });
 

@@ -5,6 +5,7 @@ use App\Models\Premise;
 use App\Models\Repair;
 use App\Models\Report;
 use App\Models\Technic;
+use App\Models\Session;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
@@ -36,13 +37,17 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::post('user/changeMail', [UserController::class, 'changeMail']);
     Route::post('user/changePhone', [UserController::class, 'changePhone']);
     Route::post('user/changePassword', [UserController::class, 'changePassword']);
+    Route::post('user/sessions', [UserController::class, 'getSessions']);
+    Route::post('user/dropSession', [UserController::class, 'dropSession']);
+
+    Route::any('statement/get', [StatementController::class, 'get']);
+    Route::any('statement/add', [StatementController::class, 'add']);
 
     Route::middleware('access.level:4')->group(function () {
         Route::post('technic/getList', [TechnicController::class, 'getList']);
         Route::post('technic/getInfo', [TechnicController::class, 'getInfo']);
         Route::post('technic/move', [TechnicController::class, 'move']);
 
-        Route::any('statement/get', [StatementController::class, 'get']);
         Route::post('statement/accept', [StatementController::class, 'accept']);
         Route::post('statement/complete', [StatementController::class, 'complete']);
     });
@@ -62,11 +67,10 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
 Route::get('test', function () {
     DB::enableQueryLog();
 
-    $count = Repair::where('repairman_id', 2)->whereHas('report', function ($query) {
-        $query->whereHas('user', function ($query)  {
-            $query->select('id')->where('organization_id', 1);
-        })->select('id')->where('status', 4)->whereBetween('complete_date', [1654732800, 1655251200]);
-    })->count('id');
-//    dd($count);
+    $data = Session::where('user_id', 1)->where('id', 6)->where('removed', 1)
+        ->update(['removed' => 0]);
+
+//        if ($data === 0) abort(400, json_encode('Данной сессии не существует'));
+//    dd($data);
     dd(DB::getQueryLog());
 });

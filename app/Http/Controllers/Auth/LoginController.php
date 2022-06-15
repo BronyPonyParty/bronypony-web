@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Crypt;
 use App\Http\Controllers\Controller;
 use App\Models\Session;
 use App\Models\User;
@@ -31,15 +32,11 @@ class LoginController extends Controller
         $user = User::whereLogin($login)->where('status', '!=', 1)->first();
         if (empty($user)) abort(400, json_encode('Неверные данные входа'));
 
-        $hash = md5($password.$user->salt);
-        for ($i = 0; $i < 64000; $i++) {
-            $hash = md5($hash);
-        }
-
-        if ($user->password !== $hash) abort(400, json_encode('Неверные данные входа'));
+        if ( !Crypt::verify($password, $user->salt, $user->password) ) abort(400, json_encode('Неверные данные входа'));
 
 
-        //Если данные оказались верны
+        // Если данные оказались верны
+        // Генерация токена для сессии
         $token = '';
         for ($i = 0; $i < 5; $i++) {
             $token = md5(random_bytes(256));

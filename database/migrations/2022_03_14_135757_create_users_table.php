@@ -22,9 +22,9 @@ class CreateUsersTable extends Migration
 
             $table->string('login', 32)->unique();
 
-            $table->string('password', 32);
+            $table->string('password', 128);
 
-            $table->string('salt', 16);
+            $table->string('salt', 32);
 
             $table->string('phone_number', 16)->nullable()->unique();
 

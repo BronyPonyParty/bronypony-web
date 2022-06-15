@@ -200,7 +200,7 @@ export default {
 
         getUserInfo() {
             return this.$store.getters['user/getProfileInfo'];
-        }
+        },
     },
 
     methods: {

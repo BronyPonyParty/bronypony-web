@@ -18,6 +18,7 @@ export default {
             buttonText: '',
             buttonStyle: '',
             description: '',
+            token: '',
             width: 0,
             height: 0,
             id: null,
