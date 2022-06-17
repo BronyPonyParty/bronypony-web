@@ -14,26 +14,25 @@
                         </div>
 
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            <div class="gap-4" style="justify-content: space-between; display: flex;">
-                                <input class="form-control outline-text"
-                                       placeholder="Название"
-                                       ref="name"
-                                       maxlength="64"
-                                       @focus="$refs.name.classList.remove('border-red')">
-                                <input class="form-control outline-text"
-                                       placeholder="Номер"
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                       ref="number"
-                                       maxlength="10"
-                                       @focus="$refs.number.classList.remove('border-red')">
+                            <div class="gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
+                                <div>
+                                    <label>Название</label>
+                                    <v-input ref="inputName" maxlength="64"></v-input>
+                                </div>
+
+
+                                <div>
+                                    <label>Номер</label>
+                                    <v-input ref="inputNumber" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></v-input>
+                                </div>
                             </div>
 
                             <div class="item">
+                                <label>Описание</label>
                                 <textarea class="form-control outline-text"
-                                          placeholder="Описание"
                                           ref="description"
                                           maxlength="1024"
-                                          @focus="$refs.description.classList.remove('border-red')"></textarea>
+                                          @focus="$refs.description.classList.remove('textarea-error')"></textarea>
                             </div>
 
                             <div class="item" style="text-align: right">
@@ -48,6 +47,7 @@
 </template>
 
 <script>
+import vInput from '../Input';
 export default {
     name: "addTechWindow",
     inject: ['api'],
@@ -58,43 +58,45 @@ export default {
         },
 
         addTech() {
-            let name = this.$refs.name;
-            let number = this.$refs.number;
+            let inputName = this.$refs.inputName;
+            let inputNumber = this.$refs.inputNumber;
             let description = this.$refs.description;
-            let errorMass = [];
+            let errored = false;
 
-            if (name.value.trim().length > 64) {
-                name.classList.add('border-red');
-                errorMass.push('Длина названия не должна превышать 64 символов');
+            if (inputName.value.trim().length > 64) {
+                inputName.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
             }
-            if (name.value.trim().length === 0) {
-                name.classList.add('border-red');
-                errorMass.push('Поле с названием должно быть заполнено');
-            }
-
-            if (number.value.trim().length > 10) {
-                number.classList.add('border-red');
-                errorMass.push('Длина номера не должна превышать 10 символов');
-            }
-            if (number.value.trim().length === 0) {
-                number.classList.add('border-red');
-                errorMass.push('Поле с номером должно быть заполнено');
-            }
-            if (number.value.trim()[0] === '0') {
-                number.classList.add('border-red');
-                errorMass.push('Номер не может начинаться с 0');
+            if (inputName.value.trim().length === 0) {
+                inputName.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
-            if (errorMass.length > 0) {
-                console.log(errorMass);
-                return;
+            if (inputNumber.value.trim().length > 10) {
+                inputNumber.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+            if (inputNumber.value.trim().length === 0) {
+                inputNumber.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
+            }
+            if (inputNumber.value.trim()[0] === '0') {
+                inputNumber.errorInfoText = 'Номер не может начинаться с 0';
+                errored = true;
             }
 
-            this.api('technic/add', {name: name.value.trim(), number: number.value.trim(), description: description.value.trim()}).then(data => {
+            if (description.value.trim().length > 1024) {
+                description.classList.add('textarea-error');
+                errored = true;
+            }
+
+            if (errored) return;
+
+            this.api('technic/add', {name: inputName.value.trim(), number: inputNumber.value.trim(), description: description.value.trim()}, false).then(data => {
                 this.$store.commit('technical/pushItem', {
                     id: data,
-                    name: name.value.trim(),
-                    number: number.value.trim(),
+                    name: inputName.value.trim(),
+                    number: inputNumber.value.trim(),
                     cabinet: '',
                     date: Math.round(new Date().getTime() / 1000.0),
                     description: description.value.replace(/\s+/g, ' ').trim(), // Убираем лишние пробелы
@@ -102,8 +104,47 @@ export default {
                 });
 
                 this.close();
+            }).catch(error => {
+                const errors = error.response.data.errors;
+
+                if (errors.name !== undefined) {
+                    if (errors.name.Required) {
+                        inputName.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        inputName.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.number !== undefined) {
+                    if (errors.number.Required) {
+                        inputNumber.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else if (errors.number.Max) {
+                        inputNumber.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                    else if (errors.number.Integer) {
+                        inputNumber.errorInfoText = 'Разрешается вводить только цифры';
+                    }
+                    else if (errors.number.Zero) {
+                        inputNumber.errorInfoText = 'Номер не может начинаться с 0';
+                    }
+                    else {
+                        inputNumber.errorInfoText = 'Номер уже используется';
+                    }
+                }
+
+                if (errors.description !== undefined) {
+                    if (errors.description.Max) {
+                        description.classList.add('textarea-error');
+                    }
+                }
             });
-        }
+        },
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -125,11 +166,6 @@ strong {
     display: flex;
 }
 
-input:focus {
-    border-color: #5374D1;
-    box-shadow: inherit;
-}
-
 .item {
     margin-top: 16px;
 
@@ -143,10 +179,6 @@ input:focus {
     }
 }
 
-.border-red {
-    border-color: red
-}
-
 .outline-text {
     font-size: 16px;
     height: 35px;
@@ -154,5 +186,9 @@ input:focus {
 
 .outline-text:focus {
     border-color: #5374D1;
+}
+
+.textarea-error {
+    border-color: #E64825;
 }
 </style>

@@ -15,13 +15,13 @@
                             </div>
 
                             <div class="form-white my-4">
-                                <label class="form-label">Логин</label>
-                                <input class="form-control form-control-lg outline-text" ref="login" @keyup.enter="authorization"/>
+                                <label>Логин</label>
+                                <v-input ref="inputLogin" @keyup.enter="authorization"></v-input>
                             </div>
 
                             <div class="form-white mb-4">
-                                <label class="form-label">Пароль</label>
-                                <input type="password" class="form-control form-control-lg outline-text" ref="password" @keyup.enter="authorization"/>
+                                <label>Пароль</label>
+                                <v-input ref="inputPassword" type="password" @keyup.enter="authorization"></v-input>
                             </div>
 
                             <button class="btn btn-lg w-100 text-white outline-button" style="border: none; box-shadow: inherit;" type="submit" @click="authorization">Войти в систему</button>
@@ -35,13 +35,14 @@
 </template>
 
 <script>
+import vInput from './Input'
 export default {
     name: 'Login',
     inject: ['api', 'socket'],
 
     methods: {
         authorization() {
-            this.api('login', {login: this.$refs.login.value, password: this.$refs.password.value}).then(data => {
+            this.api('login', {login: this.$refs.inputLogin.value, password: this.$refs.inputPassword.value}, false).then(data => {
                 this.$store.commit('user/setProfileInfo', {
                     id: data[1].id,
                     organization_id: data[1].organization_id,
@@ -101,9 +102,41 @@ export default {
                 }).catch(() => {
                     console.log('connect error');
                 });
-            });
 
+            }).catch(error => {
+                const errors = error.response.data.errors;
+
+                if (errors.login !== undefined) {
+
+                    if (errors.login.Required) {
+                        this.$refs.inputLogin.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else if (errors.login.Max) {
+                        this.$refs.inputLogin.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                    else {
+                        this.$refs.inputLogin.errorInfoText = 'Неверный данные';
+                    }
+                }
+
+                if (errors.password !== undefined) {
+
+                    if (errors.password.Required) {
+                        this.$refs.inputPassword.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else if (errors.password.Max) {
+                        this.$refs.inputPassword.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                    else {
+                        this.$refs.inputPassword.errorInfoText = 'Неверный данные';
+                    }
+                }
+            });
         },
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -140,5 +173,13 @@ export default {
     }
     .outline-button:active {
         background-color: #1E367E;
+    }
+
+    .text-error {
+        color: #E64825;
+    }
+
+    .input-error {
+        border-color: #E64825;
     }
 </style>

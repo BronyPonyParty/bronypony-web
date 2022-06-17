@@ -14,31 +14,41 @@
                         </div>
 
                         <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
-                            <div class="gap-4" style="justify-content: space-between; display: flex;">
-                                <input class="form-control outline-text"
-                                       placeholder="Фамилия"
-                                       ref="firstname"
-                                       maxlength="32"
-                                       @focus="$refs.firstname.classList.remove('border-red')">
-                                <input class="form-control outline-text"
-                                       placeholder="Имя"
-                                       ref="lastname"
-                                       maxlength="32"
-                                       @focus="$refs.lastname.classList.remove('border-red')">
+                            <div class="gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
+                                <div>
+                                    <label>Фамилия</label>
+                                    <input class="form-control outline-text"
+                                           ref="firstname"
+                                           maxlength="32"
+                                           @focus="$refs.firstname.classList.remove('border-red')">
+                                </div>
+
+                                <div>
+                                    <label>Имя</label>
+                                    <input class="form-control outline-text"
+                                           ref="lastname"
+                                           maxlength="32"
+                                           @focus="$refs.lastname.classList.remove('border-red')">
+                                </div>
                             </div>
 
-                            <div class="item gap-4" style="justify-content: space-between; display: flex;">
-                                <input class="form-control outline-text"
-                                       placeholder="Логин"
-                                       ref="login"
-                                       maxlength="64"
-                                       @focus="$refs.login.classList.remove('border-red')">
-                                <input class="form-control outline-text"
-                                       type="password"
-                                       placeholder="Пароль"
-                                       ref="password"
-                                       maxlength="128"
-                                       @focus="$refs.password.classList.remove('border-red')">
+                            <div class="item gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
+                                <div>
+                                    <label>Логин</label>
+                                    <input class="form-control outline-text"
+                                           ref="login"
+                                           maxlength="64"
+                                           @focus="$refs.login.classList.remove('border-red')">
+                                </div>
+
+                                <div>
+                                    <label>Пароль</label>
+                                    <input class="form-control outline-text"
+                                           type="password"
+                                           ref="password"
+                                           maxlength="128"
+                                           @focus="$refs.password.classList.remove('border-red')">
+                                </div>
                             </div>
 
                             <div class="item">

@@ -108,16 +108,14 @@ class TechnicController extends Controller
             'technicId' => 'required|int'
         ]);
 
-        if ($validator->fails()) {
-            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
-        }
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $user = AuthFacade::user();
         $cabinet = $request->post('cabinet');
         $technicId = $request->post('technicId');
 
         $premise = Premise::select('id')->where('number', $cabinet)->where('organization_id', $user->organization_id)->first();
-        if (empty($premise)) abort(400, json_encode('Данного кабинета не существует'));
+        if (empty($premise)) return response(['errors' => ['cabinet' => ['NotFound' => []]]], 400);
 
         $movingTechnic = new MovingTechnic();
         $movingTechnic->user_id = $user->id;
@@ -153,35 +151,23 @@ class TechnicController extends Controller
 
     public function add(Request $request) {
         $validator = Validator::make($request->all(), [
-            'name' => 'required:max:64',
+            'name' => 'required|max:64',
             'number' => 'required|max:10',
             'description' => 'max:1024',
-        ],
-            [
-                'name.required' => 'Название должно быть заполнена',
-                'name.max' => 'Длина названия не должна превышать 64 символа',
+        ]);
 
-                'number.required' => 'Номер должнен быть заполнен',
-                'number.max' => 'Длина номера не должна превышать 10 символов',
-
-                'description.max' => 'Длина описания не должна превышать 1024 символов',
-            ]
-        );
-
-        if ($validator->fails()) {
-            abort(400, json_encode($validator->getMessageBag()));
-        }
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $authUser = AuthFacade::user();
         $name = $request->post('name');
         $number = trim($request->post('number'));
         $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
 
-        if (!ctype_digit($number)) abort(400, json_encode('Номер должен содержать только целые числа'));
-        if ($number[0] == 0) abort(400, json_encode('Номер не может начинаться с 0'));
+        if (!ctype_digit($number)) return response(['errors' => ['number' => ['Integer' => []]]], 400);
+        if ($number[0] == 0) return response(['errors' => ['number' => ['Zero' => []]]], 400);
 
         $unique = Technic::where('organization_id', $authUser->organization_id)->where('number', $number)->where('status', '!=', 1)->first();
-        if (!empty($unique)) abort(400, json_encode('Данный номер уже используется'));
+        if (!empty($unique)) return response(['errors' => ['number' => ['Busy' => []]]], 400);
 
         $technic = new Technic();
         $technic->name = $name;
@@ -200,7 +186,7 @@ class TechnicController extends Controller
             'techId' => 'required|integer'
         ]);
 
-        if ($validator->fails()) abort(400, json_encode('Данной техники не существует'));
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $deleteTechId = $request->post('techId');
         $authUser = AuthFacade::user();
@@ -208,7 +194,7 @@ class TechnicController extends Controller
         $tech = Technic::where('id', $deleteTechId)->where('organization_id', $authUser->organization_id)
             ->where('status', '!=', 1)->update(['status' => 1]);
 
-        if ($tech === 0) abort(400, json_encode('Данной техники не существует, либо она уже удалёна'));
+        if ($tech === 0) return response(['errors' => ['techId' => ['NotFound' => []]]], 400);
 
         return 'OK';
     }

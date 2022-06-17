@@ -108,6 +108,7 @@ export default {
                     });
                 });
 
+
                 data[1].forEach(item => {
                     this.$store.commit('techInfo/setTechRepairs', {
                         id: item.id,
@@ -150,7 +151,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     strong {
         font-weight: 600;
     }

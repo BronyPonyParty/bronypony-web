@@ -16,21 +16,15 @@ class LoginController extends Controller
         $validator = Validator::make($request->all(), [
             'login' => 'required|max:32',
             'password' => 'required|max:128',
-        ], [
-            'required' => 'Все поля должны быть заполнены',
-            'login.max' => 'Максимальная длина логина 32 символа',
-            'password.max' => 'Максимальная длина пароля 128 символов'
         ]);
 
-        if ($validator->fails()) {
-            abort(400, $validator->getMessageBag());
-        }
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $login = $request->post('login');
         $password = $request->post('password');
 
         $user = User::whereLogin($login)->where('status', '!=', 1)->first();
-        if (empty($user)) abort(400, json_encode('Неверные данные входа'));
+        if (empty($user)) return response(['errors' => ['password' => ['Incorrect' => []], 'login' => ['Incorrect' => []]]], 400);
 
         if ( !Crypt::verify($password, $user->salt, $user->password) ) abort(400, json_encode('Неверные данные входа'));
 

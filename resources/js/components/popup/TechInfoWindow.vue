@@ -15,7 +15,7 @@
                             </div>
 
                             <div class="position-relative">
-                                <button class="btn header-btn" @click="deleteTech" style="border: none; box-shadow: inherit;">
+                                <button class="btn header-btn" @click="deleteTech" style="border: none; box-shadow: inherit;" v-if="descriptionShowed && getUserInfo.status >= 8">
                                     <svg viewBox="0 0 24 24" width="18" height="18" fill="white" xmlns="http://www.w3.org/2000/svg"><g data-name="4. Trash" id="_4._Trash"><path d="M18,4H17V3a3,3,0,0,0-3-3H10A3,3,0,0,0,7,3V4H6A3,3,0,0,0,3,7V9a1,1,0,0,0,1,1h.069l.8,11.214A3.012,3.012,0,0,0,7.862,24h8.276a3.012,3.012,0,0,0,2.992-2.786L19.931,10H20a1,1,0,0,0,1-1V7A3,3,0,0,0,18,4ZM9,3a1,1,0,0,1,1-1h4a1,1,0,0,1,1,1V4H9ZM5,7A1,1,0,0,1,6,6H18a1,1,0,0,1,1,1V8H5ZM17.136,21.071a1,1,0,0,1-1,.929H7.862a1,1,0,0,1-1-.929L6.074,10H17.926Z"/><path d="M10,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,10,20Z"/><path d="M14,20a1,1,0,0,0,1-1V13a1,1,0,0,0-2,0v6A1,1,0,0,0,14,20Z"/></g></svg>
                                 </button>
                                 <button class="btn header-btn" :class="{ active: getEditDescriptionShowed }" @click="editMode" style="border: none; box-shadow: inherit" v-if="descriptionShowed && getUserInfo.status >= 8"><svg width="20px" height="20px" viewBox="0 0 54 62" xmlns="http://www.w3.org/2000/svg">
@@ -42,7 +42,8 @@
                                     <span>Откуда</span>
                                     <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
                                     <span>Куда</span>
-                                    <input class="form-control outline-text" ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @focus="removeRed">
+                                    <v-input ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" :little="true"></v-input>
+<!--                                    <input class="form-control outline-text" ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @focus="removeRed">-->
                                     <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" @click="moveTechnic"><strong>Переместить</strong></button>
                                 </div>
 
@@ -92,11 +93,11 @@
                             <div class="techList" v-if="getTechRepairs.length !== 0">
                                 <div class="tech" v-for="(item, index) in getTechRepairs" :key="item.id">
 
-                                    <div class="item justify-content-between p-3 d-flex" @click="toggleDescription(index)">
+                                    <div class="item cur-point justify-content-between p-3 d-flex" @click="toggleDescription(index)">
                                         <strong>{{ item.repairman }}</strong>
                                         <div>
                                             <span>{{ formatDate(item.startDate) + '/' + formatDate(item.endDate) }}</span>
-                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" class="cur-point" style="margin-left: 10px">
+                                            <svg width="16" height="16" fill="currentColor" viewBox="0 0 18 18" style="margin-left: 10px">
                                                 <path  d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/>
                                             </svg>
                                         </div>
@@ -105,7 +106,7 @@
                                     <div v-if="item.visibility">
                                         <div>
                                             <div v-if="item.textSwitcher">
-                                                <div v-if="item.repairmanDescription.length !== 0">
+                                                <div v-if="item.repairmanDescription">
                                                     {{ item.repairmanDescription }}
                                                 </div>
                                                 <div class="h4 d-flex justify-content-center" style="opacity: 40%; margin-bottom: 0" v-else>
@@ -113,7 +114,7 @@
                                                 </div>
                                             </div>
                                             <div v-else>
-                                                <div v-if="item.userDescription.length !== 0">
+                                                <div v-if="item.userDescription">
                                                     {{item.userDescription}}
                                                 </div>
                                                 <div class="h4 d-flex justify-content-center" style="opacity: 40%; margin-bottom: 0" v-else>
@@ -157,6 +158,7 @@
 </template>
 
 <script>
+import vInput from '../Input';
 export default {
     name: "TechInfoWindow",
     inject: ['api'],
@@ -291,12 +293,16 @@ export default {
             let technicId = this.getTechDescription.id;
 
             // Некая валидация
-            if (cabinet.length === 0 || cabinet.length > 6) {
-                this.$refs.cabinetInput.classList.add('border-red');
+            if (cabinet.length === 0) {
+                this.$refs.cabinetInput.errorInfoText = 'Поле не может быть пустым';
+                return;
+            }
+            if (cabinet.length > 6) {
+                this.$refs.cabinetInput.errorInfoText = 'Вы превысили лимит символов';
                 return;
             }
 
-            this.api('technic/move', {cabinet, technicId}).then(data => {
+            this.api('technic/move', {cabinet, technicId}, false).then(data => {
                 let authUser = this.$store.getters['user/getProfileInfo'];
 
                 this.$store.commit('techInfo/changeTechDescriptionProperty', ['cabinet', cabinet]);
@@ -307,6 +313,24 @@ export default {
                 });
 
                 this.$refs.cabinetInput.value = null;
+            }).catch(error => {
+                const errors = error.response.data.errors;
+
+                if (errors.cabinet !== undefined) {
+
+                    if (errors.cabinet.NotFound) {
+                        this.$refs.cabinetInput.errorInfoText = 'Данного кабинет не существует';
+                    }
+                    else if (errors.cabinet.Required) {
+                        this.$refs.cabinetInput.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else if (errors.cabinet.Integer) {
+                        this.$refs.cabinetInput.errorInfoText = 'Поле может содержать только цифры';
+                    }
+                    else {
+                        this.$refs.cabinetInput.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
             });
         },
 
@@ -327,6 +351,10 @@ export default {
             });
         }
     },
+
+    components: {
+        vInput
+    }
 }
 </script>
 
@@ -382,6 +410,7 @@ export default {
         justify-content: space-between;
     }
 
+
     .techList {
         border-radius: 5px;
         max-height: 500px;
@@ -399,11 +428,11 @@ export default {
             }
         }
 
+
         .item {
             width: 100%;
             background-color: #3C4870;
             color: white;
-            cursor: pointer;
             border-radius: 5px;
             margin-bottom: 8px;
 
@@ -411,10 +440,14 @@ export default {
                 margin-bottom: 0;
             }
         }
-        .item:hover {
+
+        .cur-point {
+            cursor: pointer;
+        }
+        .cur-point:hover {
             background-color: #353F62;
         }
-        .item:active {
+        .cur-point:active {
             background-color: #262E45;
         }
     }

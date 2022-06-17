@@ -158,7 +158,7 @@ class StatementController extends Controller
         $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
         $authUser = AuthFacade::user();
 
-        $technic = Technic::select(['id', 'name', 'cabinet', 'status'])->where('organization_id', $authUser->organization_id)->where('number', $number)->first();
+        $technic = Technic::select(['id', 'name', 'cabinet', 'status'])->where('organization_id', $authUser->organization_id)->where('number', $number)->where('status', '!=', 1)->first();
         if (empty($technic)) abort(400, json_encode('Данной техники не существует в вашей организации'));
         if ($technic->status == 2) abort(400, json_encode('Данная техника уже ожидает ремонта'));
 

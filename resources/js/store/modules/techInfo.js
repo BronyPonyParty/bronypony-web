@@ -65,7 +65,7 @@ export default {
         },
 
 
-        setTechDescription(state, {id, name, cabinet, date, description, provider, status}) {
+        setTechDescription(state, {id, name, cabinet, date, description, status}) {
             state.techDescription = {
                 id,
                 name,

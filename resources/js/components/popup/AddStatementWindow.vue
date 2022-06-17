@@ -14,16 +14,16 @@
                     </div>
 
                     <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
+                        <label>Номер техники</label>
                         <input class="form-control outline-text"
-                               placeholder="Номер техники"
                                ref="number"
                                maxlength="10"
                                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                                @focus="$refs.number.classList.remove('border-red')">
 
                         <div class="description">
+                            <label>Описание</label>
                             <textarea class="form-control outline-text"
-                                      placeholder="Описание"
                                       ref="description"
                                       maxlength="1024"
                                       @focus="$refs.description.classList.remove('border-red')"></textarea>

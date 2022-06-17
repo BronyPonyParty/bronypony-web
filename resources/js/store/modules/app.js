@@ -7,7 +7,8 @@ export default {
         page: localStorage.getItem('page') || '',
 
         popup: {
-            name: '',
+            bool: false,
+            title: '',
             description: ''
         },
 
