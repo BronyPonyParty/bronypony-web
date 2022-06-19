@@ -80,8 +80,15 @@
                                 <div class="note" style="padding: 0 0 0 0; margin: 0;">Вы можете узнать количество выполненных заказон за определённый интервал.</div>
 
                                 <div style="display: flex; gap: 8px; padding: 8px 0;">
-                                    <input type="date" ref="startInterval">
-                                    <input type="date" ref="endInterval" :max="new Date()">
+                                    <input
+                                        type="date"
+                                        ref="startInterval">
+                                    <input
+                                        type="date"
+                                        ref="endInterval">
+                                    <span
+                                        class="d-flex align-items-center"
+                                        v-if="interval !== null">{{ interval }}</span>
                                 </div>
 
                                 <div style="padding: 0 0 16px 0;">
@@ -102,6 +109,10 @@ export default {
     name: "UserInfoWindow",
     inject: ['api'],
 
+    data: () => ({
+        interval: null
+    }),
+
     computed: {
         userInfo() {
             return this.$store.getters['userInfo/getUserInfo'];
@@ -117,15 +128,12 @@ export default {
             let startDate = this.$refs.startInterval.valueAsNumber / 1000 || ''; // Перевод в секунды
             let endDate = this.$refs.endInterval.valueAsNumber / 1000 || ''; // Перевод в секунды
 
-            if (startDate === '' || endDate === '') {
-                console.log('Обе даты должны быть указаны');
-                return;
-            }
+            if (startDate === '' || endDate === '') return;
 
             let userId = this.$store.getters['userInfo/getUserInfo'].id;
 
             this.api('user/getInterval', {userId, startDate, endDate}).then(data => {
-                console.log('Количество выполненных заказов = ', data);
+                this.interval = data;
             });
         },
 

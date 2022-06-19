@@ -19,18 +19,22 @@
 
                     <div class="edit-list w-100 justify-content-between d-flex" v-if="selectedTab === 1">
                         <div>
-                            <div class="edit-group">
+                            <div class="edit-group w-220">
                                 <strong>Фамилия</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnFirstname" ref="firstname" v-model="newProfileInfo.lastname">
+                                <v-input maxlength="32" ref="firstname" v-model:title="newProfileInfo.firstname"></v-input>
                             </div>
-                            <div class="edit-group">
+                            <div class="edit-group w-220">
                                 <strong>Имя</strong>
-                                <input class="form-control form-control-lg outline-text" maxlength="32" @focus="removeRedOnLastname" ref="lastname" v-model="newProfileInfo.firstname">
+                                <v-input maxlength="32" ref="lastname"  v-model:title="newProfileInfo.lastname"></v-input>
                             </div>
-                            <div class="edit-group d-sm-none">
+                            <div class="edit-group d-sm-none" style="position: relative;">
                                 <strong>Изображение</strong>
-                                <div class="avatar-image cur-point" @click="$refs.inputFile.click()">
+                                <div class="avatar-image cur-point" @click="$refs.inputFile.click(); clearError()">
                                     <img :src="newProfileInfo.avatar" alt="Avatar" class="rounded-circle">
+                                </div>
+                                <svg v-if="error.errorInfoText !== ''" @click="toggleErrorVisible" viewBox="0 0 32 32" style="position: absolute; right: 5px; top: 34px;" width="22" height="32" xmlns="http://www.w3.org/2000/svg"><path fill="#E64825" d="M28.83,24.45l-12-18a1,1,0,0,0-1.66,0l-12,18a1,1,0,0,0,0,1A1,1,0,0,0,4,26H28a1,1,0,0,0,.88-.53A1,1,0,0,0,28.83,24.45Z"/><path fill="white" d="M16,20a1,1,0,0,1-1-1V13a1,1,0,0,1,2,0v6A1,1,0,0,1,16,20Z"/><path fill="white" d="M16,23a1,1,0,0,1-1-1,1,1,0,0,1,2,0A1,1,0,0,1,16,23Z"/></svg>
+                                <div class="error-info" style="top: 64px; bottom: inherit;" ref="errorInfo" v-if="error.visibleError && error.errorInfoText !== ''">
+                                    <span>{{ error.errorInfoText }}</span>
                                 </div>
                             </div>
                             <div class="edit-group buttons">
@@ -43,11 +47,15 @@
                             </div>
                         </div>
 
-                        <div class="d-none d-sm-block">
+                        <div class="d-none d-sm-block" style="position: relative;">
                             <strong>Изображение</strong>
-                            <div class="avatar-image cur-point"  @click="$refs.inputFile.click()">
+                            <div class="avatar-image cur-point"  @click="$refs.inputFile.click(); clearError()">
                                 <input type="file" accept=".jpg, .png, .jpeg" ref="inputFile" hidden @change="loadAvatar">
                                 <img :src="newProfileInfo.avatar" alt="Avatar" class="rounded-circle">
+                            </div>
+                            <svg v-if="error.errorInfoText !== ''" @click="toggleErrorVisible" viewBox="0 0 32 32" style="position: absolute; right: 5px; bottom: 34px;" width="22" height="32" xmlns="http://www.w3.org/2000/svg"><path fill="#E64825" d="M28.83,24.45l-12-18a1,1,0,0,0-1.66,0l-12,18a1,1,0,0,0,0,1A1,1,0,0,0,4,26H28a1,1,0,0,0,.88-.53A1,1,0,0,0,28.83,24.45Z"/><path fill="white" d="M16,20a1,1,0,0,1-1-1V13a1,1,0,0,1,2,0v6A1,1,0,0,1,16,20Z"/><path fill="white" d="M16,23a1,1,0,0,1-1-1,1,1,0,0,1,2,0A1,1,0,0,1,16,23Z"/></svg>
+                            <div class="error-info" ref="errorInfo" style="bottom: inherit;" v-if="error.visibleError && error.errorInfoText !== ''">
+                                <span>{{ error.errorInfoText }}</span>
                             </div>
                         </div>
                     </div>
@@ -105,6 +113,7 @@
 </template>
 
 <script>
+import vInput from './Input';
 export default {
     name: "User",
     inject: ['api', 'socket'],
@@ -152,6 +161,10 @@ export default {
 
         sessions() {
             return this.$store.getters['user/getSessions'];
+        },
+
+        error() {
+            return this.$store.getters['user/getError'];
         }
     },
 
@@ -164,28 +177,37 @@ export default {
         },
 
         saveUserData() {
-            const firstname = this.$refs.firstname.value;
-            const lastname = this.$refs.lastname.value;
-
-            if (firstname.trim() === '' ||
-                firstname.trim().length > 32 ||
-                lastname.trim() === '' ||
-                lastname.trim().length > 32) {
-                if (firstname.trim() === '' || firstname.trim().length > 32) this.$refs.firstname.classList.add('border-red');
-                if (lastname.trim() === '' || lastname.trim().length > 32) this.$refs.lastname.classList.add('border-red');
-                return;
-            }
-
             const userData = this.$store.getters['user/getProfileInfo'];
             const newUserData = this.$store.getters['user/getNewProfileInfo'];
             const avatar = this.$store.getters['user/getSelectedFile'];
+            let errored = false;
+
+            if (newUserData.firstname.trim().length === 0) {
+                this.$refs.firstname.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
+            }
+            if (newUserData.firstname.trim().length > 32) {
+                this.$refs.firstname.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+
+            if (newUserData.lastname.trim().length === 0) {
+                this.$refs.lastname.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
+            }
+            if  (newUserData.lastname.trim().length > 32){
+                this.$refs.lastname.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+
+            if (errored) return;
 
             const formData = new FormData();
             formData.append('avatar', avatar);
             formData.append('firstname', newUserData.firstname);
             formData.append('lastname', newUserData.lastname);
 
-            this.api('user/saveUserData', formData).then(() => {
+            this.api('user/saveUserData', formData, false).then(() => {
                 if (userData.firstname !== newUserData.firstname || userData.lastname !== newUserData.lastname) {
                     let localData = {
                         message: 'change name',
@@ -198,22 +220,52 @@ export default {
                 this.$store.commit('user/changeItemProperty', ['firstname', newUserData.firstname])
                 this.$store.commit('user/changeItemProperty', ['lastname', newUserData.lastname])
                 this.$store.commit('user/changeItemProperty', ['avatar', newUserData.avatar])
+            }).catch(error => {
+                if (error.response.status === 401) {
+                    this.$store.dispatch('auth/logout');
+                    return;
+                }
+
+                const errors = error.response.data.errors;
+
+                if (errors.firstname !== undefined) {
+                    if (errors.firstname.Required) {
+                        this.$refs.firstname.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        this.$refs.firstname.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.lastname !== undefined) {
+                    if (errors.lastname.Required) {
+                        this.$refs.lastname.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        this.$refs.lastname.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.avatar !== undefined) {
+                    if (errors.avatar.BigSize) {
+                        this.setErrorInfoText('Вес картинки должен быть не больше 1МБ');
+                    }
+                    else if (errors.avatar.NotSupported) {
+                        this.setErrorInfoText('Мы поддерживаем только изображения png, jpg и jpeg');
+                    }
+
+                    else {
+                        this.setErrorInfoText('Изображение должно быть не больше 512x512');
+                    }
+                }
             })
         },
 
-        removeRedOnFirstname() {
-            this.$refs.firstname.classList.remove('border-red');
-        },
-
-        removeRedOnLastname() {
-            this.$refs.lastname.classList.remove('border-red');
-        },
-
         cancelInfo() {
-            this.removeRedOnFirstname();
-            this.removeRedOnLastname();
             this.$refs.inputFile.value = ''; // Исправляем баг с неизменяемой аватаркой
             this.$store.commit('user/cancelInfo');
+
+            this.clearError();
         },
 
         setTab(value, title) {
@@ -258,7 +310,26 @@ export default {
                 buttonText: 'Завершить',
                 buttonStyle: 'red-btn',
             });
+        },
+
+        toggleErrorVisible() {
+            this.$store.commit('user/toggleErrorVisible');
+        },
+
+        setErrorInfoText(text) {
+            this.$store.commit('user/setErrorInfoText', text);
+        },
+
+        clearError() {
+            this.$refs.firstname.errorInfoText = '';
+            this.$refs.lastname.errorInfoText = '';
+            if (this.error.visibleError) this.toggleErrorVisible();
+            this.setErrorInfoText('');
         }
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -307,6 +378,10 @@ export default {
     .buttons {
         display: flex;
         gap: 10px;
+    }
+
+    .w-220 {
+        max-width: 220px;
     }
 
     .edit-list {
@@ -409,5 +484,31 @@ export default {
                 background-color: #262E45;
             }
         }
+    }
+
+    .error-info {
+        max-width: 180px;
+        font-size: 12px;
+        padding: 8px;
+        position: absolute;
+        right: 5px;
+        bottom: -37px;
+        background-color: white;
+        color: #E64825;
+        border-radius: 2px;
+        box-shadow: 0 0 5px #B2B2B2;
+        display: flex;
+        align-items: center;
+    }
+    .error-info:after {
+        width: 0;
+        height: 0;
+        right: 7px;
+        border-left: 4px solid transparent;
+        border-right: 4px solid transparent;
+        border-bottom: 8px solid white;
+        position: absolute;
+        content: '';
+        top: -8px;
     }
 </style>

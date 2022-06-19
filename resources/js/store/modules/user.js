@@ -13,6 +13,11 @@ export default {
             status: ''
         },
 
+        error: {
+            errorInfoText: '',
+            visibleError: false,
+        },
+
         sessions: [],
 
         newUserData: {
@@ -30,7 +35,10 @@ export default {
     actions: {
         loadAvatar(ctx, {file, fileValue}) {
             if (fileValue === '') return; // Если пользователь нажимает отмена в выборе файла
-            if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) return console.log('Мы поддерживаем только изображения png, jpg и jpeg');
+            if (!/.(png|jpg|jpeg|JPG|JPEG)$/.test(file.name)) {
+                ctx.state.error.errorInfoText = 'Мы поддерживаем только изображения png, jpg и jpeg';
+                return;
+            }
 
             const image = new Image();
             const fr = new FileReader();
@@ -39,14 +47,14 @@ export default {
                 image.src = [e.target.result].join('');
 
                 image.onload = function() {
-                    if (this.naturalHeight > 512 && this.naturalWidth > 512) return console.log('Изображение слишком большое, размер картинки должен быть не больше 512x512');
-                    if (e['total'] > 100000) return console.log('Вес картинки должен быть не больше 1МБ');
+                    if (this.naturalHeight > 512 && this.naturalWidth > 512) return ctx.state.error.errorInfoText = 'Изображение должно быть не больше 512x512';
+                    if (e['total'] > 100000) return ctx.state.error.errorInfoText = 'Вес картинки должен быть не больше 1МБ';
                     ctx.commit('setAvatar', [e.target.result].join(''));
                     ctx.commit('setSelectedFile', file);
                 }
 
                 image.onerror = function () {
-                    console.log('Содержимое файла не соответствует расширению файла');
+                    ctx.state.error.errorInfoText = 'Содержимое файла не соответствует расширению файла';
                 }
             }
         }
@@ -118,6 +126,14 @@ export default {
                     break;
                 }
             }
+        },
+
+        setErrorInfoText(state, text) {
+            state.error.errorInfoText = text;
+        },
+
+        toggleErrorVisible(state) {
+            state.error.visibleError ^= true;
         }
 
     },
@@ -145,6 +161,10 @@ export default {
 
         getSessions(state) {
             return state.sessions;
+        },
+
+        getError(state) {
+            return state.error;
         }
     }
 }

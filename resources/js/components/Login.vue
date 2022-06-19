@@ -16,12 +16,12 @@
 
                             <div class="form-white my-4">
                                 <label>Логин</label>
-                                <v-input ref="inputLogin" @keyup.enter="authorization"></v-input>
+                                <v-input ref="inputLogin" maxlength="32" @keyup.enter="authorization"></v-input>
                             </div>
 
                             <div class="form-white mb-4">
                                 <label>Пароль</label>
-                                <v-input ref="inputPassword" type="password" @keyup.enter="authorization"></v-input>
+                                <v-input ref="inputPassword" maxlength="128" type="password" @keyup.enter="authorization"></v-input>
                             </div>
 
                             <button class="btn btn-lg w-100 text-white outline-button" style="border: none; box-shadow: inherit;" type="submit" @click="authorization">Войти в систему</button>
@@ -42,6 +42,30 @@ export default {
 
     methods: {
         authorization() {
+            let login = this.$refs.inputLogin;
+            let password = this.$refs.inputPassword;
+            let errored = false;
+
+            if (login.value.trim().length === 0) {
+                login.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
+            }
+            if (login.value.trim().length > 32) {
+                login.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+
+            if (password.value.trim().length === 0) {
+                password.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
+            }
+            if (password.value.trim().length > 128) {
+                password.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+
+            if (errored) return;
+
             this.api('login', {login: this.$refs.inputLogin.value, password: this.$refs.inputPassword.value}, false).then(data => {
                 this.$store.commit('user/setProfileInfo', {
                     id: data[1].id,

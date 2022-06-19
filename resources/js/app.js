@@ -68,25 +68,25 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
                 break;
             }
 
-            case 400: { // Bad Request
-                console.log(JSON.parse(error.response.data.message));
-                break;
-            }
+            // case 400: { // Bad Request
+            //     console.log(JSON.parse(error.response.data.message));
+            //     break;
+            // }
+            //
+            // case 422: { // Unprocessable Entity
+            //     console.log('Unprocessable Entity');
+            //     break;
+            // }
+            //
+            // case 403: {
+            //     console.log(JSON.parse(error.response.data.message));
+            //     break;
+            // }
 
-            case 422: { // Unprocessable Entity
-                console.log('Unprocessable Entity');
-                break;
-            }
-
-            case 403: {
-                console.log(JSON.parse(error.response.data.message));
-                break;
-            }
-
-            default: {
-                console.log(error.response.data.message);
-                console.log('Неизвестная ошибка');
-            }
+            // default: {
+            //     console.log(error.response.data.message);
+            //     console.log('Неизвестная ошибка');
+            // }
         }
     };
 

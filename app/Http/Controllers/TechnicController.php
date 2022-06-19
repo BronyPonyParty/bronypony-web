@@ -135,16 +135,14 @@ class TechnicController extends Controller
             'technicId' => 'required|int'
         ]);
 
-        if ($validator->fails()) {
-            abort(400, json_encode('Хм. Данная ошибка не должна была возникнуть при обычных обстоятельствах'));
-        }
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $user = AuthFacade::user();
         $description = $request->post('description');
         $technicId = $request->post('technicId');
 
         $technic = Technic::where('id', $technicId)->where('organization_id', $user->organization_id)->update(['description' => $description]);
-        if ($technic == 0) abort(400, json_encode('Данной техники не существует в вашей орагнизации'));
+        if ($technic == 0) return response(['errors' => ['technicId' => ['NotFound' => []]]], 400);
 
         return 'OK';
     }

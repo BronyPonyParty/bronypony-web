@@ -17,60 +17,51 @@
                                 {{ window.description }}
                             </div>
 
-                            <input class="form-control mb-3 child form-control-lg outline-text"
-                                   type="email"
-                                   placeholder="Введите новую почту"
-                                   ref="mail"
-                                   maxlength="64"
-                                   @keyup.enter="getAccess"
-                                   @focus="$refs.mail.classList.remove('border-red')"
-                                   v-if="window.type === 'mail'">
+                            <div v-if="window.type === 'mail'">
+                                <label>Введите новую почту</label>
+                                <v-input
+                                    class="mb-3"
+                                    type="email"
+                                    maxlength="64"
+                                    ref="mail"
+                                    @keyup.enter="getAccess"></v-input>
+                            </div>
 
-                            <input class="form-control mb-3 form-control-lg outline-text"
-                                   type="tel"
-                                   placeholder="Введите новый номер телефона"
-                                   ref="phoneNumber"
-                                   @keyup.enter="getAccess"
-                                   maxlength="16"
-                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                   @focus="$refs.phoneNumber.classList.remove('border-red')"
-                                   v-if="window.type === 'phoneNumber'">
+                            <div v-if="window.type === 'phoneNumber'">
+                                <label>Введите номер телефона</label>
+                                <v-input
+                                    class="mb-3"
+                                    type="tel"
+                                    maxlength="16"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                    ref="phoneNumber"
+                                    @keyup.enter="getAccess"></v-input>
+                            </div>
 
-                            <input class="form-control mb-3 form-control-lg outline-text"
-                                   type="password"
-                                   placeholder="Введите старый пароль"
-                                   ref="oldPassword"
-                                   maxlength="128"
-                                   @keyup.enter="getAccess"
-                                   @focus="$refs.oldPassword.classList.remove('border-red')"
-                                   v-if="window.type === 'password'">
+                            <div v-if="window.type === 'password'">
+                                <label>Введите старый пароль</label>
+                                <v-input
+                                    class="mb-3"
+                                    type="password"
+                                    maxlength="128"
+                                    ref="oldPassword"
+                                    @keyup.enter="getAccess"></v-input>
+                            </div>
 
-                            <input class="form-control mb-3 form-control-lg outline-text"
-                                   type="password"
-                                   placeholder="Введите новый пароль"
-                                   ref="newPassword"
-                                   maxlength="128"
-                                   @keyup.enter="getAccess"
-                                   @focus="$refs.newPassword.classList.remove('border-red')"
-                                   v-if="window.type === 'password'">
+                            <div v-if="window.type === 'password'">
+                                <label>Введите новый пароль</label>
+                                <v-input class="mb-3" type="password" maxlength="128" ref="newPassword" @keyup.enter="getAccess"></v-input>
+                            </div>
 
-                            <input class="form-control  form-control-lg outline-text"
-                                   type="password"
-                                   placeholder="Подтвердите новый пароль"
-                                   ref="verNewPassword"
-                                   maxlength="128"
-                                   @keyup.enter="getAccess"
-                                   @focus="$refs.verNewPassword.classList.remove('border-red')"
-                                   v-if="window.type === 'password'">
+                            <div v-if="window.type === 'password'">
+                                <label>Подтвердите новый пароль</label>
+                                <v-input type="password" maxlength="128" ref="verNewPassword" @keyup.enter="getAccess"></v-input>
+                            </div>
 
-                            <input class="form-control form-control-lg outline-text"
-                                   type="password"
-                                   placeholder="Введите текущий пароль"
-                                   ref="password"
-                                   maxlength="128"
-                                   @keyup.enter="getAccess"
-                                   @focus="$refs.password.classList.remove('border-red')"
-                                   v-if="window.type !== 'password'">
+                            <div v-if="window.type !== 'password'">
+                                <label>Введите текущий пароль</label>
+                                <v-input type="password" maxlength="128" ref="password" @keyup.enter="getAccess"></v-input>
+                            </div>
 
                             <div class="button" style="text-align: right">
                                 <button class="btn text-white"
@@ -87,9 +78,15 @@
 </template>
 
 <script>
+import vInput from '../Input';
 export default {
     name: "passwordWindow",
     inject: ['api'],
+
+    data: () =>({
+        login: '',
+        password: ''
+    }),
 
     computed: {
         window() {
@@ -106,62 +103,142 @@ export default {
             switch (this.window.type) {
                 case 'mail': {
                     let mail = this.$refs.mail;
+                    // console.log(this.$refs.mail.value);
                     let password = this.$refs.password;
                     let reg = /^(([^<>()\[\].,;:\s@"]+(\.[^<>()\[\].,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                    let errored = [];
+                    let errored = false;
 
                     if (mail.value.trim().length === 0) {
-                        errored.push('Поле с почтой не должно быть пустым');
-                        mail.classList.add('border-red');
+                        this.$refs.mail.errorInfoText = 'Поле не может быть пустым';
+                        errored = true;
+                    }
+                    if (mail.value.trim().length > 64) {
+                        this.$refs.mail.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
                     if (password.value.trim().length === 0) {
-                        errored.push('Поле с паролем не должно быть пустым');
-                        password.classList.add('border-red');
+                        this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                        errored = true;
+                    }
+                    if (password.value.trim().length > 128) {
+                        this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
 
-                    if (errored.length !== 0) {
-                        console.log(errored);
-                        return;
-                    }
 
                     // Проверка почты по регулярному выражению
-                    if (!reg.test(mail.value)) {
-                        console.log('Почта не соответствует формату');
-                        mail.classList.add('border-red');
-                        return;
+                    if (!reg.test(mail.value) && mail.value.trim().length > 0 && mail.value.trim().length < 64) {
+                        this.$refs.mail.errorInfoText = 'Неверный формат';
+                        errored = true;
                     }
 
-                    this.api('user/changeMail', { mail: this.$refs.mail.value, password: password.value }).then(() => {
+                    if (errored) return;
+
+                    this.api('user/changeMail', { mail: this.$refs.mail.value, password: password.value }, false).then(() => {
                         this.$store.commit('user/changeItemProperty', ['mail', mail.value]);
                         this.$store.commit('app/setWindow', {name: ''});
-                    })
+                    }).catch(error => {
+                        if (error.response.status === 401) {
+                            this.$store.dispatch('auth/logout');
+                            return;
+                        }
+
+                        const errors = error.response.data.errors;
+
+                        if (errors.mail !== undefined) {
+                            if (errors.mail.Required) {
+                                this.$refs.mail.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.mail.Incorrect) {
+                                this.$refs.mail.errorInfoText = 'Неверный формат';
+                            }
+                            else if (errors.mail.Using) {
+                                this.$refs.mail.errorInfoText = 'Почта используется вами';
+                            }
+                            else if (errors.mail.Busy) {
+                                this.$refs.mail.errorInfoText = 'Почта уже используется';
+                            }
+                            else {
+                                this.$refs.mail.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                        }
+
+                        if (errors.password !== undefined) {
+                            if (errors.password.Required) {
+                                this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if(errors.password.Incorrect) {
+                                this.$refs.password.errorInfoText = 'Неверный пароль';
+                            }
+                            else {
+                                this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                        }
+                    });
+
                     break;
                 }
 
                 case 'phoneNumber': {
                     let phone = this.$refs.phoneNumber;
                     let password = this.$refs.password;
-                    let errored = [];
-
+                    let errored = false;
 
                     if (phone.value.trim().length < 6) {
-                        errored.push('Минимальная длина пароля 6 цифр');
-                        phone.classList.add('border-red');
+                        this.$refs.phoneNumber.errorInfoText = 'Минимальная длина 6 символов';
+                        errored = true;
+                    }
+                    if (phone.value.trim().length > 16) {
+                        this.$refs.phoneNumber.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
                     if (password.value.trim().length === 0) {
-                        errored.push('Поле с паролем не может быть пустым');
-                        password.classList.add('border-red');
+                        this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                        errored = true;
+                    }
+                    if (password.value.trim().length > 128) {
+                        this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
 
-                    if (errored.length !== 0) {
-                        console.log(errored);
-                        return;
-                    }
+                    if (errored) return;
 
-                    this.api('user/changePhone', {phone: phone.value, password: password.value}).then(() => {
+                    this.api('user/changePhone', {phone: phone.value, password: password.value}, false).then(() => {
                         this.$store.commit('user/changeItemProperty', ['phoneNumber', phone.value]);
                         this.$store.commit('app/setWindow', {name: ''});
-                    })
+                    }).catch(error => {
+                        if (error.response.status === 401) {
+                            this.$store.dispatch('auth/logout');
+                            return;
+                        }
+
+                        const errors = error.response.data.errors;
+
+                        if (errors.password !== undefined) {
+                            if (errors.password.Required) {
+                                this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.password.Max) {
+                                this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                            else {
+                                this.$refs.password.errorInfoText = 'Неверный пароль';
+                            }
+                        }
+
+                        if (errors.phone !== undefined) {
+                            if (errors.phone.DigitsBetween) {
+                                this.$refs.phoneNumber.errorInfoText = 'Лимит символов от 6 до 16';
+                            }
+                            else if (errors.phone.Using) {
+                                this.$refs.phoneNumber.errorInfoText = 'Номер используется вами';
+                            }
+                            else {
+                                this.$refs.phoneNumber.errorInfoText = 'Номер уже занят';
+                            }
+                        }
+                    });
+
                     break;
                 }
 
@@ -172,55 +249,154 @@ export default {
                     let errored = false;
 
                     if (oldPassword.value.trim().length === 0) {
+                        oldPassword.errorInfoText = 'Поле не может быть пустым';
                         errored = true;
-                        oldPassword.classList.add('border-red');
                     }
+                    if (oldPassword.value.trim().length > 128) {
+                        oldPassword.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
+                    }
+
                     if (newPassword.value.trim().length === 0) {
+                        newPassword.errorInfoText = 'Поле не может быть пустым';
                         errored = true;
-                        newPassword.classList.add('border-red');
                     }
+                    if (newPassword.value.trim().length > 128) {
+                        newPassword.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
+                    }
+
                     if (verPassword.value.trim().length === 0) {
+                        verPassword.errorInfoText = 'Поле не может быть пустым';
                         errored = true;
-                        verPassword.classList.add('border-red');
+                    }
+                    if (verPassword.value.trim().length > 128) {
+                        verPassword.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
 
-                    if (errored) {
-                        console.log('Все поля должны быть заполнены');
-                        return;
+
+                    if (newPassword.value.trim() !== verPassword.value.trim()) {
+                        newPassword.errorInfoText = 'Пароли отличаются';
+                        verPassword.errorInfoText = 'Пароли отличаются';
+                        errored = true;
                     }
 
-                    if (newPassword.value !== verPassword.value) {
-                        console.log('Пароли отличаются');
-                        newPassword.classList.add('border-red');
-                        verPassword.classList.add('border-red');
-                        return;
-                    }
+                    if (errored) return;
 
-                    this.api('user/changePassword', {newPassword: newPassword.value, oldPassword: oldPassword.value, verPassword: verPassword.value}).then(() => {
+                    this.api('user/changePassword', {newPassword: newPassword.value, oldPassword: oldPassword.value, verPassword: verPassword.value}, false).then(() => {
                         this.$store.commit('app/setWindow', {name: ''});
-                    })
+                    }).catch(error => {
+                        if (error.response.status === 401) {
+                            this.$store.dispatch('auth/logout');
+                            return;
+                        }
+
+                        const errors = error.response.data.errors;
+
+                        if (errors.newPassword !== undefined) {
+                            if (errors.newPassword.Required) {
+                                newPassword.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.newPassword.Max) {
+                                newPassword.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                            else if (errors.newPassword.NotMatch) {
+                                newPassword.errorInfoText = 'Пароли не совпадают';
+                            }
+                            else {
+                                newPassword.errorInfoText = 'Новый пароль не должен совпадать с текущим';
+                            }
+                        }
+
+                        if (errors.oldPassword !== undefined) {
+                            if (errors.oldPassword.Required) {
+                                oldPassword.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.oldPassword.Max) {
+                                oldPassword.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                            else if (errors.oldPassword.Incorrect) {
+                                oldPassword.errorInfoText = 'Неверный пароль';
+                            }
+                            else {
+                                oldPassword.errorInfoText = 'Новый пароль не должен совпадать с текущим';
+                            }
+                        }
+
+                        if (errors.verPassword !== undefined) {
+                            if (errors.verPassword.Required) {
+                                verPassword.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.verPassword.Max) {
+                                verPassword.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                            else {
+                                verPassword.errorInfoText = 'Пароли не совпадают';
+                            }
+                        }
+                    });
+
                     break;
                 }
 
                 case 'session': {
                     let sessionId = this.window.id;
                     let password = this.$refs.password;
+                    let errored = false;
 
                     if (password.value.trim().length === 0) {
-                        console.log('Поле с паролем не может быть пустым');
-                        password.classList.add('border-red');
-                        return;
+                        password.errorInfoText = 'Поле не может быть пустым';
+                        errored = true;
+                    }
+                    if (password.value.trim().length > 128) {
+                        password.errorInfoText = 'Вы превысили лимит символов';
+                        errored = true;
                     }
 
-                    this.api('user/dropSession', {sessionId, password: password.value}).then(() => {
+                    if (errored) return;
+
+                    this.api('user/dropSession', {sessionId, password: password.value}, false).then(() => {
                         this.$store.commit('user/deleteSession', sessionId);
                         if (this.$store.getters['app/getToken'] === this.window.token) this.$store.dispatch('auth/logout');
                         this.$store.commit('app/setWindow', {name: ''});
+                    }).catch(error => {
+                        if (error.response.status === 401) {
+                            this.$store.dispatch('auth/logout');
+                            return;
+                        }
+
+                        const errors = error.response.data.errors;
+
+                        if (errors.sessionId !== undefined) {
+                            if (errors.sessionId.Required) {
+                                console.log('ERROR. Please reload your page. Thanks).');
+                            } else {
+                                console.log('ERROR. Please reload your page. Thanks).');
+                            }
+                        }
+
+                        if (errors.password !== undefined) {
+                            if (errors.password.Required) {
+                                password.errorInfoText = 'Поле не может быть пустым';
+                            }
+                            else if (errors.password.Max) {
+                                password.errorInfoText = 'Вы превысили лимит символов';
+                            }
+                            else {
+                                password.errorInfoText = 'Пароль неверный';
+                            }
+                        }
                     })
+
                     break;
                 }
             }
         }
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -284,10 +460,6 @@ strong {
 .outline-text:focus {
     border-color: #5374D1;
     box-shadow: inherit;
-}
-
-.border-red {
-    border-color: red
 }
 
 .red-btn {

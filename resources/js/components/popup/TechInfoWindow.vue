@@ -42,7 +42,7 @@
                                     <span>Откуда</span>
                                     <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
                                     <span>Куда</span>
-                                    <v-input ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" :little="true"></v-input>
+                                    <v-input ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" height="30"></v-input>
 <!--                                    <input class="form-control outline-text" ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @focus="removeRed">-->
                                     <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" @click="moveTechnic"><strong>Переместить</strong></button>
                                 </div>
@@ -248,11 +248,9 @@ export default {
                 if (descriptionText !== this.getTechDescription.description) {
                     this.$store.commit('techInfo/changeTechDescriptionProperty', ['description', descriptionText]);
                     this.api('technic/changeDescription', {description: descriptionText, technicId: this.getTechDescription.id}, false).then(() => {
-                        console.log('success');
-                    }).catch(error => {
+                    }).catch(() => {
                         // Возвращаем старый текст если произошла ошибка
                         this.$store.commit('techInfo/changeTechDescriptionProperty', ['description', oldDescription]);
-                        console.log(JSON.parse(error.response.data.message));
                     });
                 }
             }
@@ -293,11 +291,11 @@ export default {
             let technicId = this.getTechDescription.id;
 
             // Некая валидация
-            if (cabinet.length === 0) {
+            if (cabinet.trim().length === 0) {
                 this.$refs.cabinetInput.errorInfoText = 'Поле не может быть пустым';
                 return;
             }
-            if (cabinet.length > 6) {
+            if (cabinet.trim().length > 6) {
                 this.$refs.cabinetInput.errorInfoText = 'Вы превысили лимит символов';
                 return;
             }
@@ -312,8 +310,13 @@ export default {
                     date: data
                 });
 
-                this.$refs.cabinetInput.value = null;
+                this.$refs.cabinetInput.value = ''; // Очистка поля кабинета
             }).catch(error => {
+                if (error.response.status === 401) {
+                    this.$store.dispatch('auth/logout');
+                    return;
+                }
+
                 const errors = error.response.data.errors;
 
                 if (errors.cabinet !== undefined) {

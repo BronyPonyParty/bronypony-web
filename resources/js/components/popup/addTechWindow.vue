@@ -17,13 +17,13 @@
                             <div class="gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
                                 <div>
                                     <label>Название</label>
-                                    <v-input ref="inputName" maxlength="64"></v-input>
+                                    <v-input ref="inputName" height="40" maxlength="64"></v-input>
                                 </div>
 
 
                                 <div>
                                     <label>Номер</label>
-                                    <v-input ref="inputNumber" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></v-input>
+                                    <v-input ref="inputNumber" height="40" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '')"></v-input>
                                 </div>
                             </div>
 
@@ -105,6 +105,11 @@ export default {
 
                 this.close();
             }).catch(error => {
+                if (error.response.status === 401) {
+                    this.$store.dispatch('auth/logout');
+                    return;
+                }
+
                 const errors = error.response.data.errors;
 
                 if (errors.name !== undefined) {

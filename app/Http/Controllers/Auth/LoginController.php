@@ -26,7 +26,7 @@ class LoginController extends Controller
         $user = User::whereLogin($login)->where('status', '!=', 1)->first();
         if (empty($user)) return response(['errors' => ['password' => ['Incorrect' => []], 'login' => ['Incorrect' => []]]], 400);
 
-        if ( !Crypt::verify($password, $user->salt, $user->password) ) abort(400, json_encode('Неверные данные входа'));
+        if ( !Crypt::verify($password, $user->salt, $user->password) ) return response(['errors' => ['password' => ['Incorrect' => []], 'login' => ['Incorrect' => []]]], 400);
 
 
         // Если данные оказались верны

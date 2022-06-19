@@ -17,42 +17,29 @@
                             <div class="gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
                                 <div>
                                     <label>Фамилия</label>
-                                    <input class="form-control outline-text"
-                                           ref="firstname"
-                                           maxlength="32"
-                                           @focus="$refs.firstname.classList.remove('border-red')">
+                                    <v-input ref="firstname" maxlength="32"></v-input>
                                 </div>
 
                                 <div>
                                     <label>Имя</label>
-                                    <input class="form-control outline-text"
-                                           ref="lastname"
-                                           maxlength="32"
-                                           @focus="$refs.lastname.classList.remove('border-red')">
+                                    <v-input ref="lastname" maxlength="32"></v-input>
                                 </div>
                             </div>
 
                             <div class="item gap-4" style="display: grid; grid-template-columns: 1fr 1fr;">
                                 <div>
                                     <label>Логин</label>
-                                    <input class="form-control outline-text"
-                                           ref="login"
-                                           maxlength="64"
-                                           @focus="$refs.login.classList.remove('border-red')">
+                                    <v-input ref="login" maxlength="64"></v-input>
                                 </div>
 
                                 <div>
                                     <label>Пароль</label>
-                                    <input class="form-control outline-text"
-                                           type="password"
-                                           ref="password"
-                                           maxlength="128"
-                                           @focus="$refs.password.classList.remove('border-red')">
+                                    <v-input ref="password" maxlength="128"></v-input>
                                 </div>
                             </div>
 
                             <div class="item">
-                                <select class="form-select outline-text" ref="post">
+                                <select class="form-select outline-text" ref="post" @focus="$refs.post.classList.remove('border-red')">
                                     <option>Пользователь</option>
                                     <option>Сотрудник</option>
                                 </select>
@@ -70,6 +57,7 @@
 </template>
 
 <script>
+import vInput from '../Input';
 export default {
     name: "addUserWindow",
     inject: ['api'],
@@ -84,65 +72,62 @@ export default {
             let lastname = this.$refs.lastname;
             let login = this.$refs.login;
             let password = this.$refs.password;
-            let errorMass = [];
-            let post;
+            let errored = false;
+            let post = 0;
 
             if (this.$refs.post.selectedIndex === 0) {
                 post = 2;
-            } else if (this.$refs.post.selectedIndex === 1) {
+            } else {
                 post = 4;
             }
 
 
             if (firstname.value.trim().length > 32) {
-                firstname.classList.add('border-red');
-                errorMass.push('Длина фамилии не должна превышать 32 символов');
+                this.$refs.firstname.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
             }
             if (firstname.value.trim().length === 0) {
-                firstname.classList.add('border-red');
-                errorMass.push('Поле с фамилией должно быть заполнено');
+                this.$refs.firstname.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
             if (lastname.value.trim().length > 32) {
-                lastname.classList.add('border-red');
-                errorMass.push('Длина имени не должна превышать 32 символов');
+                this.$refs.lastname.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
             }
             if (lastname.value.trim().length === 0) {
-                lastname.classList.add('border-red');
-                errorMass.push('Поле с именем должно быть заполнено');
+                this.$refs.lastname.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
             if (login.value.trim().length > 64) {
-                login.classList.add('border-red');
-                errorMass.push('Длина логина не должна превышать 64 символов');
+                this.$refs.login.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
             }
             if (login.value.trim().length === 0) {
-                login.classList.add('border-red');
-                errorMass.push('Поле с логином должно быть заполнено');
+                this.$refs.login.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
             if (password.value.trim().length > 128) {
-                password.classList.add('border-red');
-                errorMass.push('Длина пароля не должна превышать 128 символов');
+                this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
             }
             if (password.value.trim().length === 0) {
-                password.classList.add('border-red');
-                errorMass.push('Поле с паролем должно быть заполнено');
+                this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
             if (post.selectedIndex > 1) {
-                post.classList.add('border-red');
-                errorMass.push('Существует всего 2 должности');
+                this.$refs.post.classList.add('border-red');
+                errored = true;
             }
 
-            if (errorMass.length > 0) {
-                console.log(errorMass);
-                return;
-            }
+            if (errored) return;
 
 
 
-            this.api('user/add', {firstname: firstname.value.trim(), lastname: lastname.value.trim(), login: login.value.trim(), password: password.value.trim(), post}).then(data => {
+            this.api('user/add', {firstname: firstname.value.trim(), lastname: lastname.value.trim(), login: login.value.trim(), password: password.value.trim(), post}, false).then(data => {
                 this.$store.commit('userList/pushUser', {
                     id: data,
                     firstname: firstname.value.trim(),
@@ -153,8 +138,62 @@ export default {
                 });
 
                 this.close();
+            }).catch(error => {
+                if (error.response.status === 401) {
+                    this.$store.dispatch('auth/logout');
+                    return;
+                }
+
+                const errors = error.response.data.errors;
+
+                if (errors.firstname !== undefined) {
+                    if (errors.firstname.Required) {
+                        this.$refs.firstname.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        this.$refs.firstname.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.lastname !== undefined) {
+                    if (errors.lastname.Required) {
+                        this.$refs.lastname.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        this.$refs.lastname.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.login !== undefined) {
+                    if (errors.login.Required) {
+                        this.$refs.login.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else if (errors.login.Busy) {
+                        this.$refs.login.errorInfoText = 'Логин уже занят';
+                    }
+                    else {
+                        this.$refs.login.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.password !== undefined) {
+                    if (errors.password.Required) {
+                        this.$refs.password.errorInfoText = 'Поле не может быть пустым';
+                    }
+                    else {
+                        this.$refs.password.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.post !== undefined) {
+                    this.$refs.post.classList.add('border-red');
+                }
             });
         }
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -191,6 +230,10 @@ export default {
             &::-webkit-scrollbar {
                 width: 0;
             }
+        }
+
+        select {
+            height: 40px;
         }
     }
 
