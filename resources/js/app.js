@@ -55,7 +55,7 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
     let token = localStorage.getItem('token');
     let url = 'api/';
 
-    if (method === 'login') {
+    if (method === 'login' || method === 'mail/code/generate' || method === 'mail/code/success') {
         url += method;
     } else {
         url += token + '/' + method;

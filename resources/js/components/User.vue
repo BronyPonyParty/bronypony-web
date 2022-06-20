@@ -304,7 +304,6 @@ export default {
                 name: 'passwordWindow',
                 type: 'session',
                 title: 'Подтвердите свои действия',
-                description: 'Нажав на кнопку вы завершите данный сеанс',
                 token: token,
                 id: sessionId,
                 buttonText: 'Завершить',

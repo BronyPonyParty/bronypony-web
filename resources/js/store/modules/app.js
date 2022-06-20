@@ -6,11 +6,11 @@ export default {
 
         page: localStorage.getItem('page') || '',
 
-        popup: {
-            bool: false,
-            title: '',
-            description: ''
-        },
+        // popup: {
+        //     bool: false,
+        //     title: '',
+        //     description: ''
+        // },
 
         window: {
             name: '',
@@ -37,9 +37,9 @@ export default {
             localStorage.setItem('page', page);
         },
 
-        setPopup(state, popup) {
-            state.popup = popup;
-        },
+        // setPopup(state, popup) {
+        //     state.popup = popup;
+        // },
 
         setWindow(state, window) {
             state.window = window;
@@ -60,9 +60,9 @@ export default {
             return state.page;
         },
 
-        getPopup(state) {
-            return state.popup;
-        },
+        // getPopup(state) {
+        //     return state.popup;
+        // },
 
         getWindow(state) {
             return state.window;

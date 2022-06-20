@@ -1,5 +1,7 @@
 <?php
 
+
+use App\Http\Controllers\MailController;
 use App\Models\MovingTechnic;
 use App\Models\Premise;
 use App\Models\Repair;
@@ -27,6 +29,8 @@ use App\Http\Middleware\AccessLevel;
 */
 
 Route::post('login', [LoginController::class, 'login']);
+Route::post('mail/code/generate', [MailController::class, 'generateCode']);
+Route::post('mail/code/success', [MailController::class, 'successCode']);
 
 
 Route::prefix('{token}')->middleware(Auth::class)->group(function () {

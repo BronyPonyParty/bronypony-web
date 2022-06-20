@@ -8,10 +8,12 @@
         <v-add-user-window v-if="window.name === 'addUserWindow'"></v-add-user-window>
         <v-add-technic-window v-if="window.name === 'addTechWindow'"></v-add-technic-window>
         <v-add-statement-window v-if="window.name === 'addStatementWindow'"></v-add-statement-window>
+        <v-forgot-password-window v-if="window.name === 'forgotPasswordWindow'"></v-forgot-password-window>
 
-        <v-header v-if="page !== 'login'"></v-header>
+        <v-header v-if="page !== 'login' && page !== 'register'"></v-header>
 
         <v-login v-if="page === 'login'"></v-login>
+        <v-register v-if="page === 'register'"></v-register>
         <v-user v-if="page === 'user'"></v-user>
         <v-statements v-if="page === 'statements'"></v-statements>
         <v-technical v-if="page === 'technical'"></v-technical>
@@ -34,6 +36,8 @@ import vUserInfoWindow from './components/popup/UserInfoWindow'
 import vAddUserWindow from './components/popup/addUserWindow'
 import vAddTechnicWindow from './components/popup/addTechWindow'
 import vAddStatementWindow from './components/popup/AddStatementWindow'
+import vRegister from './components/Register'
+import vForgotPasswordWindow from './components/popup/ForgotPasswordWindow'
 import {mapGetters, mapMutations} from 'vuex';
 export default {
     name: "App",
@@ -54,6 +58,8 @@ export default {
         vAddUserWindow,
         vAddTechnicWindow,
         vAddStatementWindow,
+        vRegister,
+        vForgotPasswordWindow
     },
 
     mounted() {

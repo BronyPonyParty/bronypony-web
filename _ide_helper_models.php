@@ -12,6 +12,28 @@
 
 namespace App\Models{
 /**
+ * App\Models\Code
+ *
+ * @property int $id
+ * @property int $user_id
+ * @property int $code
+ * @property int $term
+ * @property int $removed
+ * @property-read \App\Models\User|null $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Code newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Code newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Code query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Code whereCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Code whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Code whereRemoved($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Code whereTerm($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Code whereUserId($value)
+ */
+	class Code extends \Eloquent {}
+}
+
+namespace App\Models{
+/**
  * App\Models\MovingTechnic
  *
  * @property int $id

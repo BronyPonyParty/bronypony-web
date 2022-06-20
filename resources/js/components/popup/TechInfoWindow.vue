@@ -43,7 +43,6 @@
                                     <input class="form-control outline-text" disabled :value="getTechDescription.cabinet">
                                     <span>Куда</span>
                                     <v-input ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" height="30"></v-input>
-<!--                                    <input class="form-control outline-text" ref="cabinetInput" maxlength="6" oninput="this.value = this.value.replace(/[^0-9]/g, '')" @focus="removeRed">-->
                                     <button class="btn move-button text-white" style="border: none; box-shadow: inherit;" @click="moveTechnic"><strong>Переместить</strong></button>
                                 </div>
 

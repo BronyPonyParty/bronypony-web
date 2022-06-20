@@ -24,8 +24,20 @@
                                 <v-input ref="inputPassword" maxlength="128" type="password" @keyup.enter="authorization"></v-input>
                             </div>
 
-                            <button class="btn btn-lg w-100 text-white outline-button" style="border: none; box-shadow: inherit;" type="submit" @click="authorization">Войти в систему</button>
-                            <p class="small mt-4 pb-lg-2 float-end"><a class="text-decoration-none" href="#">Забыли пароль?</a></p>
+                            <button
+                                class="btn w-100 text-white outline-button"
+                                style="border: none; box-shadow: inherit;"
+                                @click="authorization">Войти в систему</button>
+
+                            <div class="d-flex justify-content-between mt-2">
+                            <p
+                                class="small link"
+                                @click="showRegisterPage">Регистрация</p>
+                            <p
+                                class="small link"
+                                @click="forgotPassword">Забыли пароль?</p>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -157,6 +169,20 @@ export default {
                 }
             });
         },
+
+        showRegisterPage() {
+            this.$store.commit('app/setPage', 'register');
+        },
+
+        forgotPassword() {
+            this.$store.commit('app/setWindow', {name: 'forgotPasswordWindow'})
+            // name: '',
+            //     title: '',
+            //     type: '',
+            //     buttonText: '',
+            //     buttonStyle: '',
+            //     description: '',
+        }
     },
 
     components: {
@@ -165,7 +191,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     .mainBox {
         width: 100%;
         height: 100%;
@@ -190,6 +216,11 @@ export default {
 
     .outline-button {
         background-color: #345DD1;
+        font-size: 1.125rem;
+        border-radius: 0.3rem;
+        height: 40px;
+        display: flex;
+        justify-content: center;
     }
 
     .outline-button:hover {
@@ -205,5 +236,20 @@ export default {
 
     .input-error {
         border-color: #E64825;
+    }
+
+    .link {
+        color: #345DD1;
+        border-bottom: 1px solid #345DD1;
+        display: inline;
+        cursor: pointer;
+    }
+    .link:hover {
+        color: #2F52B8;
+        border-color: #2F52B8;
+    }
+    .link:active {
+        color: #1E367E;
+        border-color: #1E367E;
     }
 </style>
