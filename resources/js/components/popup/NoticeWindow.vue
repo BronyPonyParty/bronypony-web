@@ -125,6 +125,10 @@ export default {
                     this.$store.commit('technical/deleteTech', techId);
                 });
             }
+
+            else {
+                this.setWindow({name: ''});
+            }
         },
     }
 }

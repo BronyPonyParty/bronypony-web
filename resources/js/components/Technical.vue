@@ -17,9 +17,9 @@
                 </div>
 
                 <div class="white-block col-12 col-lg p-3">
-                    <div class="techniclist-cap">
+                    <div class="techniclist-cap" :class="{'gridTempColumns1fr44px': this.$store.getters['user/getProfileInfo'].status >= 8}">
                         <input class="form-control search" placeholder="Поиск" :value="searchLine" @input="changeSearchLine">
-                        <div class="add-technic-button" @click="showAddTechWindow">
+                        <div class="add-technic-button" v-if="this.$store.getters['user/getProfileInfo'].status >= 8" @click="showAddTechWindow">
                             <svg viewBox="0 0 32 32" width="32" height="32" fill="black" xmlns="http://www.w3.org/2000/svg"><line stroke-width="2" shape-rendering="crispEdges" stroke="white" class="cls-1" x1="16" x2="16" y1="7" y2="25"/><line stroke-width="2" shape-rendering="crispEdges" stroke="white" class="cls-1" x1="7" x2="25" y1="16" y2="16"/></svg>
                         </div>
                     </div>
@@ -255,6 +255,10 @@ export default {
         cursor: pointer;
     }
 
+    .gridTempColumns1fr44px{
+        grid-template-columns: 1fr 44px;
+    }
+
     .add-technic-button:hover {
         background-color: #2B7B5E;
     }
@@ -265,7 +269,6 @@ export default {
 
     .techniclist-cap {
         display: grid;
-        grid-template-columns: 1fr 44px;
         grid-template-rows: 44px;
         gap: 12px;
         margin-bottom: 12px;

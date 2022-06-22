@@ -119,6 +119,9 @@ class UserController extends Controller
         $user = User::where('id', $deleteUserId)->where('organization_id', $authUser->organization_id)
             ->whereIn('status', [2, 4])->update(['status' => 1]);
 
+        Session::where('user_id', $deleteUserId)->where('term', '>', time())->where('removed', false)
+            ->update(['removed' => true]);
+
         if ($user === 0) abort(400, json_encode('Данного пользователя не существует, либо он уже удалён'));
 
         return 'OK';

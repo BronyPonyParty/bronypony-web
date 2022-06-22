@@ -55,7 +55,7 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
     let token = localStorage.getItem('token');
     let url = 'api/';
 
-    if (method === 'login' || method === 'mail/code/generate' || method === 'mail/code/success') {
+    if (method === 'login' || method === 'mail/code/generate' || method === 'mail/code/success' || method === 'mail/code/registration') {
         url += method;
     } else {
         url += token + '/' + method;
@@ -67,26 +67,6 @@ app.provide('api', function (method, data = {}, catchDefault = true) {
                 that.$store.dispatch('auth/logout');
                 break;
             }
-
-            // case 400: { // Bad Request
-            //     console.log(JSON.parse(error.response.data.message));
-            //     break;
-            // }
-            //
-            // case 422: { // Unprocessable Entity
-            //     console.log('Unprocessable Entity');
-            //     break;
-            // }
-            //
-            // case 403: {
-            //     console.log(JSON.parse(error.response.data.message));
-            //     break;
-            // }
-
-            // default: {
-            //     console.log(error.response.data.message);
-            //     console.log('Неизвестная ошибка');
-            // }
         }
     };
 
@@ -104,7 +84,7 @@ const socket = {
 
     connect() {
         return new Promise((resolve, reject) => {
-            this.conn = new WebSocket('ws://localhost:8080');
+            this.conn = new WebSocket('ws://37.140.192.116:8080');
 
             this.conn.onopen = function (e) {
                 console.log('Connection established!');

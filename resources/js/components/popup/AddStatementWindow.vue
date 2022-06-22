@@ -15,11 +15,9 @@
 
                     <div class="card-body bg-white text-black" style="border-radius: 0 0 5px 5px">
                         <label>Номер техники</label>
-                        <input class="form-control outline-text"
-                               ref="number"
-                               maxlength="10"
-                               oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                               @focus="$refs.number.classList.remove('border-red')">
+                        <v-input ref="number"
+                                 maxlength="10"
+                                 oninput="this.value = this.value.replace(/[^0-9]/g, '')"></v-input>
 
                         <div class="description">
                             <label>Описание</label>
@@ -40,6 +38,7 @@
 </div>
 </template>
 <script>
+import vInput from '../Input';
 export default {
     name: "AddStatementWindow",
     inject: ['api', 'socket'],
@@ -56,14 +55,25 @@ export default {
         addStatement() {
             let description = this.$refs.description.value.replace(/\s+/g, ' ').trim();
             let number = this.$refs.number;
+            let errored = false;
 
             if (number.value.trim().length === 0) {
-                console.log('Поле с номером не может быть пустым');
-                number.classList.add('border-red');
-                return;
+                this.$refs.number.errorInfoText = 'Поле не может быть пустым';
+                errored = true;
             }
 
-            this.api('statement/add', {number: number.value.trim(), description}).then(data => {
+            if (number.value.trim().length > 10) {
+                this.$refs.number.errorInfoText = 'Вы превысили лимит символов';
+                errored = true;
+            }
+
+            if (description.length > 1024) {
+                this.$refs.description.classList.add('border-red');
+            }
+
+            if (errored) return;
+
+            this.api('statement/add', {number: number.value.trim(), description}, false).then(data => {
                 this.$store.commit('statements/pushItem', {
                     id: data.reportId,
                     techName: data.name,
@@ -89,8 +99,16 @@ export default {
                 }
                 this.socket.send(socketData);
                 this.close();
+            }).catch(error => {
+                const errors = error.response.data.errors;
+
+                //
             });
         }
+    },
+
+    components: {
+        vInput
     }
 }
 </script>
@@ -113,6 +131,11 @@ export default {
     }
 
     input:focus {
+        border-color: #5374D1;
+        box-shadow: inherit;
+    }
+
+    textarea:focus {
         border-color: #5374D1;
         box-shadow: inherit;
     }

@@ -36,7 +36,6 @@
                             <p
                                 class="small link"
                                 @click="forgotPassword">Забыли пароль?</p>
-
                             </div>
                         </div>
                     </div>

@@ -232,4 +232,20 @@ export default {
     .container {
         max-width: 1160px;
     }
+
+    .outline-text:focus {
+        border-color: #5374D1;
+        box-shadow: inherit;
+    }
+
+    .outline-button {
+        background-color: #345DD1;
+    }
+
+    .outline-button:hover {
+        background-color: #2F52B8;
+    }
+    .outline-button:active {
+        background-color: #1E367E;
+    }
 </style>

@@ -2,20 +2,12 @@
 
 
 use App\Http\Controllers\MailController;
-use App\Models\MovingTechnic;
-use App\Models\Premise;
-use App\Models\Repair;
-use App\Models\Report;
-use App\Models\Technic;
-use App\Models\Session;
-use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TechnicController;
 use App\Http\Controllers\StatementController;
 use App\Http\Middleware\Auth;
-use App\Http\Middleware\AccessLevel;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,10 +23,13 @@ use App\Http\Middleware\AccessLevel;
 Route::post('login', [LoginController::class, 'login']);
 Route::post('mail/code/generate', [MailController::class, 'generateCode']);
 Route::post('mail/code/success', [MailController::class, 'successCode']);
+Route::post('mail/code/registration', [MailController::class, 'registration']);
 
 
 Route::prefix('{token}')->middleware(Auth::class)->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
+
+    Route::post('mail/feedback', [MailController::class, 'feedback']);
 
     Route::post('user/getUserData', [UserController::class, 'getUserData']);
     Route::post('user/saveUserData', [UserController::class, 'saveUserData']);
@@ -66,15 +61,4 @@ Route::prefix('{token}')->middleware(Auth::class)->group(function () {
         Route::post('user/delete', [UserController::class, 'delete']);
         Route::post('user/add', [UserController::class, 'add']);
     });
-});
-
-Route::get('test', function () {
-    DB::enableQueryLog();
-
-    $data = Session::where('user_id', 1)->where('id', 6)->where('removed', 1)
-        ->update(['removed' => 0]);
-
-//        if ($data === 0) abort(400, json_encode('Данной сессии не существует'));
-//    dd($data);
-    dd(DB::getQueryLog());
 });

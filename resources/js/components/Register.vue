@@ -90,8 +90,8 @@ export default {
                 errored = true;
             }
 
-            if (phone.value.trim().length === 0) {
-                phone.errorInfoText = 'Поле не может быть пустым';
+            if (phone.value.trim().length < 6) {
+                phone.errorInfoText = 'Минимальная длина 6 символов';
                 errored = true;
             }
             if (phone.value.trim().length > 16) {
@@ -101,7 +101,48 @@ export default {
 
             if (errored) return;
 
-            //this.api()
+            this.api('mail/code/registration', {name: name.value.trim(), address: address.value.trim(), phone: phone.value.trim()}, false).then(() => {
+                this.$store.commit('app/setPage', 'login');
+                this.$store.commit('app/setWindow', {
+                    name: 'noticeWindow',
+                    title: 'Успешно',
+                    buttonText: 'ОК',
+                    buttonStyle: 'green-btn',
+                    description: 'Заявка на регистрацию подана, ожидайте сообщения на вашу почту.',
+                });
+            }).catch(error => {
+                const errors = error.response.data.errors;
+
+                if (errors.name !== undefined) {
+                    if (errors.name.Required) {
+                        name.errorInfoText = 'Поле не может быть пустым';
+                    }
+
+                    else {
+                        name.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.address !== undefined) {
+                    if (errors.address.Required) {
+                        address.errorInfoText = 'Поле не может быть пустым';
+                    }
+
+                    else {
+                        address.errorInfoText = 'Вы превысили лимит символов';
+                    }
+                }
+
+                if (errors.phone !== undefined) {
+                    if (errors.phone.DigitsBetween) {
+                        phone.errorInfoText = 'Лимит символов от 6 до 16';
+                    }
+
+                    else {
+                        phone.errorInfoText = 'Поле не может быть пустым';
+                    }
+                }
+            });
         },
 
         showLoginPage() {

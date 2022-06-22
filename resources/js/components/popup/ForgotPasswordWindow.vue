@@ -105,8 +105,46 @@ export default {
                 });
             }
             else {
-                console.log('hi');
-                // коод
+                let password = this.$refs.password;
+                let code = this.$refs.code;
+                let errored = false;
+
+                if (password.value.trim().length === 0) {
+                    password.errorInfoText = 'Поле не может быть пустым';
+                    errored = true;
+                }
+                if (password.value.trim().length > 128) {
+                    password.errorInfoText = 'Вы превысили лимит символов';
+                    errored = true;
+                }
+                if (code.value.trim().length === 0) {
+                    code.errorInfoText = 'Поле не может быть пустым';
+                    errored = true;
+                }
+                if (code.value.trim().length > 4) {
+                    code.errorInfoText = 'Вы превысили лимит символов';
+                    errored = true;
+                }
+
+                if (errored) return;
+
+                this.api('mail/code/success', {code: code.value.trim(), password: password.value.trim()}, false).then(() => {
+                    this.close();
+                }).catch(error => {
+                    const errors = error.response.data.errors;
+
+                    if (errors.code !== undefined) {
+                        if (errors.code.Required) {
+                            code.errorInfoText = 'Поле не может быть пустым';
+                        }
+                        else if (errors.code.Max) {
+                            code.errorInfoText = 'Вы превысили лимит символов';
+                        }
+                        else {
+                            code.errorInfoText = 'Код неверный';
+                        }
+                    }
+                })
             }
         },
 
