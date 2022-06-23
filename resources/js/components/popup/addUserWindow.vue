@@ -34,7 +34,7 @@
 
                                 <div>
                                     <label>Пароль</label>
-                                    <v-input ref="password" maxlength="128"></v-input>
+                                    <v-input ref="password" type="password" maxlength="128"></v-input>
                                 </div>
                             </div>
 

@@ -175,12 +175,6 @@ export default {
 
         forgotPassword() {
             this.$store.commit('app/setWindow', {name: 'forgotPasswordWindow'})
-            // name: '',
-            //     title: '',
-            //     type: '',
-            //     buttonText: '',
-            //     buttonStyle: '',
-            //     description: '',
         }
     },
 

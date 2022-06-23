@@ -102,7 +102,23 @@ export default {
             }).catch(error => {
                 const errors = error.response.data.errors;
 
-                //
+                if (errors.description !== undefined) {
+                    this.$refs.description.classList.add('border-red');
+                }
+
+                if (errors.number !== undefined) {
+                    if (errors.number.Required) {
+                        this.$refs.number.errorInfoText = 'Поле не может быть пустым';
+                    }
+
+                    else if (errors.number.NotFound) {
+                        this.$refs.number.errorInfoText = 'Данной техники не существует';
+                    }
+
+                    else {
+                        this.$refs.number.errorInfoText = 'Техника уже в процессе ремонта';
+                    }
+                }
             });
         }
     },

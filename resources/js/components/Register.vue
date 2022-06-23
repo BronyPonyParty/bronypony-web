@@ -42,12 +42,12 @@
                             <button
                                 class="btn w-100 text-white outline-button"
                                 style="border: none; box-shadow: inherit;"
-                                @click="registration">Зарегестрироваться</button>
+                                @click="registration">Зарегистрироваться</button>
 
                             <div class="mt-2">
                                 <p
                                     class="small link"
-                                    @click="showLoginPage">Уже зарегестрированы?</p>
+                                    @click="showLoginPage">Уже зарегистрированы?</p>
 
                             </div>
                         </div>

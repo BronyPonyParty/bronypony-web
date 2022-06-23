@@ -20197,12 +20197,7 @@ __webpack_require__.r(__webpack_exports__);
     forgotPassword: function forgotPassword() {
       this.$store.commit('app/setWindow', {
         name: 'forgotPasswordWindow'
-      }); // name: '',
-      //     title: '',
-      //     type: '',
-      //     buttonText: '',
-      //     buttonStyle: '',
-      //     description: '',
+      });
     }
   },
   components: {
@@ -20879,7 +20874,21 @@ __webpack_require__.r(__webpack_exports__);
 
         _this.close();
       })["catch"](function (error) {
-        var errors = error.response.data.errors; //
+        var errors = error.response.data.errors;
+
+        if (errors.description !== undefined) {
+          _this.$refs.description.classList.add('border-red');
+        }
+
+        if (errors.number !== undefined) {
+          if (errors.number.Required) {
+            _this.$refs.number.errorInfoText = 'Поле не может быть пустым';
+          } else if (errors.number.NotFound) {
+            _this.$refs.number.errorInfoText = 'Данной техники не существует';
+          } else {
+            _this.$refs.number.errorInfoText = 'Техника уже в процессе ремонта';
+          }
+        }
       });
     }
   },
@@ -22776,12 +22785,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     onClick: _cache[0] || (_cache[0] = function () {
       return $options.registration && $options.registration.apply($options, arguments);
     })
-  }, "Зарегестрироваться"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  }, "Зарегистрироваться"), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
     "class": "small link",
     onClick: _cache[1] || (_cache[1] = function () {
       return $options.showLoginPage && $options.showLoginPage.apply($options, arguments);
     })
-  }, "Уже зарегестрированы?")])])])])])])]);
+  }, "Уже зарегистрированы?")])])])])])])]);
 }
 
 /***/ }),
@@ -25468,6 +25477,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   /* NEED_PATCH */
   )]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_v_input, {
     ref: "password",
+    type: "password",
     maxlength: "128"
   }, null, 512
   /* NEED_PATCH */

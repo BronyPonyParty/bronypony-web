@@ -152,15 +152,15 @@ class StatementController extends Controller
             'description' => 'max:512'
         ]);
 
-        if ($validator->fails()) abort(400, json_encode('Неверные данные'));
+        if ($validator->fails()) return response(['errors' => $validator->failed()], 400);
 
         $number = $request->post('number');
         $description = preg_replace("/\s+/u", " ", str_replace(array("\r\n", "\r", "\n"), '', $request->post('description')));
         $authUser = AuthFacade::user();
 
         $technic = Technic::select(['id', 'name', 'cabinet', 'status'])->where('organization_id', $authUser->organization_id)->where('number', $number)->where('status', '!=', 1)->first();
-        if (empty($technic)) abort(400, json_encode('Данной техники не существует в вашей организации'));
-        if ($technic->status == 2) abort(400, json_encode('Данная техника уже ожидает ремонта'));
+        if (empty($technic)) return response(['errors' => ['number' => ['NotFound' => []]]], 400);
+        if ($technic->status == 2) return response(['errors' => ['number' => ['Repair' => []]]], 400);
 
         $report = new Report();
         $report->technic_id = $technic->id;

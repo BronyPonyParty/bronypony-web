@@ -32,10 +32,10 @@ class MailController extends Controller
 
         $randomCode = random_int(1000, 9999);
 
-        Mail::send('mail', ['code' => $randomCode], function ($message) use ($mail) {
-            $message->to($mail, 'Support')->subject('Восстановление пароля');
-            $message->from('support@bronypony.com', 'Support');
-        });
+       Mail::send('mail', ['code' => $randomCode], function ($message) use ($mail) {
+           $message->to($mail, 'Support')->subject('Восстановление пароля');
+           $message->from('support@bronypony.com', 'Support');
+       });
 
         $code = new Code();
         $code->user_id = $user->id;
